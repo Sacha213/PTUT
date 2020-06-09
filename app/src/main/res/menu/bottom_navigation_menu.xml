@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_calendrier"
+        android:icon="@drawable/calendar"
+        android:title="@string/bottom_navigation_menu_calendrier" />
+
+    <item
+        android:id="@+id/action_notes"
+        android:icon="@drawable/school"
+        android:title="@string/bottom_navigation_menu_notes" />
+
+    <item
+        android:id="@+id/action_actu"
+        android:icon="@drawable/article"
+        android:title="@string/bottom_navigation_menu_actu" />
+
+    <item
+        android:id="@+id/action_claroline"
+        android:icon="@drawable/folder"
+        android:title="@string/bottom_navigation_menu_drive" />
+
+    <item
+        android:id="@+id/action_messagerie"
+        android:icon="@drawable/mail"
+        android:title="@string/bottom_navigation_menu_messagerie" />
+</menu>

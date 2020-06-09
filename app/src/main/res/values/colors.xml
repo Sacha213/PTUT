@@ -7,4 +7,6 @@
     <color name="bouton_connexion">#42A5F5</color>
     <color name="fond_accueil">#fafafa</color>
     <color name="white">#fff</color>
+    <color name="colorAccentDark">#4aa87a</color>
+    <color name="background_light">#fff</color>
 </resources>

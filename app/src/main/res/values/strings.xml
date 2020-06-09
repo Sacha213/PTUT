@@ -7,4 +7,14 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+
+    <!-- BOTTOM NAVIGATION VIEW -->
+    <string name="bottom_navigation_menu_calendrier">Calendrier</string>
+    <string name="bottom_navigation_menu_notes">Notes</string>
+    <string name="bottom_navigation_menu_actu">Actu</string>
+    <string name="bottom_navigation_menu_drive">Claroline</string>
+    <string name="bottom_navigation_menu_messagerie">Messagerie</string>
+
+
 </resources>
