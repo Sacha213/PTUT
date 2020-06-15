@@ -1,22 +1,33 @@
 package com.example.myapplication;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+
+
+
+
 
 public class accueil extends AppCompatActivity {
 
     /******************* Attribut *******************/
     private AlertDialog.Builder bienvenueDialogue; //Boite de dialogue pour un message de bienvenu
     private DatabaseManager databaseManager;//Base de données
-    private BottomNavigationView bottomNav;//Menu de navigation
+    private ScrollView layout;// afficheur scroll
 
 
     @Override
@@ -27,7 +38,7 @@ public class accueil extends AppCompatActivity {
         /******************* Initialisation des variables *******************/
         bienvenueDialogue = new AlertDialog.Builder(this); //Création de la boîte de dialogue
         databaseManager = new DatabaseManager(this);
-        bottomNav = findViewById(R.id.activity_main_bottom_navigation);
+        this.layout = findViewById(R.id.scrollActu); // liaison avec le layout
 
 
         /******************* Affichage de la boîte de dialogue de bienvenue *******************/
@@ -38,44 +49,61 @@ public class accueil extends AppCompatActivity {
 
         System.out.println(databaseManager.getIdentifiant());//Affichage des identifiants enregistré dans la base de données (provisoire)
 
-        bottomNav.setOnNavigationItemSelectedListener(navListener);
+        /******************* Test *******************/
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Calendrier()).commit(); //Affichage de base
-    }
+        ImageView image = new ImageView(this);
+        ViewGroup.LayoutParams params = new ActionBar.LayoutParams(100,100);
+        image.setLayoutParams(params);
+        image.setBackgroundResource(R.drawable.article);
+        layout.addView(image);
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        /******************* Affichage des articles *******************/
+
+        AccesBD test = new AccesBD();
+        test.execute();
+
+
+
+
+        }
+
+    private class AccesBD extends AsyncTask<Void, Void, Void> {
+
         @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        protected Void doInBackground(Void... voids) {
+            try{
 
-            /******************* Changement de page *******************/
+                DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+                Class.forName("oracle.jdbc.driver.OracleDriver");
+              //  Class.forName("oracle.jdbc.driver.")
 
-            Fragment selectedFragment = null;
-            switch (item.getItemId()){
-                case R.id.action_calendrier:
-                    selectedFragment = new Calendrier();
-                    System.out.println("wsh");
-                    break;
+                System.out.println("co");
 
-                case R.id.action_notes:
-                    selectedFragment = new Notes();
-                    break;
+            } catch (ClassNotFoundException e) {
 
-                case R.id.action_actu:
-                    selectedFragment = new Actu();
-                    break;
-
-                case R.id.action_claroline:
-                    selectedFragment = new Drive();
-                    break;
-
-                case R.id.action_messagerie:
-                    selectedFragment = new Messagerie();
-                    break;
+                System.out.println("Where is your Oracle JDBC Driver?");
 
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
 
-            return true;
+
+            Connection connexionBd;
+            Statement stmt = null;
+            try {
+                connexionBd = DriverManager.getConnection("jdbc:oracle:thin:@iutdoua-oracle.univ-lyon1.fr:1521:orcl", "p1915095", "461541");
+
+                stmt = connexionBd.createStatement();
+                ResultSet resultat = stmt.executeQuery("select * from ANNONCES where IDANNONCE = 1 ");
+
+                while(resultat.next()) {
+                    System.out.println("ID : " + resultat.getInt(1) + " Nom : " + resultat.getString(2) + "Comtenu : " + resultat.getString(3));
+
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+
+            return null;
         }
-    };
+    }
+
 }
