@@ -8,17 +8,13 @@
     tools:context=".accueil">
 
 
-
-
-    <ScrollView
-        android:id="@+id/scrollActu"
+    <WebView
+        android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/divider"
-        android:layout_marginBottom="0dp">
+        android:layout_above="@+id/divider">
 
-
-    </ScrollView>
+    </WebView>
 
     <!-- Menu  -->
 
@@ -36,7 +32,7 @@
         android:layout_marginEnd="334dp"
         android:layout_marginRight="334dp"
         android:layout_marginBottom="12dp"
-        app:srcCompat="@drawable/calendar" />
+        app:srcCompat="@drawable/calendar"/>
 
     <ImageView
         android:id="@+id/informations"
@@ -52,8 +48,7 @@
         android:layout_marginEnd="160dp"
         android:layout_marginRight="160dp"
         android:layout_marginBottom="12dp"
-        app:srcCompat="@drawable/article"
-        android:tint="@android:color/holo_purple"/>
+        app:srcCompat="@drawable/article" />
 
     <ImageView
         android:id="@+id/drive"
@@ -69,7 +64,8 @@
         android:layout_marginEnd="91dp"
         android:layout_marginRight="91dp"
         android:layout_marginBottom="13dp"
-        app:srcCompat="@drawable/folder" />
+        app:srcCompat="@drawable/folder"
+        android:tint="@android:color/holo_purple"/>
 
     <ImageView
         android:id="@+id/messagerie"
@@ -101,7 +97,7 @@
         android:layout_marginEnd="238dp"
         android:layout_marginRight="238dp"
         android:layout_marginBottom="13dp"
-        app:srcCompat="@drawable/school" />
+        app:srcCompat="@drawable/school"/>
 
     <View
         android:id="@+id/divider"

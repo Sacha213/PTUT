@@ -36,7 +36,7 @@
         android:layout_marginEnd="334dp"
         android:layout_marginRight="334dp"
         android:layout_marginBottom="12dp"
-        app:srcCompat="@drawable/calendar" />
+        app:srcCompat="@drawable/calendar"/>
 
     <ImageView
         android:id="@+id/informations"
@@ -52,8 +52,7 @@
         android:layout_marginEnd="160dp"
         android:layout_marginRight="160dp"
         android:layout_marginBottom="12dp"
-        app:srcCompat="@drawable/article"
-        android:tint="@android:color/holo_purple"/>
+        app:srcCompat="@drawable/article" />
 
     <ImageView
         android:id="@+id/drive"
@@ -101,7 +100,8 @@
         android:layout_marginEnd="238dp"
         android:layout_marginRight="238dp"
         android:layout_marginBottom="13dp"
-        app:srcCompat="@drawable/school" />
+        app:srcCompat="@drawable/school"
+        android:tint="@android:color/holo_purple"/>
 
     <View
         android:id="@+id/divider"

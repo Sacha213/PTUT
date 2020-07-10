@@ -1,30 +1,19 @@
 package com.example.myapplication;
 
+import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-
-
-
-
-
-
-
-public class accueil extends AppCompatActivity {
+public class drive extends AppCompatActivity {
 
     /******************* Attribut *******************/
-    private AlertDialog.Builder bienvenueDialogue; //Boite de dialogue pour un message de bienvenue
-    private DatabaseManager databaseManager;//Base de données
-    private ScrollView layout;// afficheur scroll
+    private WebView webView; //Navigateur web
 
     private ImageView calendrier; //Icônes du menu
     private ImageView notes;
@@ -32,16 +21,13 @@ public class accueil extends AppCompatActivity {
     private ImageView drive;
     private ImageView messagerie;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_accueil);
+        setContentView(R.layout.activity_drive);
 
         /******************* Initialisation des variables *******************/
-        bienvenueDialogue = new AlertDialog.Builder(this); //Création de la boîte de dialogue
-        databaseManager = new DatabaseManager(this);
-        this.layout = findViewById(R.id.scrollActu); // liaison avec le scroll layout
+        this.webView = findViewById(R.id.webView);
 
         this.calendrier = findViewById(R.id.calendrier);
         this.notes = findViewById(R.id.notes);
@@ -49,24 +35,12 @@ public class accueil extends AppCompatActivity {
         this.drive = findViewById(R.id.drive);
         this.messagerie = findViewById(R.id.messagerie);
 
+        /******************* Gestion du navigateur web *******************/
+        webView.setWebViewClient(new WebViewClient());
+        webView.loadUrl("https://clarolineconnect.univ-lyon1.fr/desktop/tool/open/home#/tab/-1");
 
-
-        /******************* Affichage de la boîte de dialogue de bienvenue *******************/
-        bienvenueDialogue.setTitle("Bienvenue"); //Titre
-        bienvenueDialogue.setMessage("Bravo, tu as réussi à te connecter "); //Message
-        bienvenueDialogue.setIcon(R.drawable.valider); //Ajout de l'icone valider
-        bienvenueDialogue.show(); //Affichage de la boîte de dialogue
-
-        System.out.println(databaseManager.getIdentifiant());//Affichage des identifiants enregistré dans la base de données (provisoire)
-
-        /******************* Test *******************/
-
-        ImageView image = new ImageView(this);
-        ViewGroup.LayoutParams params = new ActionBar.LayoutParams(100,100);
-        image.setLayoutParams(params);
-        image.setBackgroundResource(R.drawable.article);
-        layout.addView(image);
-
+        WebSettings webSettings = webView.getSettings();  //Gérer les parametre du WebView
+        webSettings.setJavaScriptEnabled(true);//Activer le javascript sur le navigateur
 
         /******************* Gestion des évènements du menu *******************/
 
@@ -76,8 +50,6 @@ public class accueil extends AppCompatActivity {
 
                 /******************* Changement de page *******************/
                 Intent otherActivity = new Intent(getApplicationContext(),calendrier.class); //Ouverture d'une nouvelle activité
-                overridePendingTransition(0,0);//Suprimmer animation
-                otherActivity.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
@@ -137,14 +109,18 @@ public class accueil extends AppCompatActivity {
             }
         });
 
+    }
 
+    /******************* Gestion du retour en arrière *******************/
+    @Override
+    public void onBackPressed() {
 
+        if (webView.canGoBack()){
+            webView.goBack();
+        }
+        else {
+            super.onBackPressed();
         }
 
-
-
-
-
+    }
 }
-
-

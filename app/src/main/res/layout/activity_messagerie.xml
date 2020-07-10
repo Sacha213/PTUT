@@ -9,18 +9,8 @@
 
 
 
-
-    <ScrollView
-        android:id="@+id/scrollActu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/divider"
-        android:layout_marginBottom="0dp">
-
-
-    </ScrollView>
-
     <!-- Menu  -->
+
 
     <ImageView
         android:id="@+id/calendrier"
@@ -52,8 +42,7 @@
         android:layout_marginEnd="160dp"
         android:layout_marginRight="160dp"
         android:layout_marginBottom="12dp"
-        app:srcCompat="@drawable/article"
-        android:tint="@android:color/holo_purple"/>
+        app:srcCompat="@drawable/article"/>
 
     <ImageView
         android:id="@+id/drive"
@@ -85,7 +74,8 @@
         android:layout_marginEnd="14dp"
         android:layout_marginRight="14dp"
         android:layout_marginBottom="12dp"
-        app:srcCompat="@drawable/mail" />
+        app:srcCompat="@drawable/mail"
+        android:tint="@android:color/holo_purple"/>
 
     <ImageView
         android:id="@+id/notes"
