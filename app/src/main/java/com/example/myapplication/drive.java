@@ -53,6 +53,8 @@ public class drive extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
 
             }
         });
@@ -66,6 +68,7 @@ public class drive extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });
@@ -79,6 +82,7 @@ public class drive extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });
@@ -92,6 +96,7 @@ public class drive extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });
@@ -105,6 +110,7 @@ public class drive extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });

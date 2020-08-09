@@ -51,7 +51,7 @@ public class accueil extends AppCompatActivity {
 
 
 
-        /******************* Affichage de la boîte de dialogue de bienvenue *******************/
+        /******************* Affichage de la boîte de dialogue de bienvenue *******************/ // à enlever après avoir créer un parcours d'initialisation de l'application pour l'utilisateur
         bienvenueDialogue.setTitle("Bienvenue"); //Titre
         bienvenueDialogue.setMessage("Bravo, tu as réussi à te connecter "); //Message
         bienvenueDialogue.setIcon(R.drawable.valider); //Ajout de l'icone valider
@@ -76,11 +76,11 @@ public class accueil extends AppCompatActivity {
 
                 /******************* Changement de page *******************/
                 Intent otherActivity = new Intent(getApplicationContext(),calendrier.class); //Ouverture d'une nouvelle activité
-                overridePendingTransition(0,0);//Suprimmer animation
-                otherActivity.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
 
             }
         });
@@ -94,6 +94,7 @@ public class accueil extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });
@@ -107,6 +108,7 @@ public class accueil extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });
@@ -120,6 +122,7 @@ public class accueil extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });
@@ -133,6 +136,7 @@ public class accueil extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });

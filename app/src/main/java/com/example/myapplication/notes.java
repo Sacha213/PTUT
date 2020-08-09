@@ -29,6 +29,7 @@ public class notes extends AppCompatActivity {
         this.messagerie = findViewById(R.id.messagerie);
 
         /******************* Gestion des évènements du menu *******************/
+
         calendrier.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -38,6 +39,8 @@ public class notes extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
 
             }
         });
@@ -51,6 +54,7 @@ public class notes extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });
@@ -64,6 +68,7 @@ public class notes extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });
@@ -77,6 +82,7 @@ public class notes extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });
@@ -90,6 +96,7 @@ public class notes extends AppCompatActivity {
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
             }
         });

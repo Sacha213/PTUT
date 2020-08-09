@@ -20,91 +20,92 @@
 
     <ImageView
         android:id="@+id/calendrier"
-        android:layout_width="58dp"
-        android:layout_height="54dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="19dp"
-        android:layout_marginLeft="19dp"
-        android:layout_marginEnd="334dp"
-        android:layout_marginRight="334dp"
-        android:layout_marginBottom="12dp"
-        app:srcCompat="@drawable/calendar"/>
-
-    <ImageView
-        android:id="@+id/informations"
-        android:layout_width="58dp"
-        android:layout_height="54dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="165dp"
-        android:layout_marginLeft="165dp"
-        android:layout_marginEnd="160dp"
-        android:layout_marginRight="160dp"
-        android:layout_marginBottom="12dp"
-        app:srcCompat="@drawable/article" />
-
-    <ImageView
-        android:id="@+id/drive"
-        android:layout_width="58dp"
-        android:layout_height="54dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="259dp"
-        android:layout_marginLeft="259dp"
-        android:layout_marginEnd="91dp"
-        android:layout_marginRight="91dp"
-        android:layout_marginBottom="13dp"
-        app:srcCompat="@drawable/folder"
-        android:tint="@android:color/holo_purple"/>
-
-    <ImageView
-        android:id="@+id/messagerie"
-        android:layout_width="58dp"
-        android:layout_height="54dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="331dp"
-        android:layout_marginLeft="331dp"
-        android:layout_marginEnd="14dp"
-        android:layout_marginRight="14dp"
-        android:layout_marginBottom="12dp"
-        app:srcCompat="@drawable/mail" />
+        android:layout_marginStart="25.75dp"
+        android:layout_marginLeft="25.75dp"
+        android:layout_marginEnd="327.25dp"
+        android:layout_marginRight="327.25dp"
+        android:layout_marginBottom="5dp"
+        app:srcCompat="@drawable/calendrier" />
 
     <ImageView
         android:id="@+id/notes"
-        android:layout_width="58dp"
-        android:layout_height="54dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="74dp"
-        android:layout_marginLeft="74dp"
-        android:layout_marginEnd="238dp"
-        android:layout_marginRight="238dp"
-        android:layout_marginBottom="13dp"
-        app:srcCompat="@drawable/school"/>
+        android:layout_marginStart="101.5dp"
+        android:layout_marginLeft="101.5dp"
+        android:layout_marginEnd="251.5dp"
+        android:layout_marginRight="251.5dp"
+        android:layout_marginBottom="5dp"
+        app:srcCompat="@drawable/classe" />
+
+    <ImageView
+        android:id="@+id/informations"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="177.25dp"
+        android:layout_marginLeft="177.25dp"
+        android:layout_marginEnd="175.75dp"
+        android:layout_marginRight="175.75dp"
+        android:layout_marginBottom="5dp"
+        app:srcCompat="@drawable/actualite" />
+
+    <ImageView
+        android:id="@+id/drive"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="253dp"
+        android:layout_marginLeft="253dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginBottom="5dp"
+        app:srcCompat="@drawable/nuage" />
+
+    <ImageView
+        android:id="@+id/messagerie"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="327.25dp"
+        android:layout_marginLeft="327.25dp"
+        android:layout_marginEnd="25.75dp"
+        android:layout_marginRight="25.75dp"
+        android:layout_marginBottom="5dp"
+        app:srcCompat="@drawable/messagerie" />
+
+
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="68dp"
-        android:background="@android:color/black" />
+        android:layout_marginBottom="55dp"
+        android:background="@android:color/darker_gray" />
 
 </RelativeLayout>
