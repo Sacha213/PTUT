@@ -21,6 +21,10 @@ public class drive extends AppCompatActivity {
     private ImageView drive;
     private ImageView messagerie;
 
+    private DatabaseManager databaseManager;//Base de données
+    private String idUtilisateur;
+    private String passwordUtilisateur;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,12 +39,35 @@ public class drive extends AppCompatActivity {
         this.drive = findViewById(R.id.drive);
         this.messagerie = findViewById(R.id.messagerie);
 
-        /******************* Gestion du navigateur web *******************/
-        webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://clarolineconnect.univ-lyon1.fr/desktop/tool/open/home#/tab/-1");
+        databaseManager = new DatabaseManager(this);
+        idUtilisateur = databaseManager.getIdentifiant().substring(0,8);
+        passwordUtilisateur = databaseManager.getIdentifiant().substring(8);
 
-        WebSettings webSettings = webView.getSettings();  //Gérer les parametre du WebView
-        webSettings.setJavaScriptEnabled(true);//Activer le javascript sur le navigateur
+        /******************* Gestion du navigateur web *******************/
+
+        webView.getSettings().setJavaScriptEnabled(true);//Activer le javascript sur le navigateur
+        //webView.getSettings().setDomStorageEnabled(true);
+
+        webView.loadUrl("https://cas.univ-lyon1.fr/cas/login?service=https%3A%2F%2Fclarolineconnect.univ-lyon1.fr%2Flogin_check");
+
+        webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url){
+                view.loadUrl("javascript:var x = document.getElementById('username').value = '"+idUtilisateur+"';");
+                view.loadUrl("javascript:var x = document.getElementById('password').value = '"+passwordUtilisateur+"';");
+                view.loadUrl("javascript:document.getElementsByName('submit')[0].click();");
+            }
+        });
+
+
+
 
         /******************* Gestion des évènements du menu *******************/
 

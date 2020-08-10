@@ -49,6 +49,8 @@ public class accueil extends AppCompatActivity {
         this.drive = findViewById(R.id.drive);
         this.messagerie = findViewById(R.id.messagerie);
 
+        databaseManager = new DatabaseManager(this);
+
 
 
         /******************* Affichage de la boîte de dialogue de bienvenue *******************/ // à enlever après avoir créer un parcours d'initialisation de l'application pour l'utilisateur
