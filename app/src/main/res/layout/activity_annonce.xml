@@ -4,34 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fond_accueil"
-    tools:context=".Calendrier">
+    tools:context=".Annonce">
 
     <TextView
-        android:id="@+id/textCalendrier"
+        android:id="@+id/textAnnonce"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Calendrier"
+        android:text="Annonces"
         android:textSize="40dp"
         android:gravity="center"/>
 
-    <Button
-        android:id="@+id/boutonDeconnexion"
+    <ScrollView
+        android:id="@+id/scrollAnnonce"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="match_parent"
         android:layout_above="@+id/divider"
-        android:background="@color/vert_claire"
-        android:text="Me Déconnecter"
-        android:textSize="20dp"
-        android:textColor="@color/white" />
-
+        android:layout_below="@+id/textAnnonce">
+    </ScrollView>
 
     <!-- Menu  -->
 
     <ImageView
         android:id="@+id/calendrier"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
@@ -62,8 +58,8 @@
 
     <ImageView
         android:id="@+id/informations"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"

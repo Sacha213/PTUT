@@ -17,7 +17,7 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class MainActivity extends AppCompatActivity { //Classe pricipale : page de connexion des utilisateur pour vérifier que leurs identifiants Lyon1 sont correctes
+public class Connexion extends AppCompatActivity { //Classe pricipale : page de connexion des utilisateur pour vérifier que leurs identifiants Lyon1 sont correctes
 
     /******************* Attribut *******************/
     //Interface utilisateur
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity { //Classe pricipale : page 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_connexion);
 
         /******************* Initialisation des variables *******************/
         this.connexion = findViewById(R.id.connexion);
@@ -40,7 +40,24 @@ public class MainActivity extends AppCompatActivity { //Classe pricipale : page 
         this.motDePasse = findViewById(R.id.motdepasse);
         databaseManager = new DatabaseManager(this);
 
-        databaseManager.deleteAll(); // Supression des données de la base au début du programme (provisoire)
+
+        try {
+            databaseManager.getIdentifiant(); //On vérifie si les identifiants de l'utilisateur sont déjà enregistrés
+
+            /******************* Changement de page *******************/
+            Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
+            startActivity(otherActivity);
+
+            finish();//Fermeture de l'ancienne activité
+            overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
+        }
+        catch (android.database.CursorIndexOutOfBoundsException e){ //Si une erreur se décanche c'est qu'il n'y a pas d'itentifiant
+
+            System.out.println(e);
+        }
+
+
 
         /******************* Mise en place d'écouteur *******************/
         connexion.setOnClickListener(new View.OnClickListener() { //Lors q'un clic sur le bouton connexion
@@ -67,7 +84,7 @@ public class MainActivity extends AppCompatActivity { //Classe pricipale : page 
         protected void onPreExecute() {
 
             /******************* Initialisation des variables *******************/
-            erreur = new AlertDialog.Builder(MainActivity.this); //création de la boîte de dialogue pour un usage future
+            erreur = new AlertDialog.Builder(Connexion.this); //création de la boîte de dialogue pour un usage future
         }
 
         /******************* Méthode principale *******************/
@@ -132,7 +149,7 @@ public class MainActivity extends AppCompatActivity { //Classe pricipale : page 
 
 
                 /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(),accueil.class); //Ouverture d'une nouvelle activité
+                Intent otherActivity = new Intent(getApplicationContext(), Accueil.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
 
                 databaseManager.close();//Fermeture de la base de données (provisoire)

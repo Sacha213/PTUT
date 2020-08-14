@@ -4,34 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fond_accueil"
-    tools:context=".Calendrier">
+    tools:context=".Article">
 
     <TextView
-        android:id="@+id/textCalendrier"
+        android:id="@+id/textTitre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Calendrier"
-        android:textSize="40dp"
+        android:text="Titre"
+        android:textSize="30dp"
         android:gravity="center"/>
 
-    <Button
-        android:id="@+id/boutonDeconnexion"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="match_parent"
         android:layout_above="@+id/divider"
-        android:background="@color/vert_claire"
-        android:text="Me Déconnecter"
-        android:textSize="20dp"
-        android:textColor="@color/white" />
+        android:layout_below="@+id/textTitre">
+
+        <TextView
+            android:id="@+id/textContenu"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Contenu"
+            android:textSize="20dp"
+            android:gravity="center"
+            android:layout_marginTop="20dp"/>
+
+    </ScrollView>
+
 
 
     <!-- Menu  -->
 
     <ImageView
         android:id="@+id/calendrier"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
@@ -94,8 +101,8 @@
 
     <ImageView
         android:id="@+id/messagerie"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
@@ -117,5 +124,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="60dp"
         android:background="@color/gris_claire" />
+
+
 
 </RelativeLayout>

@@ -5,33 +5,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fond_accueil"
-    tools:context=".Calendrier">
+    tools:context=".Information">
 
     <TextView
-        android:id="@+id/textCalendrier"
+        android:id="@+id/textInformation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Calendrier"
+        android:text="Informations"
         android:textSize="40dp"
         android:gravity="center"/>
 
+    <ScrollView
+        android:id="@+id/scrollActu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/boutonAnnonces"
+        android:layout_below="@+id/textInformation">
+
+        <LinearLayout
+            android:id="@+id/dynamiqueLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/boutonAnnonces"
+            android:layout_below="@+id/textInformation"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+
     <Button
-        android:id="@+id/boutonDeconnexion"
+        android:id="@+id/boutonAnnonces"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_above="@+id/divider"
         android:background="@color/vert_claire"
-        android:text="Me Déconnecter"
+        android:text="Annonces"
         android:textSize="20dp"
         android:textColor="@color/white" />
-
 
     <!-- Menu  -->
 
     <ImageView
         android:id="@+id/calendrier"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
@@ -62,8 +83,8 @@
 
     <ImageView
         android:id="@+id/informations"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
@@ -107,7 +128,6 @@
         android:layout_marginRight="25.75dp"
         android:layout_marginBottom="5dp"
         app:srcCompat="@drawable/messagerie" />
-
 
 
     <View

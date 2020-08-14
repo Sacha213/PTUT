@@ -4,112 +4,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fond_accueil"
-    tools:context=".accueil">
+    tools:context=".Accueil">
 
-
-
-
-    <ScrollView
-        android:id="@+id/scrollActu"
+    <TextView
+        android:id="@+id/textAccueil"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/divider"
-        android:layout_marginBottom="0dp">
+        android:layout_height="wrap_content"
+        android:text="Accueil"
+        android:textSize="40dp"
+        android:gravity="center" />
 
-
-    </ScrollView>
-
-    <!-- Menu  -->
-
-    <ImageView
-        android:id="@+id/calendrier"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="25.75dp"
-        android:layout_marginLeft="25.75dp"
-        android:layout_marginEnd="327.25dp"
-        android:layout_marginRight="327.25dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/calendrier" />
-
-    <ImageView
-        android:id="@+id/notes"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="101.5dp"
-        android:layout_marginLeft="101.5dp"
-        android:layout_marginEnd="251.5dp"
-        android:layout_marginRight="251.5dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/classe" />
-
-    <ImageView
-        android:id="@+id/informations"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="177.25dp"
-        android:layout_marginLeft="177.25dp"
-        android:layout_marginEnd="175.75dp"
-        android:layout_marginRight="175.75dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/actualite" />
-
-    <ImageView
-        android:id="@+id/drive"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="253dp"
-        android:layout_marginLeft="253dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/nuage" />
-
-    <ImageView
-        android:id="@+id/messagerie"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="327.25dp"
-        android:layout_marginLeft="327.25dp"
-        android:layout_marginEnd="25.75dp"
-        android:layout_marginRight="25.75dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/messagerie" />
-
-
-
-    <View
-        android:id="@+id/divider"
+    <Button
+        android:id="@+id/boutonAccueil"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="78dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="60dp"
-        android:background="@android:color/darker_gray" />
+        android:layout_marginBottom="0dp"
+        android:background="@color/bleu_claire"
+        android:text="Continuer" />
 
+    <ImageView
+        android:id="@+id/etape1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/boutonAccueil"
+        android:layout_below="@+id/textAccueil"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="277dp"
+        android:layout_marginRight="277dp"
+        android:layout_marginBottom="450dp"
+        app:srcCompat="@drawable/etape_1" />
+
+    <ImageView
+        android:id="@+id/etape2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/boutonAccueil"
+        android:layout_below="@+id/textAccueil"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="250dp"
+        android:layout_marginEnd="275dp"
+        android:layout_marginRight="275dp"
+        android:layout_marginBottom="250dp"
+        app:srcCompat="@drawable/etape_2" />
+
+    <ImageView
+        android:id="@+id/etape3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/boutonAccueil"
+        android:layout_below="@+id/textAccueil"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="450dp"
+        android:layout_marginEnd="275dp"
+        android:layout_marginRight="275dp"
+        android:layout_marginBottom="50dp"
+        app:srcCompat="@drawable/etape_3" />
 </RelativeLayout>

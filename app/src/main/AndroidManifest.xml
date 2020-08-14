@@ -11,17 +11,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".messagerie" ></activity>
-        <activity android:name=".drive" />
-        <activity android:name=".notes" />
-        <activity android:name=".calendrier" />
-        <activity android:name=".Drive" />
-        <activity android:name=".Calendrier" />
-        <activity android:name=".Notes" />
+        <activity android:name=".Article"></activity>
+        <activity android:name=".Annonce" />
+        <activity android:name=".Chat" />
+        <activity android:name=".Mail" />
+        <activity android:name=".Accueil" />
         <activity android:name=".Messagerie" />
-        <activity android:name=".Actu" />
-        <activity android:name=".accueil" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Drive" />
+        <activity android:name=".Note" />
+        <activity android:name=".Calendrier" />
+        <activity android:name=".Information" />
+        <activity android:name=".Connexion">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -4,9 +4,11 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="fond_connexion">#fafafa</color>
-    <color name="bouton_connexion">#42A5F5</color>
+    <color name="bleu_claire">#85C1E9</color>
     <color name="fond_accueil">#fafafa</color>
     <color name="white">#fff</color>
     <color name="colorAccentDark">#4aa87a</color>
     <color name="background_light">#fff</color>
+    <color name="vert_claire">#A3E4D7</color>
+    <color name="gris_claire">#EAECEE</color>
 </resources>
