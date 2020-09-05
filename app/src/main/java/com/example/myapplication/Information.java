@@ -3,6 +3,7 @@ package com.example.myapplication;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -17,10 +18,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 
 public class Information extends AppCompatActivity {
@@ -28,6 +40,8 @@ public class Information extends AppCompatActivity {
     /******************* Attribut *******************/
     private DatabaseManager databaseManager;//Base de données local
     private FirebaseFirestore db; //Base de donnée Firestore
+    private StorageReference storageReference;
+
     private LinearLayout layout;// afficheur scroll
 
     private ImageView calendrier; //Icônes du menu
@@ -56,6 +70,7 @@ public class Information extends AppCompatActivity {
         this.messagerie = findViewById(R.id.messagerie);
 
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         this.annonce = findViewById(R.id.boutonAnnonces);
 
@@ -174,12 +189,46 @@ public class Information extends AppCompatActivity {
 
                                 System.out.println(document.getId() + " => " + document.getData()); //A enlever
 
+
+                                afficherImage(document);
+
+
+                            }
+                        } else {
+                            System.out.println("Pas de document trouvé ");
+                        }
+                    }
+                });
+    }
+
+    public void afficherImage(QueryDocumentSnapshot document){
+
+        final StorageReference monImage = storageReference.child("Images/"+document.getString("Image")+".jpg");
+
+        File localFile = null;
+
+        try {
+            localFile = File.createTempFile(document.getString("Image"),"jpg");
+        }
+        catch (IOException e){
+            System.out.println(e);
+        }
+
+        monImage.getFile(localFile)
+                .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+
+                        monImage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+
                                 //Ajout de l'image de l'article
                                 ImageView image = new ImageView(getApplicationContext());
-                                ViewGroup.LayoutParams params = new ActionBar.LayoutParams(600,600); // Dimenssion de l'image
+                                ViewGroup.LayoutParams params = new ActionBar.LayoutParams(750,750); // Dimenssion de l'image
                                 image.setLayoutParams(params);
-                                image.setBackgroundResource(R.drawable.article_test);
-                                image.setX(250);//Centrage de l'image
+                                image.setX(175);//Centrage de l'image
+                                Picasso.with(getBaseContext()).load(uri).into(image);
                                 layout.addView(image);
 
                                 //Ajout du titre de l'article
@@ -194,6 +243,8 @@ public class Information extends AppCompatActivity {
                                 espace.setText("   ");
                                 layout.addView(espace);
 
+
+
                                 /******************* Mise en place d'écouteur *******************/
                                 image.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -207,16 +258,20 @@ public class Information extends AppCompatActivity {
                                         overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
                                     }
                                 });
+                            }
 
+                        }
+                        ).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
 
                             }
-                        } else {
-                            System.out.println("Pas de document trouvé ");
-                        }
+                        });
                     }
                 });
-    }
 
+
+    }
 
 
 }

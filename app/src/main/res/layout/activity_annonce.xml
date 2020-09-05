@@ -18,9 +18,29 @@
         android:id="@+id/scrollAnnonce"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/divider"
+        android:layout_above="@+id/boutonCreerAnnonces"
         android:layout_below="@+id/textAnnonce">
+
+        <LinearLayout
+            android:id="@+id/dynamiqueLayoutAnnonce"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/boutonAnnonces"
+            android:layout_below="@+id/textInformation"
+            android:orientation="vertical">
+
+        </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/boutonCreerAnnonces"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_above="@+id/divider"
+        android:background="@color/vert_claire"
+        android:text="Créer une annonces"
+        android:textSize="20dp"
+        android:textColor="@color/white" />
 
     <!-- Menu  -->
 
