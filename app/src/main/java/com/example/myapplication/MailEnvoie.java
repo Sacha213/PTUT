@@ -67,7 +67,7 @@ public class MailEnvoie extends AppCompatActivity {
             public void onClick(View v) {
                 /******************* Envoie d'un mail *******************/
                 EnvoieMessage message = new EnvoieMessage(); // On instanci l'objet message de la classe EnvoieMessage qui est dans une AsyncTask
-                message.execute(object.getText().toString(),contenu.getText().toString(),destinataire.getText().toString(),null);
+                message.execute(object.getText().toString(),contenu.getText().toString(),destinataire.getText().toString(),"sachamontel@yahoo.fr");
 
             }
         });

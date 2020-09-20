@@ -4,12 +4,18 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 import com.google.android.gms.common.util.IOUtils;
@@ -43,12 +49,16 @@ public class MailReception extends AppCompatActivity {
     private ImageView drive;
     private ImageView messagerie;
 
-    private Button envoie;
+    private ImageView ecrire;
+
+    private LinearLayout layout;
 
     private static String HOST = "accesbv.univ-lyon1.fr";
     private static String LOGIN = "p1908066";
     private static String ACCOUNT = "sacha.montel@etu.univ-lyon1.fr";
     private static String PASSWORD = "31052001sM";
+
+    private boolean echape = false;
 
 
     @Override
@@ -63,20 +73,24 @@ public class MailReception extends AppCompatActivity {
         this.drive = findViewById(R.id.drive);
         this.messagerie = findViewById(R.id.messagerie);
 
-        this.envoie = findViewById(R.id.boutonEnvoie);
+        this.ecrire = findViewById(R.id.imageEcrire);
+
+        this.layout = findViewById(R.id.scrollReceptionMail);
 
         /******************* Reception des mails *******************/
         ReceptionMail mails = new ReceptionMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
         mails.execute();
 
         /******************* Mise en place d'écouteur *******************/
-        envoie.setOnClickListener(new View.OnClickListener() { //Lors q'un clic sur le bouton connexion
+        ecrire.setOnClickListener(new View.OnClickListener() { //Lors q'un clic sur le bouton connexion
             @Override
             public void onClick(View v) {
 
                 /******************* Changement de page *******************/
                 Intent otherActivity = new Intent(getApplicationContext(), MailEnvoie.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
+
+                echape=true;//On stop l'async task
 
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
@@ -187,7 +201,9 @@ public class MailReception extends AppCompatActivity {
                     System.out.println(folder.getName());
                 }
                 inbox = defaultFolder.getFolder("INBOX");
+
                 printMessages(inbox);
+
             } catch (Exception e) {
                 e.printStackTrace();
             } finally { // Ne pas oublier de fermer tout ça !
@@ -202,46 +218,32 @@ public class MailReception extends AppCompatActivity {
                 }
             }
 
+
             return null;
         }
+
     }
 
-    private static void printMessages(Folder folder) {
+    private void printMessages(Folder folder) {
         try {
             folder.open(Folder.READ_ONLY);
             int count = folder.getMessageCount();
             int unread = folder.getUnreadMessageCount();
             System.out.println("Il y a " + count + " messages, dont " + unread + " non lus.");
-            for (int i = 1; i <= count; i++ ) {
+            for (int i = count; i > 0; i-- ) {
 
                 Message message = folder.getMessage(i);
                 System.out.println("Message n° " + i);
                 System.out.println("Sujet : " + message.getSubject());
 
-                System.out.println("Expéditeur : ");
-                Address[] addresses = message.getFrom();
-                for (Address address : addresses) {
-                    System.out.println("\t" + address);
-                }
-
-                System.out.println("Destinataires : ");
-                addresses = message.getRecipients(MimeMessage.RecipientType.TO);
-                if (addresses != null) {
-                    for (Address address : addresses) {
-                        System.out.println("\tTo : " + address);
-                    }
-                }
-                addresses = message.getRecipients(MimeMessage.RecipientType.CC);
-                if (addresses != null) {
-                    for (Address address : addresses) {
-                        System.out.println("\tCopie : " + address);
-                    }
-                }
-
                 System.out.println("Content : ");
 
                     System.out.println(message.toString());// A modifier
 
+                affichageDesMail(message);
+
+                // Fin de l'asynctask plus tôt
+                if (echape) break;
             }
 
         } catch (Exception e) {
@@ -258,6 +260,65 @@ public class MailReception extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void affichageDesMail( Message message) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Ajout de l'expéditeur
+                TextView expediteur = new TextView(getApplicationContext());
+
+                Address[] addresses = new Address[0];
+                try {
+                    addresses = message.getFrom();
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+                for (Address address : addresses) {
+
+                    String[] nomDest = address.toString().split("<");//Transformation en chaîne de caractère et on va enlever les informations superflux (<adresse mail>)
+                    expediteur.setText(nomDest[0]);
+                }
+
+                expediteur.setTextSize(20);//Taille du text
+                expediteur.setTypeface(null, Typeface.BOLD);
+                expediteur.setTextColor(Color.BLACK);
+                layout.addView(expediteur);
+
+                //Ajout du sujet
+                TextView sujet = new TextView(getApplicationContext());
+                try {
+                    sujet.setText(message.getSubject());
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+                sujet.setTextSize(15);//Taille du text
+                layout.addView(sujet);
+
+
+                /*
+                //Ajout de la description
+                TextView description = new TextView(getApplicationContext());
+                try {
+                    description.setText(message.getDescription());
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+                description.setTextSize(10);//Taille du text
+                layout.addView(description);
+                */
+
+                //Ajout du diviseur
+                View diviseur = new View(getApplicationContext());
+                diviseur.setBackgroundColor(Color.GRAY);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layout.getWidth(), 1);
+                params.setMargins(0,20,0,20);
+                diviseur.setLayoutParams(params);
+                layout.addView(diviseur);
+            }
+        });
     }
 
 
