@@ -40,7 +40,7 @@ public class Messagerie extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Mail.class); //Ouverture d'une nouvelle activité
+                Intent otherActivity = new Intent(getApplicationContext(), MailReception.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité

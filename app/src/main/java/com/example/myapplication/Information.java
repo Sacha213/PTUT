@@ -251,7 +251,7 @@ public class Information extends AppCompatActivity {
                                     public void onClick(View v) {
                                         /******************* Changement de page *******************/
                                         Intent otherActivity = new Intent(getApplicationContext(), Article.class); //Ouverture d'une nouvelle activité
-                                        otherActivity.putExtra("Identifiant",document.getId());
+                                        otherActivity.putExtra("Identifiant",document.getId()); //Envoie de donner dans la nouvelle activité (information de l'annonce)
                                         startActivity(otherActivity);
 
                                         finish();//Fermeture de l'ancienne activité

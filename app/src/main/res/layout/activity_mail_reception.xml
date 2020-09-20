@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Mail">
+    tools:context=".MailReception">
 
     <TextView
         android:id="@+id/textMail"
@@ -13,6 +13,16 @@
         android:text="Mail"
         android:textSize="40dp"
         android:gravity="center"/>
+
+    <Button
+        android:id="@+id/boutonEnvoie"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_above="@+id/divider"
+        android:background="@color/vert_claire"
+        android:text="Envoie"
+        android:textSize="20dp"
+        android:textColor="@color/white" />
 
     <!-- Menu  -->
 

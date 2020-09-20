@@ -64,7 +64,7 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
             @Override
             public void onClick(View v) {
 
-                RequetteHttp requette = new RequetteHttp(); // On instanci l'objet requette de la classe RequetteHttp qui est dans une AsyncTask (second plan) X
+                RequetteHttp requette = new RequetteHttp(); // On instanci l'objet requette de la classe RequetteHttp qui est dans une AsyncTask
                 requette.execute(identifiant.getText().toString(),motDePasse.getText().toString()); //On lance la requette http avec comme paramètre l'identifiant et le mot de passe
 
 
@@ -92,7 +92,7 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
         protected Void doInBackground(String... strings) {
 
             /******************* Initialisation des variables *******************/
-            idUtilisateur = strings[0]; //L'identifiant et le mot de passe sont tout les deux dans le paramètre strings --> on effectue donc une séparation desz paramètre
+            idUtilisateur = strings[0]; //L'identifiant et le mot de passe sont tout les deux dans le paramètre strings --> on effectue donc une séparation des paramètre
             passwordUtilisateur = strings[1];
 
             OutputStreamWriter writer = null;
