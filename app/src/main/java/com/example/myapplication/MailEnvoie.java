@@ -146,6 +146,7 @@ public class MailEnvoie extends AppCompatActivity {
 
         }
     });
+
 }
 
     public class EnvoieMessage extends AsyncTask<String, Void, Void>{
@@ -213,7 +214,28 @@ public class MailEnvoie extends AppCompatActivity {
 
         protected void onPostExecute(Void voids) {
             System.out.println("Message envoyer");
+
+            /******************* Changement de page *******************/
+            Intent otherActivity = new Intent(getApplicationContext(), MailReception.class); //Ouverture d'une nouvelle activité
+            otherActivity.putExtra("MessageEnvoyer",true); //Envoie de donner dans la nouvelle activité (message envoyé)
+            startActivity(otherActivity);
+
+            finish();//Fermeture de l'ancienne activité
+            overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
         }
+    }
+
+    /******************* Gestion du retour en arrière *******************/
+    @Override
+    public void onBackPressed() {
+
+        /******************* Changement de page *******************/
+        Intent otherActivity = new Intent(getApplicationContext(), MailReception.class); //Ouverture d'une nouvelle activité
+        startActivity(otherActivity);
+
+        finish();//Fermeture de l'ancienne activité
+        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
     }
 
 

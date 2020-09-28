@@ -15,6 +15,7 @@
         android:gravity="center"/>
 
     <View
+        android:id="@+id/divider2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/textMail"
@@ -24,8 +25,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/textMail"
-        android:layout_above="@+id/divider2"
-        android:layout_marginLeft="20dp">
+        android:layout_above="@+id/divider"
+        android:layout_marginLeft="25dp">
 
         <LinearLayout
             android:id="@+id/scrollReceptionMail"
@@ -35,23 +36,16 @@
     </ScrollView>
 
 
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@+id/imageEcrire"
-        android:background="@color/gris_claire" />
-
     <ImageView
         android:id="@+id/imageEcrire"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_above="@+id/divider"
+        android:layout_above="@id/divider2"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginEnd="0dp"
         android:layout_marginRight="0dp"
-        app:srcCompat="@drawable/calendrier" />
+        app:srcCompat="@drawable/ecrire" />
 
     <!-- Menu  -->
 

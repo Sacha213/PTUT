@@ -72,7 +72,7 @@ public class Article extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
 
-        Intent intent = getIntent();
+        Intent intent = getIntent();//On récupaire les données transmise venant de l'ancienne activité
         identifiant = intent.getStringExtra("Identifiant");
 
         System.out.println(identifiant); // Provisoire

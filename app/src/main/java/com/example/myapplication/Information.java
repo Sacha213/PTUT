@@ -85,7 +85,7 @@ public class Information extends AppCompatActivity {
 
 
         /******************* Mise en place d'écouteur *******************/
-        annonce.setOnClickListener(new View.OnClickListener() { //Lors q'un clic sur le bouton connexion
+        annonce.setOnClickListener(new View.OnClickListener() { //Lors q'un clic sur le bouton annonce
             @Override
             public void onClick(View v) {
 
