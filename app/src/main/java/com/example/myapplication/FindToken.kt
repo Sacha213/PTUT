@@ -27,18 +27,12 @@ class FindToken : AppCompatActivity() {
             FirebaseService.token = it.token
             val newToken = it.token
 
-            val user = hashMapOf(
-                    "ID" to "p1913943",
-                    "Token" to newToken
+            val data = hashMapOf(
+                    "token" to newToken
             )
-            db!!.collection("Users")
-                    .add(user)
-                    .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error adding document", e)
-                    }
+
+
+            db!!.collection("Users").document("p1913943").set(data)
 
             /******************* Changement de page  */
             val otherActivity = Intent(applicationContext, Information::class.java) //Ouverture d'une nouvelle activité
