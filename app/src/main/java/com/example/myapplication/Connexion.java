@@ -4,10 +4,12 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.JsonToken;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
@@ -16,6 +18,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
+
+import android.content.Context;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
+
+
 
 public class Connexion extends AppCompatActivity { //Classe pricipale : page de connexion des utilisateur pour vérifier que leurs identifiants Lyon1 sont correctes
 
@@ -24,6 +43,8 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
     private Button connexion;
     private EditText identifiant;
     private EditText motDePasse;
+    FirebaseFirestore db;
+
 
     //Base de données
     private DatabaseManager databaseManager;
@@ -34,6 +55,10 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
 
+
+
+
+
         /******************* Initialisation des variables *******************/
         this.connexion = findViewById(R.id.connexion);
         this.identifiant = findViewById(R.id.identifiant);
@@ -41,11 +66,15 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
         databaseManager = new DatabaseManager(this);
 
 
+
+
         try {
             databaseManager.getIdentifiant(); //On vérifie si les identifiants de l'utilisateur sont déjà enregistrés
 
+
+
             /******************* Changement de page *******************/
-            Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
+            Intent otherActivity = new Intent(getApplicationContext(), FindToken.class); //Ouverture d'une nouvelle activité
             startActivity(otherActivity);
 
             finish();//Fermeture de l'ancienne activité
@@ -64,7 +93,7 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
             @Override
             public void onClick(View v) {
 
-                RequetteHttp requette = new RequetteHttp(); // On instanci l'objet requette de la classe RequetteHttp qui est dans une AsyncTask (second plan) X
+                RequetteHttp requette = new RequetteHttp(); // On instanci l'objet requette de la classe RequetteHttp qui est dans une AsyncTask
                 requette.execute(identifiant.getText().toString(),motDePasse.getText().toString()); //On lance la requette http avec comme paramètre l'identifiant et le mot de passe
 
 
@@ -92,7 +121,7 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
         protected Void doInBackground(String... strings) {
 
             /******************* Initialisation des variables *******************/
-            idUtilisateur = strings[0]; //L'identifiant et le mot de passe sont tout les deux dans le paramètre strings --> on effectue donc une séparation desz paramètre
+            idUtilisateur = strings[0]; //L'identifiant et le mot de passe sont tout les deux dans le paramètre strings --> on effectue donc une séparation des paramètre
             passwordUtilisateur = strings[1];
 
             OutputStreamWriter writer = null;
@@ -165,6 +194,8 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
             }
         }
     }
+
+
 }
 
 

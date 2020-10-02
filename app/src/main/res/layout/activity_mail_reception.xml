@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Mail">
+    tools:context=".MailReception">
 
     <TextView
         android:id="@+id/textMail"
@@ -13,6 +13,45 @@
         android:text="Mail"
         android:textSize="40dp"
         android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/textMail"
+        android:background="@color/gris_claire" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textMail"
+        android:layout_above="@+id/divider2"
+        android:layout_marginLeft="20dp">
+
+        <LinearLayout
+            android:id="@+id/scrollReceptionMail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/imageEcrire"
+        android:background="@color/gris_claire" />
+
+    <ImageView
+        android:id="@+id/imageEcrire"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_above="@+id/divider"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+        app:srcCompat="@drawable/calendrier" />
 
     <!-- Menu  -->
 
@@ -105,5 +144,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="60dp"
         android:background="@color/gris_claire" />
+
 
 </RelativeLayout>

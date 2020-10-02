@@ -21,6 +21,8 @@ public class Annonce extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_annonce);
 
+
+
         /******************* Initialisation des variables *******************/
         this.calendrier = findViewById(R.id.calendrier);
         this.notes = findViewById(R.id.notes);
