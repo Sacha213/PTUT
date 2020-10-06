@@ -49,11 +49,12 @@
         android:layout_above="@+id/divider"
         android:layout_marginLeft="25dp">
 
-        <TextView
+        <WebView
             android:id="@+id/scrollLectureMail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
     </ScrollView>
 
 

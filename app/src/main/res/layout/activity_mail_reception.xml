@@ -21,6 +21,14 @@
         android:layout_below="@+id/textMail"
         android:background="@color/gris_claire" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progressTint="@color/bleu_claire"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divider2"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -32,7 +40,8 @@
             android:id="@+id/scrollReceptionMail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical" >
+        </LinearLayout>
     </ScrollView>
 
 

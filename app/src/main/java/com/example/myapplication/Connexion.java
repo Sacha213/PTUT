@@ -52,7 +52,7 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
             overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
         }
-        catch (android.database.CursorIndexOutOfBoundsException e){ //Si une erreur se décanche c'est qu'il n'y a pas d'itentifiant
+        catch (android.database.CursorIndexOutOfBoundsException e){ //Si une erreur se décanche c'est qu'il n'y a pas d'identifiant
 
             System.out.println(e);
         }

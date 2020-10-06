@@ -9,6 +9,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,6 +38,7 @@ import javax.mail.Store;
 import javax.mail.URLName;
 import javax.mail.internet.MimeMultipart;
 
+
 public class MailLecture extends AppCompatActivity {
 
     /******************* Attribut *******************/
@@ -52,9 +55,10 @@ public class MailLecture extends AppCompatActivity {
 
     private int numeroMail;
 
-    private TextView contenu;
+    private WebView contenu;
     private TextView sujet;
     private TextView expediteur;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +79,10 @@ public class MailLecture extends AppCompatActivity {
         this.sujet = findViewById(R.id.textSujet);
         this.expediteur = findViewById(R.id.textExpediteur);
 
+
+
         /******************* Reception des mails *******************/
+
         LectureMail mails = new LectureMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
         mails.execute();
 
@@ -208,22 +215,26 @@ public class MailLecture extends AppCompatActivity {
 
             Message message = folder.getMessage(numeroMail);
 
-            String cont = lectureContenuMail(message);//Récupération du contenu du mail
-            String object = message.getSubject();//récupération du sujet
-            //Résupération de l'adresse de l'expéditeur
-            Address[] addresses = new Address[0];
-            try {
-                addresses = message.getFrom();
-            } catch (MessagingException e) {
-                e.printStackTrace();
+
+            String contenu = lectureContenuMail(message);//Récupération du contenu du mail
+
+            String sujet = message.getSubject();//récupération du sujet
+
+            Address addresses = message.getFrom()[0];//Résupération de l'adresse de l'expéditeur
+            String[] nomDest = addresses.toString().split("<");//Transformation en chaîne de caractère et on va enlever les informations superflux (<adresse mail>)
+
+            //On enlève les "" si le nom de l'expéditeur en contient
+            String textExpediteur = nomDest[0];
+            if (textExpediteur.substring(0, 1).equals("\"")) {
+                textExpediteur = textExpediteur.substring(1, textExpediteur.length() - 2);
             }
 
 
-            affichageDesMail(object,addresses,cont,numeroMail); //gerer l'affichage des mails dans l'activité
+
+            affichageDuMail(textExpediteur,sujet,contenu);
 
 
-
-        } catch (Exception e) {
+        } catch (MessagingException e) {
             e.printStackTrace();
         }
     }
@@ -239,31 +250,59 @@ public class MailLecture extends AppCompatActivity {
         }
     }
 
-    private void affichageDesMail(String object,Address[] addresses,String cont ,int numMail) {
+
+    private void affichageDuMail(String textExpediteur, String object, String textContenu) {
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
                 //Ajout de l'expéditeur
-                String[] nomDest = addresses[0].toString().split("<");//Transformation en chaîne de caractère et on va enlever les informations superflux (<adresse mail>)
-
-                //On enlève les "" si le nom de l'expéditeur en contient
-                String textExpediteur= nomDest[0];
-                if (textExpediteur.substring(0, 1).equals("\"")){
-                    textExpediteur=textExpediteur.substring(1,textExpediteur.length()-2);
-                }
-
                 expediteur.setText(textExpediteur);
 
                 //Ajout du sujet
                 sujet.setText(object);
 
-                //Ajout de la description
-                contenu.setText(cont);
-
+                //Ajout du contenu
+                //Pb accent
+                String corps = textContenu.replace("iso-8859-1","utf-8"); //Changement de charset pour lecture sans pc avec les accent???
+                System.out.println(corps);
+                contenu.loadDataWithBaseURL(null, corps, "text/html", "utf-8", null);
+                contenu.setBackgroundColor(0x00000000);
             }
         });
+
+
+
+
+    }
+
+    public String lectureContenuMail(Message message) {
+
+        String cont = "";
+        try {
+            DataSource dataSource = message.getDataHandler().getDataSource();
+            MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
+
+
+            if (message.isMimeType("multipart/mixed")){//Si le mail a plusieurs parties
+                int multiPartCount = mimeMultipart.getCount();
+
+                for (int i = 0; i < multiPartCount; i++ ) {
+                    BodyPart bp = mimeMultipart.getBodyPart(i);
+                    cont += processBodyPartContenu(bp);
+                }
+            }
+            else{//Une partie
+                cont  = getStringFromInputStream(message.getInputStream());
+            }
+
+
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return cont;
     }
 
     /******************* Fonction qui transforme un inputstream en string *******************/
@@ -296,55 +335,12 @@ public class MailLecture extends AppCompatActivity {
 
     }
 
-    public String lectureContenuMail(Message message) {
-
-        String contenu = null;
+    private String processBodyPartContenu(BodyPart bp) throws UnsupportedEncodingException, MessagingException {
+        String cont = "";
         try {
-            DataSource dataSource = message.getDataHandler().getDataSource();
-            MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
 
-
-            if (message.isMimeType("multipart/mixed")){
-                int multiPartCount = mimeMultipart.getCount();
-
-                for (int i = 0; i < multiPartCount; i++ ) {
-                    BodyPart bp = mimeMultipart.getBodyPart(i);
-                    contenu += processBodyPart(bp);
-                }
-            }
-            else{
-                if (message.isMimeType("text/plain")) {
-
-                    System.out.println("plain");
-                    contenu  = getStringFromInputStream(message.getInputStream());
-
-                } else if (message.isMimeType("text/html")) {
-                    System.out.println("html");
-                    contenu = Jsoup.parse(getStringFromInputStream(message.getInputStream())).text();
-                }
-            }
-
-
-        } catch (MessagingException | IOException e) {
-            e.printStackTrace();
-        }
-
-
-        return contenu;
-    }
-
-    private String processBodyPart(BodyPart bp) throws UnsupportedEncodingException, MessagingException {
-        String contenu = "rien";
-        try {
-            System.out.println("Type : " + bp.getContentType());
-
-            if (bp.isMimeType("text/plain")) {
-                contenu = getStringFromInputStream(bp.getInputStream());
-
-            }
-
-            else if(bp.isMimeType("text/html")) {
-                contenu = Jsoup.parse(getStringFromInputStream(bp.getInputStream())).text();
+            if (bp.isMimeType("text/plain") | bp.isMimeType("text/html")) {
+                cont = getStringFromInputStream(bp.getInputStream());
             }
 
             else{
@@ -361,7 +357,7 @@ public class MailLecture extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        return contenu;
+        return cont;
     }
 
 

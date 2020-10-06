@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
@@ -64,6 +65,7 @@ public class MailReception extends AppCompatActivity {
     private ImageView ecrire;
 
     private LinearLayout layout;
+    private ProgressBar progressBar;
 
     private static String HOST = "accesbv.univ-lyon1.fr";
     private static String LOGIN = "p1908066";
@@ -73,6 +75,7 @@ public class MailReception extends AppCompatActivity {
     private boolean echape ;
 
     private boolean messageEnvoye;
+
 
 
     @Override
@@ -88,7 +91,7 @@ public class MailReception extends AppCompatActivity {
         this.messagerie = findViewById(R.id.messagerie);
 
         this.ecrire = findViewById(R.id.imageEcrire);
-
+        this.progressBar = findViewById(R.id.progressBar);
         this.layout = findViewById(R.id.scrollReceptionMail);
 
         Intent intent = getIntent();//On récupaire les données transmise venant de l'ancienne activité
@@ -98,8 +101,11 @@ public class MailReception extends AppCompatActivity {
 
 
         /******************* Reception des mails *******************/
-        ReceptionMail mails = new ReceptionMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
+
+
+        TelechargementMail mails = new TelechargementMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
         mails.execute();
+
 
         /******************* Affichage de la boite de dialogue si message envoyer *******************/
         if (messageEnvoye){
@@ -141,6 +147,8 @@ public class MailReception extends AppCompatActivity {
                 Intent otherActivity = new Intent(getApplicationContext(), Calendrier.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
 
+                echape=true;//On stop l'async task
+
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
@@ -156,6 +164,8 @@ public class MailReception extends AppCompatActivity {
                 Intent otherActivity = new Intent(getApplicationContext(), Note.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
 
+                echape=true;//On stop l'async task
+
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
@@ -169,6 +179,8 @@ public class MailReception extends AppCompatActivity {
                 /******************* Changement de page *******************/
                 Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
+
+                echape=true;//On stop l'async task
 
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
@@ -184,6 +196,8 @@ public class MailReception extends AppCompatActivity {
                 Intent otherActivity = new Intent(getApplicationContext(), Drive.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
 
+                echape=true;//On stop l'async task
+
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
@@ -198,6 +212,8 @@ public class MailReception extends AppCompatActivity {
                 Intent otherActivity = new Intent(getApplicationContext(), Messagerie.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
 
+                echape=true;//On stop l'async task
+
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
@@ -205,7 +221,7 @@ public class MailReception extends AppCompatActivity {
         });
     }
 
-    public class ReceptionMail extends AsyncTask<Void, Void, Void> {
+    public class TelechargementMail extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
@@ -248,31 +264,40 @@ public class MailReception extends AppCompatActivity {
         return null;
     }
 
-}
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            progressBar.setVisibility(View.INVISIBLE);//Supression de la progressbar
+        }
+    }
 
     private void printMessages(Folder folder) {
         try {
             folder.open(Folder.READ_ONLY);
             int count = folder.getMessageCount();
 
-            for (int i = count; i > 0; i-- ) {
+            progressBar.setMax(20);//Max de la progresse bar
+
+            for (int i = count ; i >= count-20; i-- ) {
 
                 Message message = folder.getMessage(i);
 
 
+                String description = lectureDescriptionMail(message);//Récupération de la description du mail
 
-                String contenu = lectureContenuMail(message);//Récupération du contenu du mail
                 String sujet = message.getSubject();//récupération du sujet
-                //Résupération de l'adresse de l'expéditeur
-                Address[] addresses = new Address[0];
-                try {
-                    addresses = message.getFrom();
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                }
-                int numMail = message.getMessageNumber();
 
-                affichageDesMail(sujet,addresses,contenu,numMail); //gerer l'affichage des mails dans l'activité
+                Address addresses = message.getFrom()[0];//Résupération de l'adresse de l'expéditeur
+                String[] nomDest = addresses.toString().split("<");//Transformation en chaîne de caractère et on va enlever les informations superflux (<adresse mail>)
+
+                //On enlève les "" si le nom de l'expéditeur en contient
+                String textExpediteur= nomDest[0];
+                if (textExpediteur.substring(0, 1).equals("\"")){
+                    textExpediteur=textExpediteur.substring(1,textExpediteur.length()-2);
+                }
+
+
+                affichageDuMail(textExpediteur,sujet,description,i);
+                progressBar.setProgress(progressBar.getProgress()+1);//On augmente le chargement de la bar de 1
 
                 // Fin de l'asynctask plus tôt (si on quite l'activité)
                 if (echape) break;
@@ -294,112 +319,106 @@ public class MailReception extends AppCompatActivity {
         }
     }
 
-    private void affichageDesMail(String object,Address[] addresses,String contenu ,int numMail) {
+    private void affichageDuMail(String textExpediteur, String object, String textDescription, int numMail) {
 
         runOnUiThread(new Runnable() {
+
             @Override
             public void run() {
 
-                //Ajout de l'expéditeur
-                TextView expediteur = new TextView(getApplicationContext());
+
+                        //Ajout de l'expéditeur
+                        TextView expediteur = new TextView(getApplicationContext());
+                        expediteur.setText(textExpediteur);
+                        expediteur.setTextSize(20);//Taille du text
+                        expediteur.setTypeface(null, Typeface.BOLD);//Gras
+                        expediteur.setTextColor(Color.BLACK);//text en noir
+                        expediteur.setLines(1);//Une ligne max
+                        expediteur.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
+                        layout.addView(expediteur);
 
 
-
-                String[] nomDest = addresses[0].toString().split("<");//Transformation en chaîne de caractère et on va enlever les informations superflux (<adresse mail>)
-
-                //On enlève les "" si le nom de l'expéditeur en contient
-                String textExpediteur= nomDest[0];
-                if (textExpediteur.substring(0, 1).equals("\"")){
-                    textExpediteur=textExpediteur.substring(1,textExpediteur.length()-2);
-                }
-                expediteur.setText(textExpediteur);
-
-                expediteur.setTextSize(20);//Taille du text
-                expediteur.setTypeface(null, Typeface.BOLD);//Gras
-                expediteur.setTextColor(Color.BLACK);//text en noir
-                expediteur.setLines(1);//Une ligne max
-                expediteur.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
-                layout.addView(expediteur);
+                        //Ajout du sujet
+                        TextView sujet = new TextView(getApplicationContext());
+                        sujet.setText(object);
+                        sujet.setTextSize(15);//Taille du text
+                        sujet.setLines(1);//Une ligne max
+                        sujet.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
+                        layout.addView(sujet);
 
 
-
-                //Ajout du sujet
-                TextView sujet = new TextView(getApplicationContext());
-                sujet.setText(object);
-                sujet.setTextSize(15);//Taille du text
-                sujet.setLines(1);//Une ligne max
-                sujet.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
-                layout.addView(sujet);
-
+                        //Ajout de la description
+                        TextView description = new TextView(getApplicationContext());
+                        description.setText(textDescription);
+                        description.setTextSize(10);//Taille du text
+                        description.setMaxLines(3);//3 lignes max
+                        description.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
+                        layout.addView(description);
 
 
+                        //Ajout du diviseur
+                        View diviseur = new View(getApplicationContext());
+                        diviseur.setBackgroundColor(Color.GRAY);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layout.getWidth(), 1);
+                        params.setMargins(0, 20, 0, 20);
+                        diviseur.setLayoutParams(params);
+                        layout.addView(diviseur);
 
-                //Ajout de la description
-                TextView description = new TextView(getApplicationContext());
-                description.setText(contenu);
-                description.setTextSize(10);//Taille du text
-                description.setMaxLines(3);//3 lignes max
-                description.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
-                layout.addView(description);
+                        /******************* Mise en place d'écouteur *******************/
+                        sujet.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                /******************* Changement de page *******************/
+                                Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
+                                otherActivity.putExtra("Numéro", numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
+                                startActivity(otherActivity);
 
+                                echape = true;//On stop l'async task
 
-                //Ajout du diviseur
-                View diviseur = new View(getApplicationContext());
-                diviseur.setBackgroundColor(Color.GRAY);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layout.getWidth(), 1);
-                params.setMargins(0,20,0,20);
-                diviseur.setLayoutParams(params);
-                layout.addView(diviseur);
+                                finish();//Fermeture de l'ancienne activité
+                                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
+                            }
+                        });
 
-                /******************* Mise en place d'écouteur *******************/
-                sujet.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        /******************* Changement de page *******************/
-                        Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
-                        otherActivity.putExtra("Numéro",numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
-                        startActivity(otherActivity);
+                        expediteur.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                /******************* Changement de page *******************/
+                                Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
+                                otherActivity.putExtra("Numéro", numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
+                                startActivity(otherActivity);
 
-                        echape=true;//On stop l'async task
+                                echape = true;//On stop l'async task
 
-                        finish();//Fermeture de l'ancienne activité
-                        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+                                finish();//Fermeture de l'ancienne activité
+                                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
+                            }
+                        });
+
+                        description.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                /******************* Changement de page *******************/
+                                Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
+                                otherActivity.putExtra("Numéro", numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
+                                startActivity(otherActivity);
+
+                                echape = true;//On stop l'async task
+
+                                finish();//Fermeture de l'ancienne activité
+                                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
+                            }
+                        });
+
                     }
-                });
 
-                expediteur.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        /******************* Changement de page *******************/
-                        Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
-                        otherActivity.putExtra("Numéro",numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
-                        startActivity(otherActivity);
 
-                        echape=true;//On stop l'async task
 
-                        finish();//Fermeture de l'ancienne activité
-                        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-                    }
-                });
-
-                description.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        /******************* Changement de page *******************/
-                        Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
-                        otherActivity.putExtra("Numéro",numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
-                        startActivity(otherActivity);
-
-                        echape=true;//On stop l'async task
-
-                        finish();//Fermeture de l'ancienne activité
-                        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-                    }
-                });
-
-            }
         });
+
     }
+
+
 
     /******************* Fonction qui transforme un inputstream en string *******************/
     private static String getStringFromInputStream(InputStream inputStream) {
@@ -431,38 +450,35 @@ public class MailReception extends AppCompatActivity {
 
     }
 
-    public String lectureContenuMail(Message message) {
+    public String lectureDescriptionMail(Message message) {
 
-        String contenu = "rienn";
+        String contenu = "";
         try {
             DataSource dataSource = message.getDataHandler().getDataSource();
             MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
 
+            //Une seul partie
             if (message.isMimeType("text/plain")) {
 
-                System.out.println("plain");
                 contenu  = getStringFromInputStream(message.getInputStream());
 
             } else if (message.isMimeType("text/html")) {
-                System.out.println("html");
+
                 contenu = Jsoup.parse(getStringFromInputStream(message.getInputStream())).text();
             }
+
+            //Plusieur parties
             else {
-                System.out.println("else");
+
                 int multiPartCount = mimeMultipart.getCount();
                 System.out.println("Il y a " + multiPartCount + " partie(s) dans ce message.");
 
-                int part;
-                if (mimeMultipart.getBodyPart(0).isMimeType("text/plain") || mimeMultipart.getBodyPart(0).isMimeType("text/html")){
-                    part=0;
+                for (int i = 0; i < multiPartCount; i++ ) {
+                    BodyPart bp = mimeMultipart.getBodyPart(i);
+                    contenu += processBodyPartDescription(bp);
                 }
-                else{
-                    part=1;
-                }
-                System.out.println(mimeMultipart.getBodyPart(0).getContentType());
-                System.out.println(mimeMultipart.getBodyPart(1).getContentType());
-                BodyPart bp = mimeMultipart.getBodyPart(part);
-                contenu = processBodyPart(bp);
+
+
 
             }
 
@@ -474,16 +490,15 @@ public class MailReception extends AppCompatActivity {
         return contenu;
     }
 
-    private String processBodyPart(BodyPart bp) throws UnsupportedEncodingException, MessagingException {
-        String contenu = "rien";
+
+
+    private String processBodyPartDescription(BodyPart bp) throws UnsupportedEncodingException, MessagingException {
+        String contenu = "";
         try {
-            System.out.println("Type : " + bp.getContentType());
 
             if (bp.isMimeType("text/plain")) {
                 contenu = getStringFromInputStream(bp.getInputStream());
-
             }
-
             else if(bp.isMimeType("text/html")) {
                 contenu = Jsoup.parse(getStringFromInputStream(bp.getInputStream())).text();
             }
@@ -492,14 +507,11 @@ public class MailReception extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        //Transformation du charcet en UTF-8
-        if(bp.getContentType().equals("text/plain; charset=\"iso-8859-1\"")  || bp.getContentType().equals("text/html; charset=\"iso-8859-1\"") ){
-            contenu =  new String(contenu.getBytes("ISO-8859-1"), "UTF-8");
-            System.out.println("trad");
-        }
 
         return contenu;
     }
+
+
 
 
 }
