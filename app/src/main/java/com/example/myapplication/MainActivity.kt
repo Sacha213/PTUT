@@ -1,11 +1,9 @@
 package com.example.myapplication
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
@@ -27,39 +25,30 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         db = FirebaseFirestore.getInstance()
 
-        FirebaseService.sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
-        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
-            FirebaseService.token = it.token
-            etToken.setText(it.token)
-            val newToken = it.token
-            val user = hashMapOf(
-                    "ID" to "p1913943",
-                    "Token" to newToken
-            )
+        val refToken = db!!.collection("Users").document("p1913943")
 
-            db!!.collection("Users")
-                    .add(user)
-                    .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+        val recipientToken = refToken.get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+                    } else {
+                        Log.d(TAG, "No such document")
                     }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error adding document", e)
-                    }
-        }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "get failed with ", exception)
+                }
 
-
-
+        recipientToken as String
 
 
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
 
         btnSend.setOnClickListener {
-            val title = etTitle.text.toString()
             val message = etMessage.text.toString()
-            val recipientToken = etToken.text.toString()
-            if(title.isNotEmpty() && message.isNotEmpty() && recipientToken.isNotEmpty()) {
+            if(message.isNotEmpty() && recipientToken.isNotEmpty()) {
                 PushNotification(
-                        NotificationData(title, message),
+                        NotificationData(message),
                         recipientToken
                 ).also {
                     sendNotification(it)
@@ -83,3 +72,5 @@ class MainActivity : AppCompatActivity() {
 
 
 }
+
+
