@@ -69,7 +69,6 @@ public class MailReception extends AppCompatActivity {
 
     private static String HOST = "accesbv.univ-lyon1.fr";
     private static String LOGIN = "p1908066";
-    private static String ACCOUNT = "sacha.montel@etu.univ-lyon1.fr";
     private static String PASSWORD = "31052001sM";
 
     private boolean echape ;
@@ -228,9 +227,10 @@ public class MailReception extends AppCompatActivity {
 
         // Création de la session
         Properties properties = new Properties();
-        properties.setProperty("mail.store.protocol", "pop3");
-        properties.setProperty("mail.pop3.host", HOST);
-        properties.setProperty("mail.pop3.user", LOGIN);
+        properties.setProperty("mail.store.protocol", "pop3s");
+        properties.setProperty("mail.pop3s.host", HOST);
+        properties.setProperty("mail.pop3s.user", LOGIN);
+        properties.setProperty("mail.pop3s.port","995");
         Session session = Session.getInstance(properties);
 
         // Les dossiers
@@ -238,7 +238,7 @@ public class MailReception extends AppCompatActivity {
         Folder defaultFolder = null;
         Folder inbox = null;
         try {
-            store = session.getStore(new URLName("pop3://" + HOST));
+            store = session.getStore(new URLName("pop3s://" + HOST));
             store.connect(LOGIN, PASSWORD);
             defaultFolder = store.getDefaultFolder();
 
@@ -287,6 +287,7 @@ public class MailReception extends AppCompatActivity {
                 String sujet = message.getSubject();//récupération du sujet
 
                 Address addresses = message.getFrom()[0];//Résupération de l'adresse de l'expéditeur
+                System.out.println(Jsoup.parse(addresses.toString()));
                 String[] nomDest = addresses.toString().split("<");//Transformation en chaîne de caractère et on va enlever les informations superflux (<adresse mail>)
 
                 //On enlève les "" si le nom de l'expéditeur en contient
@@ -511,7 +512,20 @@ public class MailReception extends AppCompatActivity {
         return contenu;
     }
 
+    /******************* Gestion du retour en arrière *******************/
+    @Override
+    public void onBackPressed() {
 
+        /******************* Changement de page *******************/
+        Intent otherActivity = new Intent(getApplicationContext(), Messagerie.class); //Ouverture d'une nouvelle activité
+        startActivity(otherActivity);
+
+        echape=true;//On stop l'async task
+
+        finish();//Fermeture de l'ancienne activité
+        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
+    }
 
 
 }

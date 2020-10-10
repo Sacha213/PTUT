@@ -273,6 +273,13 @@ public class Information extends AppCompatActivity {
 
     }
 
+    /******************* Gestion du retour en arrière *******************/
+    @Override
+    public void onBackPressed() {
+
+        super.onBackPressed();
+    }
+
 
 }
 

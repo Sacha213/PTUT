@@ -43,4 +43,12 @@ public class Accueil extends AppCompatActivity {
             }
         });
     }
+
+    /******************* Gestion du retour en arrière *******************/
+    @Override
+    public void onBackPressed() {
+
+        super.onBackPressed();
+
+    }
 }

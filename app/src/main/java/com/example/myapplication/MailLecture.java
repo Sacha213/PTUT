@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -13,6 +14,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -50,7 +52,6 @@ public class MailLecture extends AppCompatActivity {
 
     private static String HOST = "accesbv.univ-lyon1.fr";
     private static String LOGIN = "p1908066";
-    private static String ACCOUNT = "sacha.montel@etu.univ-lyon1.fr";
     private static String PASSWORD = "31052001sM";
 
     private int numeroMail;
@@ -59,6 +60,8 @@ public class MailLecture extends AppCompatActivity {
     private TextView sujet;
     private TextView expediteur;
 
+    private ProgressBar progressBar;
+    private TextView textChargement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +82,8 @@ public class MailLecture extends AppCompatActivity {
         this.sujet = findViewById(R.id.textSujet);
         this.expediteur = findViewById(R.id.textExpediteur);
 
-
+        this.progressBar = findViewById(R.id.barChargement);
+        this.textChargement = findViewById(R.id.textChargement);
 
         /******************* Reception des mails *******************/
 
@@ -165,14 +169,16 @@ public class MailLecture extends AppCompatActivity {
 
     public class LectureMail extends AsyncTask<Void, Void, Void> {
 
+
+
         @Override
         protected Void doInBackground(Void... voids) {
 
             // Création de la session
             Properties properties = new Properties();
-            properties.setProperty("mail.store.protocol", "pop3");
-            properties.setProperty("mail.pop3.host", HOST);
-            properties.setProperty("mail.pop3.user", LOGIN);
+            properties.setProperty("mail.store.protocol", "pop3s");
+            properties.setProperty("mail.pop3s.host", HOST);
+            properties.setProperty("mail.pop3s.user", LOGIN);
             Session session = Session.getInstance(properties);
 
             // Les dossiers
@@ -180,7 +186,7 @@ public class MailLecture extends AppCompatActivity {
             Folder defaultFolder = null;
             Folder inbox = null;
             try {
-                store = session.getStore(new URLName("pop3://" + HOST));
+                store = session.getStore(new URLName("pop3s://" + HOST));
                 store.connect(LOGIN, PASSWORD);
                 defaultFolder = store.getDefaultFolder();
 
@@ -206,6 +212,12 @@ public class MailLecture extends AppCompatActivity {
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            //On cache l'affichage du chargement
+            progressBar.setVisibility(View.INVISIBLE);
+            textChargement.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void printMessages(Folder folder) {
@@ -358,6 +370,20 @@ public class MailLecture extends AppCompatActivity {
         }
 
         return cont;
+    }
+
+    /******************* Gestion du retour en arrière *******************/
+    @Override
+    public void onBackPressed() {
+
+        /******************* Changement de page *******************/
+        Intent otherActivity = new Intent(getApplicationContext(), MailReception.class); //Ouverture d'une nouvelle activité
+        startActivity(otherActivity);
+
+
+        finish();//Fermeture de l'ancienne activité
+        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
     }
 
 

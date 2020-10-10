@@ -165,6 +165,13 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
             }
         }
     }
+
+    /******************* Gestion du retour en arrière *******************/
+    @Override
+    public void onBackPressed() {
+
+       super.onBackPressed();
+    }
 }
 
 

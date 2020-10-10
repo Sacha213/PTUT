@@ -221,4 +221,18 @@ public class Article extends AppCompatActivity {
                     }
                 });
     }
+
+    /******************* Gestion du retour en arrière *******************/
+    @Override
+    public void onBackPressed() {
+
+        /******************* Changement de page *******************/
+        Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
+        startActivity(otherActivity);
+
+
+        finish();//Fermeture de l'ancienne activité
+        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
+    }
 }
