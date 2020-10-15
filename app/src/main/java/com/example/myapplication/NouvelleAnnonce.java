@@ -1,16 +1,34 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-public class Calendrier extends AppCompatActivity {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+public class NouvelleAnnonce extends AppCompatActivity {
 
     /******************* Attribut *******************/
     private ImageView calendrier; //Icônes du menu
@@ -19,19 +37,22 @@ public class Calendrier extends AppCompatActivity {
     private ImageView drive;
     private ImageView messagerie;
 
-    private Button deconnexion;
+    private EditText titre;
+    private RadioButton perte;
+    private RadioButton info;
+    private RadioButton enquete;
+    private RadioButton autres;
+    private EditText contenu;
+    private Button publier;
 
-    //Base de données
-    private DatabaseManager databaseManager;
-
-    private FirebaseAuth mAuth;
-
+    private FirebaseFirestore db; //Base de donnée Firestore
+    private DatabaseManager databaseManager;//Base de données local
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendrier);
+        setContentView(R.layout.activity_nouvelle_annonce);
 
         /******************* Initialisation des variables *******************/
         this.calendrier = findViewById(R.id.calendrier);
@@ -40,26 +61,49 @@ public class Calendrier extends AppCompatActivity {
         this.drive = findViewById(R.id.drive);
         this.messagerie = findViewById(R.id.messagerie);
 
-        this.deconnexion = findViewById(R.id.boutonDeconnexion);
+        this.titre = findViewById(R.id.titreNewAnnonce);
+        this.perte = findViewById(R.id.checkBoxPerte);
+        this.info = findViewById(R.id.checkBoxInfo);
+        this.enquete = findViewById(R.id.checkBoxEnquete);
+        this.autres = findViewById(R.id.checkBoxAutres);
+        this.contenu = findViewById(R.id.ContenuAnnonce);
+        this.publier = findViewById(R.id.boutonPublierAnnonce);
 
+        db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
         databaseManager = new DatabaseManager(this);
 
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
 
-        /******************* Mise en place d'écouteur *******************/
-        deconnexion.setOnClickListener(new View.OnClickListener() {
+
+        //On coche par default la checkbox autres
+        autres.setChecked(true);
+
+
+
+        /******************* Gestion publication annonce *******************/
+        publier.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                /******************* Changement de page *******************/
-                databaseManager.deleteAllUsers(); // Supression des données de la base au début du programme (provisoire)
-                databaseManager.deleteAllMails();
+            public void onClick(View view) {
 
-                mAuth.signOut();//On se déconnecte
+                //On récupère le choix de la checkbox
+                int choixCheckbox;
+                if (perte.isChecked())choixCheckbox=1;
+                else if (info.isChecked())choixCheckbox=2;
+                else if (enquete.isChecked())choixCheckbox=3;
+                else choixCheckbox = 4;
 
-                finish();//Fermeture de l'ancienne activité
+
+                //Création data pour la BD Firebase
+                Map<String, Object> data = new HashMap<>();
+                data.put("Titre",titre.getText().toString());
+                data.put("Auteur",databaseManager.getIdentifiant());
+                data.put("Date",new Date());
+                data.put("Contenu",contenu.getText().toString());
+                data.put("Type",choixCheckbox);
+
+                db.collection("annonces").add(data);
             }
         });
+
 
         /******************* Gestion des évènements du menu *******************/
 
@@ -133,19 +177,11 @@ public class Calendrier extends AppCompatActivity {
 
             }
         });
+
+
     }
 
-    /******************* Gestion du retour en arrière *******************/
-    @Override
-    public void onBackPressed() {
-
-        /******************* Changement de page *******************/
-        Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
-        startActivity(otherActivity);
-
-
-        finish();//Fermeture de l'ancienne activité
-        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+    public void onCheckBoxClicked(View view){
 
     }
 }

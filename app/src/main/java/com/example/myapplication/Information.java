@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -52,6 +53,8 @@ public class Information extends AppCompatActivity {
 
     private Button annonce;
 
+    private FirebaseAuth mAuth;
+
 
 
     @Override
@@ -74,13 +77,14 @@ public class Information extends AppCompatActivity {
 
         this.annonce = findViewById(R.id.boutonAnnonces);
 
-        System.out.println(databaseManager.getIdentifiant());//Affichage des identifiants enregistré dans la base de données (provisoire)
-
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
 
 
 
         /******************* Acces aux articles *******************/
 
+        //System.out.println("ID token : "+mAuth.getCurrentUser().getUid());
         getAllDocs();
 
 
@@ -189,7 +193,6 @@ public class Information extends AppCompatActivity {
 
                                 System.out.println(document.getId() + " => " + document.getData()); //A enlever
 
-
                                 afficherImage(document);
 
 
@@ -228,7 +231,7 @@ public class Information extends AppCompatActivity {
                                 ViewGroup.LayoutParams params = new ActionBar.LayoutParams(750,750); // Dimenssion de l'image
                                 image.setLayoutParams(params);
                                 image.setX(175);//Centrage de l'image
-                                Picasso.with(getBaseContext()).load(uri).into(image);
+                                Picasso.get().load(uri).into(image);
                                 layout.addView(image);
 
                                 //Ajout du titre de l'article

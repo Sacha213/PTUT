@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.jsoup.Jsoup;
 
 import java.io.BufferedReader;
 import java.io.File;

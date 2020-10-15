@@ -23,6 +23,7 @@
         android:background="@color/bleu_claire"
         android:text="Continuer" />
 
+
     <ImageView
         android:id="@+id/etape1"
         android:layout_width="wrap_content"
@@ -40,6 +41,21 @@
         android:layout_marginRight="277dp"
         android:layout_marginBottom="450dp"
         app:srcCompat="@drawable/etape_1" />
+
+    <EditText
+        android:id="@+id/adresseMail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/etape1"
+        android:layout_alignBottom="@+id/etape1"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="102dp"
+        android:layout_marginBottom="3dp"
+        android:ems="10"
+        android:hint="Adresse mail Lyon 1"
+        android:inputType="textEmailAddress"
+        android:layout_alignLeft="@+id/etape1"
+        android:layout_marginLeft="102dp" />
 
     <ImageView
         android:id="@+id/etape2"

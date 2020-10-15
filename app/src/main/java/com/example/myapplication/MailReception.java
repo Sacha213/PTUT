@@ -19,11 +19,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import org.jsoup.Jsoup;
+
 
 
 import com.google.android.gms.common.util.IOUtils;
 
-import org.jsoup.Jsoup;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

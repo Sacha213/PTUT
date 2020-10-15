@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 public class Annonce extends AppCompatActivity {
@@ -15,6 +16,8 @@ public class Annonce extends AppCompatActivity {
     private ImageView informations;
     private ImageView drive;
     private ImageView messagerie;
+
+    private Button creerAnnonce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +30,22 @@ public class Annonce extends AppCompatActivity {
         this.informations = findViewById(R.id.informations);
         this.drive = findViewById(R.id.drive);
         this.messagerie = findViewById(R.id.messagerie);
+
+        this.creerAnnonce = findViewById(R.id.boutonCreerAnnonces);
+
+        /******************* Gestion du bouton de creation d'annonce *******************/
+        creerAnnonce.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /******************* Changement de page *******************/
+                Intent otherActivity = new Intent(getApplicationContext(), NouvelleAnnonce.class); //Ouverture d'une nouvelle activité
+                startActivity(otherActivity);
+
+                finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
+            }
+        });
 
         /******************* Gestion des évènements du menu *******************/
 

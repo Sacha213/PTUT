@@ -7,8 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,8 +26,7 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
     private EditText identifiant;
     private EditText motDePasse;
 
-    //Base de données
-    private DatabaseManager databaseManager;
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -38,11 +38,12 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
         this.connexion = findViewById(R.id.connexion);
         this.identifiant = findViewById(R.id.identifiant);
         this.motDePasse = findViewById(R.id.motdepasse);
-        databaseManager = new DatabaseManager(this);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
 
 
-        try {
-            databaseManager.getIdentifiant(); //On vérifie si les identifiants de l'utilisateur sont déjà enregistrés
+        if (mAuth.getCurrentUser() != null) { //On vérifie si l'utilisateur est déja connecté
 
             /******************* Changement de page *******************/
             Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
@@ -52,10 +53,7 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
             overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
         }
-        catch (android.database.CursorIndexOutOfBoundsException e){ //Si une erreur se décanche c'est qu'il n'y a pas d'identifiant
 
-            System.out.println(e);
-        }
 
 
 
@@ -107,12 +105,10 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
                 URLConnection conn = url.openConnection();
                 conn.setDoOutput(true);
 
-
                 //Envoi de la requête
                 writer = new OutputStreamWriter(conn.getOutputStream());
                 writer.write(data);
                 writer.flush();
-
 
                 //Lecture de la réponse
                 reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -145,14 +141,12 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
             /******************* Vérification de la réponse *******************/
             if(result.length()==4229){ //Si la réponse contient 4229 caractère alors l'utilisateur à rentré les bons identifiants Lyon1
 
-                databaseManager.insertIdentifiant(idUtilisateur,passwordUtilisateur); //Enregistrement des identifiants dans la base de données
-
-
                 /******************* Changement de page *******************/
                 Intent otherActivity = new Intent(getApplicationContext(), Accueil.class); //Ouverture d'une nouvelle activité
+                otherActivity.putExtra("Identifiant", idUtilisateur); //Envoie l'identifiant et le mot de passe dans l'activité accueil
+                otherActivity.putExtra("MotDePasse", passwordUtilisateur);
                 startActivity(otherActivity);
 
-                databaseManager.close();//Fermeture de la base de données (provisoire)
                 finish();//Fermeture de l'ancienne activité
             }
 

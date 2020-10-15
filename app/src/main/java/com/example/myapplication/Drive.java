@@ -39,8 +39,8 @@ public class Drive extends AppCompatActivity {
         this.messagerie = findViewById(R.id.messagerie);
 
         databaseManager = new DatabaseManager(this);
-        idUtilisateur = databaseManager.getIdentifiant().substring(0,8);
-        passwordUtilisateur = databaseManager.getIdentifiant().substring(8);
+        idUtilisateur = databaseManager.getIdentifiant();
+        passwordUtilisateur = databaseManager.getMotDePasse();
 
         /******************* Gestion du navigateur web *******************/
 

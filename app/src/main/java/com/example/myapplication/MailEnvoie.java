@@ -35,11 +35,13 @@ public class MailEnvoie extends AppCompatActivity {
     private EditText object;
     private ImageView envoyer;
 
+    private DatabaseManager databaseManager;//Base de données local
+
 
     private static String HOST = "smtpbv.univ-lyon1.fr";
-    private static String LOGIN = "p1908066";
+    private static String LOGIN;
     private static String ACCOUNT = "sacha.montel@etu.univ-lyon1.fr";
-    private static String PASSWORD = "31052001sM";
+    private static String PASSWORD ;
 
 
     @Override
@@ -60,6 +62,9 @@ public class MailEnvoie extends AppCompatActivity {
         this.contenu = findViewById(R.id.textMessage);
         this.object = findViewById(R.id.editTextObject);
 
+        databaseManager = new DatabaseManager(this);
+        LOGIN = databaseManager.getIdentifiant();
+        PASSWORD = databaseManager.getMotDePasse();
 
         /******************* Mise en place d'écouteur *******************/
         envoyer.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +72,7 @@ public class MailEnvoie extends AppCompatActivity {
             public void onClick(View v) {
                 /******************* Envoie d'un mail *******************/
                 EnvoieMessage message = new EnvoieMessage(); // On instanci l'objet message de la classe EnvoieMessage qui est dans une AsyncTask
-                message.execute(object.getText().toString(),contenu.getText().toString(),destinataire.getText().toString(),"sachamontel@yahoo.fr");
+                message.execute(object.getText().toString(),contenu.getText().toString(),destinataire.getText().toString());
 
             }
         });
@@ -164,7 +169,7 @@ public class MailEnvoie extends AppCompatActivity {
             subject = strings[0];
             text = strings[1];
             destinataire = strings[2];
-            copyDest = strings[3];
+            //copyDest = strings[3];
 
             //Création de la session
             Properties properties = new Properties();
@@ -185,7 +190,7 @@ public class MailEnvoie extends AppCompatActivity {
                 message.setText(text);
                 message.setSubject(subject);
                 message.addRecipients(Message.RecipientType.TO, destinataire);
-                message.addRecipients(Message.RecipientType.CC, copyDest);
+                //message.addRecipients(Message.RecipientType.CC, copyDest);
             } catch (MessagingException e) {
                 e.printStackTrace();
             }

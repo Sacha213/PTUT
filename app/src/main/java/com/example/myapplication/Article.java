@@ -208,8 +208,7 @@ public class Article extends AppCompatActivity {
                             public void onSuccess(Uri uri) {
 
                                 //Ajout de l'image de l'article
-                                Picasso.with(getBaseContext()).load(uri).into(image);
-
+                                Picasso.get().load(uri).into(image);
 
                             }
                         }).addOnFailureListener(new OnFailureListener() {

@@ -11,7 +11,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Attribut *******************/
 
     private static final String DATABASE_NAME = "Etu.bd"; //Nom de la base de données
-    private static final int DATABASE_VERSION = 2; //Version de la base de données
+    private static final int DATABASE_VERSION = 3; //Version de la base de données
 
     /******************* Constructeur *******************/
     public DatabaseManager( Context context){
@@ -43,18 +43,33 @@ public class DatabaseManager extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL(strSql); //Exécution de la requette
     }
 
-    /******************* Méthode qui permet de connaître les identifiants de l'utilisateur préalablement enregistrés dans la base de données *******************/
+    /******************* Méthode qui permet de connaître l'identifiants de l'utilisateur préalablement enregistrés dans la base de données *******************/
     public String getIdentifiant(){
 
-        String strsql = "select * from Users"; //Génération de la requette SQL
+        String strsql = "select idEtudiant from Users"; //Génération de la requette SQL
         Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
         cursor.moveToFirst(); //On déplace le curseur à la première ligne
 
-        String id= cursor.getString(0) + cursor.getString(1); //On enregistre le résultat de la colone 1 et 2 dans la variable string id
+        String id= cursor.getString(0); //On enregistre le résultat de la colone 1 dans la variable string id
         cursor.close(); //On ferme le curseur
 
         return id;
     }
+    /******************* Méthode qui permet de connaître le mot de passe de l'utilisateur préalablement enregistrés dans la base de données *******************/
+    public String getMotDePasse(){
+
+        String strsql = "select password from Users"; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+
+        String mdp= cursor.getString(0);  //On enregistre le résultat de la colone 1  dans la variable string mdp
+        cursor.close(); //On ferme le curseur
+
+        return mdp;
+    }
+
+
+
 
     /******************* Méthode qui permet de supprimmer les données de la table Users (provisoire) *******************/
     public void deleteAllUsers(){
