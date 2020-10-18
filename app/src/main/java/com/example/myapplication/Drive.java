@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,6 +9,15 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class Drive extends AppCompatActivity {
 
@@ -20,7 +30,10 @@ public class Drive extends AppCompatActivity {
     private ImageView drive;
     private ImageView messagerie;
 
+    private FirebaseAuth mAuth;
     private DatabaseManager databaseManager;//Base de données
+    private FirebaseFirestore db; //Base de donnée Firestore
+
     private String idUtilisateur;
     private String passwordUtilisateur;
 
@@ -39,8 +52,30 @@ public class Drive extends AppCompatActivity {
         this.messagerie = findViewById(R.id.messagerie);
 
         databaseManager = new DatabaseManager(this);
+        db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
+        mAuth = FirebaseAuth.getInstance();
+
         idUtilisateur = databaseManager.getIdentifiant();
-        passwordUtilisateur = databaseManager.getMotDePasse();
+
+        // On récupère le mot de passe de l'utilisateur
+        db.collection("users")
+                .whereEqualTo("Uid",mAuth.getCurrentUser().getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                passwordUtilisateur = document.getString("Password");
+
+                            }
+                        } else {
+                            System.out.println("Erreur ");
+                        }
+                    }
+                });
 
         /******************* Gestion du navigateur web *******************/
 

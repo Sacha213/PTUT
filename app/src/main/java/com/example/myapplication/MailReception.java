@@ -283,12 +283,13 @@ public class MailReception extends AppCompatActivity {
                 Message message = folder.getMessage(i);
 
 
-                String description = lectureDescriptionMail(message);//Récupération de la description du mail
+                //Récupération de la description du mail
+                String description = lectureDescriptionMail(message);
+                description = Jsoup.parse(description).text();//On transforme le text html en text lisible (on enlève les balises)
 
                 String sujet = message.getSubject();//récupération du sujet
 
                 Address addresses = message.getFrom()[0];//Résupération de l'adresse de l'expéditeur
-                System.out.println(Jsoup.parse(addresses.toString()));
                 String[] nomDest = addresses.toString().split("<");//Transformation en chaîne de caractère et on va enlever les informations superflux (<adresse mail>)
 
                 //On enlève les "" si le nom de l'expéditeur en contient
@@ -296,6 +297,7 @@ public class MailReception extends AppCompatActivity {
                 if (textExpediteur.substring(0, 1).equals("\"")){
                     textExpediteur=textExpediteur.substring(1,textExpediteur.length()-2);
                 }
+
 
 
                 affichageDuMail(textExpediteur,sujet,description,i);
@@ -422,8 +424,84 @@ public class MailReception extends AppCompatActivity {
 
 
 
+    public String lectureDescriptionMail(Message message) {
+
+        String cont = "";
+        try {
+            DataSource dataSource = message.getDataHandler().getDataSource();
+            MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
+
+
+            //Une seul partie
+            if(message.isMimeType("text/html") || message.isMimeType("text/plain")){
+                cont  = getStringFromInputStream(message.getInputStream(),getCharset(message.getContentType()));
+            }
+
+
+            //Le mail a plusieurs parties
+            else if (message.isMimeType("multipart/mixed") || message.isMimeType("multipart/related") || message.isMimeType("multipart/alternative")){ //Voir autre type multipat
+                int multiPartCount = mimeMultipart.getCount();
+
+                for (int i = 0; i < multiPartCount; i++ ) {
+                    BodyPart bp = mimeMultipart.getBodyPart(i);
+                    cont += processBodyPartDescription(bp);
+                }
+            }
+
+
+
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return cont;
+
+
+
+    }
+
+
+
+    private String processBodyPartDescription(BodyPart bp) throws UnsupportedEncodingException, MessagingException {
+        String cont = "";
+        try {
+
+            //On affiche que le text html
+            if (bp.isMimeType("text/html")) {
+                cont = getStringFromInputStream(bp.getInputStream(),getCharset(bp.getContentType()));
+            }
+
+            //Si la partie contient plusiseurs partie
+            else if (bp.isMimeType("multipart/mixed") || bp.isMimeType("multipart/related") || bp.isMimeType("multipart/alternative")){ //Voir autre type multipat
+                DataSource dataSource = bp.getDataHandler().getDataSource();
+                MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
+                int multiPartCount = mimeMultipart.getCount();
+
+                for (int i = 0; i < multiPartCount; i++ ) {
+                    BodyPart bp2 = mimeMultipart.getBodyPart(i);
+                    cont += processBodyPartDescription(bp2);
+                }
+            }
+
+
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return cont;
+    }
+
+    /******************* Récupération du charset *******************/
+    public String getCharset(String contentType){
+        String charset = contentType.split("charset=")[1];//On récupère la partie après le charset
+        charset = charset.substring(1,charset.length()-1);//On suprime les "" qui se trouvent au extrémité du texte
+
+        return charset;
+    }
+
     /******************* Fonction qui transforme un inputstream en string *******************/
-    private static String getStringFromInputStream(InputStream inputStream) {
+    private static String getStringFromInputStream(InputStream inputStream, String encodage) {
 
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();
@@ -431,7 +509,7 @@ public class MailReception extends AppCompatActivity {
         String line;
         try {
 
-            br = new BufferedReader(new InputStreamReader(inputStream));
+            br = new BufferedReader(new InputStreamReader(inputStream,encodage));
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
@@ -450,67 +528,6 @@ public class MailReception extends AppCompatActivity {
 
         return sb.toString();
 
-    }
-
-    public String lectureDescriptionMail(Message message) {
-
-        String contenu = "";
-        try {
-            DataSource dataSource = message.getDataHandler().getDataSource();
-            MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
-
-            //Une seul partie
-            if (message.isMimeType("text/plain")) {
-
-                contenu  = getStringFromInputStream(message.getInputStream());
-
-            } else if (message.isMimeType("text/html")) {
-
-                contenu = Jsoup.parse(getStringFromInputStream(message.getInputStream())).text();
-            }
-
-            //Plusieur parties
-            else {
-
-                int multiPartCount = mimeMultipart.getCount();
-                System.out.println("Il y a " + multiPartCount + " partie(s) dans ce message.");
-
-                for (int i = 0; i < multiPartCount; i++ ) {
-                    BodyPart bp = mimeMultipart.getBodyPart(i);
-                    contenu += processBodyPartDescription(bp);
-                }
-
-
-
-            }
-
-        } catch (MessagingException | IOException e) {
-            e.printStackTrace();
-        }
-
-
-        return contenu;
-    }
-
-
-
-    private String processBodyPartDescription(BodyPart bp) throws UnsupportedEncodingException, MessagingException {
-        String contenu = "";
-        try {
-
-            if (bp.isMimeType("text/plain")) {
-                contenu = getStringFromInputStream(bp.getInputStream());
-            }
-            else if(bp.isMimeType("text/html")) {
-                contenu = Jsoup.parse(getStringFromInputStream(bp.getInputStream())).text();
-            }
-
-        } catch (MessagingException | IOException e) {
-            e.printStackTrace();
-        }
-
-
-        return contenu;
     }
 
     /******************* Gestion du retour en arrière *******************/

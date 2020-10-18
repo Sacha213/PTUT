@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -9,6 +10,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Properties;
 
@@ -35,6 +43,8 @@ public class MailEnvoie extends AppCompatActivity {
     private EditText object;
     private ImageView envoyer;
 
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db; //Base de donnée Firestore
     private DatabaseManager databaseManager;//Base de données local
 
 
@@ -62,9 +72,32 @@ public class MailEnvoie extends AppCompatActivity {
         this.contenu = findViewById(R.id.textMessage);
         this.object = findViewById(R.id.editTextObject);
 
+        mAuth = FirebaseAuth.getInstance();  // Initialize Firebase Auth
+        db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
         databaseManager = new DatabaseManager(this);
+
         LOGIN = databaseManager.getIdentifiant();
-        PASSWORD = databaseManager.getMotDePasse();
+
+        // On récupère le mot de passe de l'utilisateur
+        db.collection("users")
+                .whereEqualTo("Uid",mAuth.getCurrentUser().getUid())
+                .limit(1)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                PASSWORD = document.getString("Password");
+
+                            }
+                        } else {
+                            System.out.println("Erreur ");
+                        }
+                    }
+                });
 
         /******************* Mise en place d'écouteur *******************/
         envoyer.setOnClickListener(new View.OnClickListener() {

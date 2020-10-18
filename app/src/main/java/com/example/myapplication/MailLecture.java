@@ -18,6 +18,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
+import org.jsoup.Jsoup;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -226,7 +228,6 @@ public class MailLecture extends AppCompatActivity {
 
             Message message = folder.getMessage(numeroMail);
 
-
             String contenu = lectureContenuMail(message);//Récupération du contenu du mail
 
             String sujet = message.getSubject();//récupération du sujet
@@ -274,15 +275,10 @@ public class MailLecture extends AppCompatActivity {
                 sujet.setText(object);
 
                 //Ajout du contenu
-                //Pb accent
-                String corps = textContenu.replace("iso-8859-1","utf-8"); //Changement de charset pour lecture sans pc avec les accent???
-                System.out.println(corps);
-                contenu.loadDataWithBaseURL(null, corps, "text/html", "utf-8", null);
-                contenu.setBackgroundColor(0x00000000);
+                contenu.loadDataWithBaseURL(null, textContenu, "text/html", "utf-8", null);
+
             }
         });
-
-
 
 
     }
@@ -295,7 +291,14 @@ public class MailLecture extends AppCompatActivity {
             MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
 
 
-            if (message.isMimeType("multipart/mixed")){//Si le mail a plusieurs parties
+            //Une seul partie
+            if(message.isMimeType("text/html") || message.isMimeType("text/plain")){
+                cont  = getStringFromInputStream(message.getInputStream(),getCharset(message.getContentType()));
+            }
+
+
+            //Le mail a plusieurs parties
+            else if (message.isMimeType("multipart/mixed") || message.isMimeType("multipart/related") || message.isMimeType("multipart/alternative")){ //Voir autre type multipat
                 int multiPartCount = mimeMultipart.getCount();
 
                 for (int i = 0; i < multiPartCount; i++ ) {
@@ -303,9 +306,7 @@ public class MailLecture extends AppCompatActivity {
                     cont += processBodyPartContenu(bp);
                 }
             }
-            else{//Une partie
-                cont  = getStringFromInputStream(message.getInputStream());
-            }
+
 
 
         } catch (MessagingException | IOException e) {
@@ -316,8 +317,57 @@ public class MailLecture extends AppCompatActivity {
         return cont;
     }
 
+    private String processBodyPartContenu(BodyPart bp) throws UnsupportedEncodingException, MessagingException {
+        String cont = "";
+        try {
+
+            //On affiche que le text html
+            if (bp.isMimeType("text/html")) {
+                cont = getStringFromInputStream(bp.getInputStream(),getCharset(bp.getContentType()));
+            }
+
+            //Si la partie contient plusiseurs partie
+            else if (bp.isMimeType("multipart/mixed") || bp.isMimeType("multipart/related") || bp.isMimeType("multipart/alternative")){ //Voir autre type multipat
+                DataSource dataSource = bp.getDataHandler().getDataSource();
+                MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
+                int multiPartCount = mimeMultipart.getCount();
+
+                for (int i = 0; i < multiPartCount; i++ ) {
+                    System.out.println("Sa mère");
+                    BodyPart bp2 = mimeMultipart.getBodyPart(i);
+                    cont += processBodyPartContenu(bp2);
+                }
+            }
+
+            else if (bp.isMimeType("image/jpeg") || bp.isMimeType("image/png")){
+
+                /*
+                DataHandler dh = bp.getDataHandler();
+                File file = new File(PATH_TO_DATA + "/received_" + fileName);
+                FileOutputStream fos = new FileOutputStream(file);
+                dh.writeTo(fos);
+                */
+                System.out.println("piece jointe");
+            }
+
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return cont;
+    }
+
+
+    /******************* Récupération du charset *******************/
+    public String getCharset(String contentType){
+        String charset = contentType.split("charset=")[1];//On récupère la partie après le charset
+        charset = charset.substring(1,charset.length()-1);//On suprime les "" qui se trouvent au extrémité du texte
+
+        return charset;
+    }
+
     /******************* Fonction qui transforme un inputstream en string *******************/
-    private static String getStringFromInputStream(InputStream inputStream) {
+    private static String getStringFromInputStream(InputStream inputStream, String encodage) {
 
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();
@@ -325,7 +375,7 @@ public class MailLecture extends AppCompatActivity {
         String line;
         try {
 
-            br = new BufferedReader(new InputStreamReader(inputStream));
+            br = new BufferedReader(new InputStreamReader(inputStream,encodage));
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
@@ -344,31 +394,6 @@ public class MailLecture extends AppCompatActivity {
 
         return sb.toString();
 
-    }
-
-    private String processBodyPartContenu(BodyPart bp) throws UnsupportedEncodingException, MessagingException {
-        String cont = "";
-        try {
-
-            if (bp.isMimeType("text/plain") | bp.isMimeType("text/html")) {
-                cont = getStringFromInputStream(bp.getInputStream());
-            }
-
-            else{
-                /*
-                DataHandler dh = bp.getDataHandler();
-                File file = new File(PATH_TO_DATA + "/received_" + fileName);
-                FileOutputStream fos = new FileOutputStream(file);
-                dh.writeTo(fos);
-                */
-                System.out.println("piece jointe");
-            }
-
-        } catch (MessagingException | IOException e) {
-            e.printStackTrace();
-        }
-
-        return cont;
     }
 
     /******************* Gestion du retour en arrière *******************/

@@ -83,8 +83,6 @@ public class Information extends AppCompatActivity {
 
 
         /******************* Acces aux articles *******************/
-
-        //System.out.println("ID token : "+mAuth.getCurrentUser().getUid());
         getAllDocs();
 
 

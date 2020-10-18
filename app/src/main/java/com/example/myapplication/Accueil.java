@@ -39,6 +39,8 @@ public class Accueil extends AppCompatActivity {
 
     private String id;
     private String mdp;
+    private String nom;
+    private String prenom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,19 +88,35 @@ public class Accueil extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 //Etape 2 : Si l'utilisateur est connecté on change d'activité
 
+                                //On enregistre l'id lyon1 dans la base de données local
+                                databaseManager.insertIdentifiant(id);
+
                                 /******************* Changement de page *******************/
 
                                 Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
                                 startActivity(otherActivity);
 
                                 finish();//Fermeture de l'ancienne activité
+                                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
 
 
                             } else {
                                 //Si il n'y a pas de compte, on en créer un
 
+                                //On récupère les différentes informations du mail
+                                String adresseMail = String.valueOf(mail.getText()); //Adresse mail
+                                String partie1 = adresseMail.split("@")[0]; //La partie avant @
+                                prenom = partie1.split("\\.")[0]; //Avant le .
+                                nom = partie1.split("\\.")[1]; //Après le .
+
+                                //On met en majuscule la première lettre
+                                prenom = prenom.substring(0,1).toUpperCase() + prenom.substring(1);
+                                nom = nom.substring(0,1).toUpperCase() + nom.substring(1);
+
+
                                 //Etape 2 : On crée le compte utilisateur
-                                mAuth.createUserWithEmailAndPassword(String.valueOf(mail.getText()), mdp)
+                                mAuth.createUserWithEmailAndPassword(adresseMail, mdp)
                                         .addOnCompleteListener(Accueil.this, new OnCompleteListener<AuthResult>() {
                                             @Override
                                             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -109,11 +127,13 @@ public class Accueil extends AppCompatActivity {
                                                 Map<String, Object> data = new HashMap<>();
                                                 data.put("Uid",mAuth.getCurrentUser().getUid());
                                                 data.put("Password",mdp);
+                                                data.put("Nom", nom);
+                                                data.put("Prénom", prenom);
 
                                                 db.collection("users").add(data);
 
                                                 //On enregistre l'id lyon1 dans la base de données local
-                                                //databaseManager.insertIdentifiant(id);
+                                                databaseManager.insertIdentifiant(id);
 
                                                 //Etape 4 : On change d'activité
 
@@ -123,6 +143,8 @@ public class Accueil extends AppCompatActivity {
                                                 startActivity(otherActivity);
 
                                                 finish();//Fermeture de l'ancienne activité
+                                                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
 
                                             } else {
                                                 //Etape 3 : Il y a un problème de création de compte ou de connection (ex : pas d'internet)

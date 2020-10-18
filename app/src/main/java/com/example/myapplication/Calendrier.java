@@ -52,8 +52,7 @@ public class Calendrier extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 /******************* Changement de page *******************/
-                databaseManager.deleteAllUsers(); // Supression des données de la base au début du programme (provisoire)
-                databaseManager.deleteAllMails();
+                databaseManager.deleteAllUsers(); // Supression des données de la table USERS
 
                 mAuth.signOut();//On se déconnecte
 

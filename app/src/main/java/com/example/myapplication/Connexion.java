@@ -148,6 +148,8 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
             }
 
             else{
