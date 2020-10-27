@@ -233,8 +233,7 @@ public class MailEnvoie extends AppCompatActivity {
             try {
                 transport = session.getTransport("smtp");
                 transport.connect(LOGIN, PASSWORD);
-                transport.sendMessage(message, new Address[] { new InternetAddress(destinataire),
-                        new InternetAddress(copyDest) });
+                transport.sendMessage(message, new Address[] { new InternetAddress(destinataire)});
             } catch (MessagingException e) {
                 e.printStackTrace();
             } finally {

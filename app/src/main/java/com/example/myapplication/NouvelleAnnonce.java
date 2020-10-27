@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -48,6 +49,8 @@ public class NouvelleAnnonce extends AppCompatActivity {
     private FirebaseFirestore db; //Base de donnée Firestore
     private DatabaseManager databaseManager;//Base de données local
 
+    private AlertDialog.Builder erreurAnnonceDialogue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,7 @@ public class NouvelleAnnonce extends AppCompatActivity {
         this.contenu = findViewById(R.id.ContenuAnnonce);
         this.publier = findViewById(R.id.boutonPublierAnnonce);
 
+        erreurAnnonceDialogue = new AlertDialog.Builder(this);
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
         databaseManager = new DatabaseManager(this);
 
@@ -84,23 +88,49 @@ public class NouvelleAnnonce extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                //On récupère le choix de la checkbox
-                int choixCheckbox;
-                if (perte.isChecked())choixCheckbox=1;
-                else if (info.isChecked())choixCheckbox=2;
-                else if (enquete.isChecked())choixCheckbox=3;
-                else choixCheckbox = 4;
+                //verification du contenu et du titre
+                String titreAnnonce = titre.getText().toString();
+                String contenuAnnonce = contenu.getText().toString();
+                //on vérifie qu'il existe un titre et un contenu d'au moins 20 caracteres.
+                if ( !titreAnnonce.equals("") && contenuAnnonce.length()>20 ){
+                    //On récupère le choix de la checkbox
+                    int choixCheckbox;
+                    if (perte.isChecked())choixCheckbox=1;
+                    else if (info.isChecked())choixCheckbox=2;
+                    else if (enquete.isChecked())choixCheckbox=3;
+                    else choixCheckbox = 4;
 
 
-                //Création data pour la BD Firebase
-                Map<String, Object> data = new HashMap<>();
-                data.put("Titre",titre.getText().toString());
-                data.put("Auteur",databaseManager.getIdentifiant());
-                data.put("Date",new Date());
-                data.put("Contenu",contenu.getText().toString());
-                data.put("Type",choixCheckbox);
+                    //Création data pour la BD Firebase
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("Titre",titreAnnonce);
+                    data.put("Auteur",databaseManager.getIdentifiant());
+                    data.put("Date",new Date());
+                    data.put("Contenu",contenuAnnonce);
+                    data.put("Type",choixCheckbox);
 
-                db.collection("annonces").add(data);
+                    db.collection("annonces").add(data);
+
+                    /******************* Redirection page informations *******************/
+                    Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
+                    otherActivity.putExtra("AnnoncePubliee",true); //Envoie de donner dans la nouvelle activité (Annonce publiée)
+                    startActivity(otherActivity);
+
+                    finish();//Fermeture de l'ancienne activité
+                    overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
+
+
+
+                }
+                else{
+
+                    /******************* Affichage de la boîte de dialogue de bienvenue *******************/
+                    erreurAnnonceDialogue.setTitle("Erreur publication"); //Titre
+                    erreurAnnonceDialogue.setMessage("Veuillez renseigner les champs \"Titre\" et \"contenu\". "); //Message
+                    erreurAnnonceDialogue.setIcon(R.drawable.erreur); //Ajout de l'icone erreur
+                    erreurAnnonceDialogue.show(); //Affichage de la boîte de dialogue
+                }
             }
         });
 
@@ -182,6 +212,19 @@ public class NouvelleAnnonce extends AppCompatActivity {
     }
 
     public void onCheckBoxClicked(View view){
+
+    }
+    /******************* Gestion du retour en arrière *******************/
+    @Override
+    public void onBackPressed() {
+
+        /******************* Changement de page *******************/
+        Intent otherActivity = new Intent(getApplicationContext(), Annonce.class); //Ouverture d'une nouvelle activité
+        startActivity(otherActivity);
+
+
+        finish();//Fermeture de l'ancienne activité
+        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
     }
 }

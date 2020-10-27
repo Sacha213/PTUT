@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,6 +56,10 @@ public class Information extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
+    private boolean annoncePubliee;
+    private AlertDialog.Builder confirmationPubliee;
+
+
 
 
     @Override
@@ -80,7 +85,19 @@ public class Information extends AppCompatActivity {
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
+        Intent intent = getIntent();//On récupaire les données transmise venant de l'ancienne activité
+        annoncePubliee = intent.getBooleanExtra("AnnoncePubliee",false);
 
+        confirmationPubliee = new AlertDialog.Builder(this); //Création de la boîte de dialogue
+
+
+        /******************* On affiche la boite de dialogue si l'utilisazteur à publiée une annonce *******************/
+        if (annoncePubliee){
+            confirmationPubliee.setTitle("Annonce publiée"); //Titre
+            confirmationPubliee.setIcon(R.drawable.valider); //Ajout de l'icone valider
+            confirmationPubliee.show(); //Affichage de la boîte de dialogue
+
+        }
 
         /******************* Acces aux articles *******************/
         getAllDocs();
@@ -189,7 +206,6 @@ public class Information extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
 
-                                System.out.println(document.getId() + " => " + document.getData()); //A enlever
 
                                 afficherImage(document);
 

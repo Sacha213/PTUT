@@ -40,6 +40,7 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.URLName;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 
 
 public class MailLecture extends AppCompatActivity {
@@ -228,9 +229,13 @@ public class MailLecture extends AppCompatActivity {
 
             Message message = folder.getMessage(numeroMail);
 
-            String contenu = lectureContenuMail(message);//Récupération du contenu du mail
+            //Récupération du contenu du mail
+            String contenu = lectureContenuMail(message);
 
-            String sujet = message.getSubject();//récupération du sujet
+            //récupération du sujet
+            String sujet = message.getSubject();
+            //On transforme le text s'il est encoder en utf-8 ou IS0
+            sujet = degodage(sujet);
 
             Address addresses = message.getFrom()[0];//Résupération de l'adresse de l'expéditeur
             String[] nomDest = addresses.toString().split("<");//Transformation en chaîne de caractère et on va enlever les informations superflux (<adresse mail>)
@@ -240,13 +245,13 @@ public class MailLecture extends AppCompatActivity {
             if (textExpediteur.substring(0, 1).equals("\"")) {
                 textExpediteur = textExpediteur.substring(1, textExpediteur.length() - 2);
             }
-
-
+            //On transforme le text s'il est encoder en utf-8 ou IS0
+            textExpediteur = degodage(textExpediteur);
 
             affichageDuMail(textExpediteur,sujet,contenu);
 
 
-        } catch (MessagingException e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
@@ -290,6 +295,7 @@ public class MailLecture extends AppCompatActivity {
             DataSource dataSource = message.getDataHandler().getDataSource();
             MimeMultipart mimeMultipart = new MimeMultipart(dataSource);
 
+            System.out.println("Type : "+message.getContentType());
 
             //Une seul partie
             if(message.isMimeType("text/html") || message.isMimeType("text/plain")){
@@ -333,7 +339,6 @@ public class MailLecture extends AppCompatActivity {
                 int multiPartCount = mimeMultipart.getCount();
 
                 for (int i = 0; i < multiPartCount; i++ ) {
-                    System.out.println("Sa mère");
                     BodyPart bp2 = mimeMultipart.getBodyPart(i);
                     cont += processBodyPartContenu(bp2);
                 }
@@ -361,8 +366,10 @@ public class MailLecture extends AppCompatActivity {
     /******************* Récupération du charset *******************/
     public String getCharset(String contentType){
         String charset = contentType.split("charset=")[1];//On récupère la partie après le charset
-        charset = charset.substring(1,charset.length()-1);//On suprime les "" qui se trouvent au extrémité du texte
-
+        
+        if (charset.substring(0,1) == "\"") { //On suprime les "" qui se trouvent au extrémité du texte
+            charset = charset.substring(1, charset.length() - 1);
+        }
         return charset;
     }
 
@@ -394,6 +401,20 @@ public class MailLecture extends AppCompatActivity {
 
         return sb.toString();
 
+    }
+
+    public String degodage(String text) throws UnsupportedEncodingException {
+
+        //On cherche si le texte est codé en UTF-8
+        int position = text.indexOf("=?UTF-8");
+        if( position != -1 ) //A modifier avec iso
+        {
+            String partie1 = text.substring(0,position);
+            String partie2 = text.substring(position);
+            text = partie1 + MimeUtility.decodeText(partie2);
+
+        }
+        return text;
     }
 
     /******************* Gestion du retour en arrière *******************/

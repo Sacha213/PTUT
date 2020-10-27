@@ -21,12 +21,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import org.jsoup.Jsoup;
 
-
+import javax.mail.internet.MimeUtility;
 
 import com.google.android.gms.common.util.IOUtils;
 
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -287,7 +288,10 @@ public class MailReception extends AppCompatActivity {
                 String description = lectureDescriptionMail(message);
                 description = Jsoup.parse(description).text();//On transforme le text html en text lisible (on enlève les balises)
 
-                String sujet = message.getSubject();//récupération du sujet
+                //Récupération du sujet
+                String sujet = message.getSubject();
+                //On transforme le text s'il est encoder en utf-8 ou IS0
+                sujet = degodage(sujet);
 
                 Address addresses = message.getFrom()[0];//Résupération de l'adresse de l'expéditeur
                 String[] nomDest = addresses.toString().split("<");//Transformation en chaîne de caractère et on va enlever les informations superflux (<adresse mail>)
@@ -297,6 +301,8 @@ public class MailReception extends AppCompatActivity {
                 if (textExpediteur.substring(0, 1).equals("\"")){
                     textExpediteur=textExpediteur.substring(1,textExpediteur.length()-2);
                 }
+                //On transforme le text s'il est encoder en utf-8 ou IS0
+                textExpediteur = degodage(textExpediteur);
 
 
 
@@ -528,6 +534,20 @@ public class MailReception extends AppCompatActivity {
 
         return sb.toString();
 
+    }
+
+    public String degodage(String text) throws UnsupportedEncodingException {
+
+        //On cherche si le texte est codé en UTF-8
+        int position = text.indexOf("=?UTF-8");
+        if( position != -1 ) //A modifier avec iso
+        {
+            String partie1 = text.substring(0,position);
+            String partie2 = text.substring(position);
+            text = partie1 + MimeUtility.decodeText(partie2);
+
+        }
+        return text;
     }
 
     /******************* Gestion du retour en arrière *******************/
