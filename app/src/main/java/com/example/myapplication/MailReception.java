@@ -501,8 +501,10 @@ public class MailReception extends AppCompatActivity {
     /******************* Récupération du charset *******************/
     public String getCharset(String contentType){
         String charset = contentType.split("charset=")[1];//On récupère la partie après le charset
-        charset = charset.substring(1,charset.length()-1);//On suprime les "" qui se trouvent au extrémité du texte
 
+        if (charset.substring(0,1) == "\"") { //On suprime les "" qui se trouvent au extrémité du texte
+            charset = charset.substring(1, charset.length() - 1);
+        }
         return charset;
     }
 
@@ -540,12 +542,22 @@ public class MailReception extends AppCompatActivity {
 
         //On cherche si le texte est codé en UTF-8
         int position = text.indexOf("=?UTF-8");
-        if( position != -1 ) //A modifier avec iso
+        if( position != -1 )
         {
             String partie1 = text.substring(0,position);
             String partie2 = text.substring(position);
             text = partie1 + MimeUtility.decodeText(partie2);
 
+        }
+        else{
+            position = text.indexOf("=?iso-8859-1");
+            if( position != -1 )
+            {
+                String partie1 = text.substring(0,position);
+                String partie2 = text.substring(position);
+                text = partie1 + MimeUtility.decodeText(partie2);
+
+            }
         }
         return text;
     }

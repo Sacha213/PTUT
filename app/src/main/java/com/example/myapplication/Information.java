@@ -199,6 +199,7 @@ public class Information extends AppCompatActivity {
     /******************* Fonction qui nous permet de générer les articles *******************/
     public void getAllDocs() {
         db.collection("articles")
+                .orderBy("Date", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

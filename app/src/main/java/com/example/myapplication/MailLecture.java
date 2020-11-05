@@ -350,10 +350,12 @@ public class MailLecture extends AppCompatActivity {
                 DataHandler dh = bp.getDataHandler();
                 File file = new File(PATH_TO_DATA + "/received_" + fileName);
                 FileOutputStream fos = new FileOutputStream(file);
-                dh.writeTo(fos);
-                */
-                System.out.println("piece jointe");
+                dh.writeTo(fos);*/
+
+
+                System.out.println("piece jointe  : "+bp.getContentType()+bp.getFileName()+bp.getInputStream());
             }
+            else System.out.println("else"+bp.getContentType());
 
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
@@ -413,6 +415,16 @@ public class MailLecture extends AppCompatActivity {
             String partie2 = text.substring(position);
             text = partie1 + MimeUtility.decodeText(partie2);
 
+        }
+        else{
+            position = text.indexOf("=?iso-8859-1");
+            if( position != -1 ) //A modifier avec iso
+            {
+                String partie1 = text.substring(0,position);
+                String partie2 = text.substring(position);
+                text = partie1 + MimeUtility.decodeText(partie2);
+
+            }
         }
         return text;
     }

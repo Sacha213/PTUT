@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -161,15 +162,11 @@ public class Article extends AppCompatActivity {
     /******************* Fonction qui nous permet de générer les articles *******************/
     public void getArticle() {
         db.collection("articles")
-                .limit(Integer.valueOf(identifiant) + 1)// Bricolage : On choisit le dernier article qui sera par conséquent afficher grâce à l'identifiant de l'article
+                .document(identifiant)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
+                    public void onSuccess(DocumentSnapshot document) {
 
                                 titre.setText(document.getString("Nom"));
                                 contenu.setText(document.getString("Contenu"));
@@ -177,16 +174,11 @@ public class Article extends AppCompatActivity {
                                // date.setText(document.getTimestamp("Date").toString());
 
                                 afficherImage(document);
-
-                            }
-                        } else {
-                            System.out.println("Pas de document trouvé ");
-                        }
                     }
                 });
     }
 
-    public void afficherImage(QueryDocumentSnapshot document) {
+    public void afficherImage(DocumentSnapshot document) {
 
         final StorageReference monImage = storageReference.child("Images/" + document.getString("Image") + ".jpg");
 
