@@ -33,6 +33,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -178,9 +179,9 @@ public class MailLecture extends AppCompatActivity {
 
             // Création de la session
             Properties properties = new Properties();
-            properties.setProperty("mail.store.protocol", "pop3s");
-            properties.setProperty("mail.pop3s.host", HOST);
-            properties.setProperty("mail.pop3s.user", LOGIN);
+            properties.setProperty("mail.store.protocol", "imaps");
+            properties.setProperty("mail.imaps.host", HOST);
+            properties.setProperty("mail.imaps.user", LOGIN);
             Session session = Session.getInstance(properties);
 
             // Les dossiers
@@ -188,7 +189,7 @@ public class MailLecture extends AppCompatActivity {
             Folder defaultFolder = null;
             Folder inbox = null;
             try {
-                store = session.getStore(new URLName("pop3s://" + HOST));
+                store = session.getStore(new URLName("imaps://" + HOST));
                 store.connect(LOGIN, PASSWORD);
                 defaultFolder = store.getDefaultFolder();
 
@@ -219,12 +220,13 @@ public class MailLecture extends AppCompatActivity {
             //On cache l'affichage du chargement
             progressBar.setVisibility(View.INVISIBLE);
             textChargement.setVisibility(View.INVISIBLE);
+
         }
     }
 
     private void printMessages(Folder folder) {
         try {
-            folder.open(Folder.READ_ONLY);
+            folder.open(Folder.READ_WRITE); //On peut lire et modifier des propriété du message
 
 
             Message message = folder.getMessage(numeroMail);
@@ -249,6 +251,10 @@ public class MailLecture extends AppCompatActivity {
             textExpediteur = degodage(textExpediteur);
 
             affichageDuMail(textExpediteur,sujet,contenu);
+
+            //On marque le mail comme lu
+            message.setFlag(Flags.Flag.SEEN,true);
+            message.saveChanges();
 
 
         } catch (MessagingException | UnsupportedEncodingException e) {

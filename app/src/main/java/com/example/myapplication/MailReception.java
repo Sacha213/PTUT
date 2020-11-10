@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import org.jsoup.Jsoup;
 
+import javax.mail.Flags;
 import javax.mail.internet.MimeUtility;
 
 import com.google.android.gms.common.util.IOUtils;
@@ -229,10 +232,10 @@ public class MailReception extends AppCompatActivity {
 
         // Création de la session
         Properties properties = new Properties();
-        properties.setProperty("mail.store.protocol", "pop3s");
-        properties.setProperty("mail.pop3s.host", HOST);
-        properties.setProperty("mail.pop3s.user", LOGIN);
-        properties.setProperty("mail.pop3s.port","995");
+        properties.setProperty("mail.store.protocol", "imaps");
+        properties.setProperty("mail.imaps.host", HOST);
+        properties.setProperty("mail.imaps.user", LOGIN);
+        properties.setProperty("mail.imaps.port","993");
         Session session = Session.getInstance(properties);
 
         // Les dossiers
@@ -240,7 +243,7 @@ public class MailReception extends AppCompatActivity {
         Folder defaultFolder = null;
         Folder inbox = null;
         try {
-            store = session.getStore(new URLName("pop3s://" + HOST));
+            store = session.getStore(new URLName("imaps://" + HOST));
             store.connect(LOGIN, PASSWORD);
             defaultFolder = store.getDefaultFolder();
 
@@ -304,9 +307,9 @@ public class MailReception extends AppCompatActivity {
                 //On transforme le text s'il est encoder en utf-8 ou IS0
                 textExpediteur = degodage(textExpediteur);
 
+                boolean mailLu = message.isSet(Flags.Flag.SEEN); //On vérifie l'état du mail
 
-
-                affichageDuMail(textExpediteur,sujet,description,i);
+                affichageDuMail(textExpediteur,sujet,description,i,mailLu);
                 progressBar.setProgress(progressBar.getProgress()+1);//On augmente le chargement de la bar de 1
 
                 // Fin de l'asynctask plus tôt (si on quite l'activité)
@@ -329,13 +332,38 @@ public class MailReception extends AppCompatActivity {
         }
     }
 
-    private void affichageDuMail(String textExpediteur, String object, String textDescription, int numMail) {
+    private void affichageDuMail(String textExpediteur, String object, String textDescription, int numMail, boolean lu) {
 
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
 
+                //On créer un layout horizontale pour pouvoir y ajouter les mail et les pastiles
+                LinearLayout layoutHorizontale = new LinearLayout(getApplicationContext());
+                layoutHorizontale.setOrientation(LinearLayout.HORIZONTAL);
+                
+                //On affiche une pastille bleu devant le mail
+                ImageView cercle = new ImageView(getApplicationContext());
+                cercle.setImageResource(R.drawable.cercle_bleu);
+
+                //Parametre de l'image
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(50, 50); // Dimenssion de l'image
+                lp.setMargins(5,10,5,10); //margin
+                cercle.setLayoutParams(lp);
+                //Centrer la pastiles
+
+
+                if(lu){ //Si le mail est lu on n'affiche pas la pastile
+                           cercle.setVisibility(View.INVISIBLE);
+                        }
+
+                layoutHorizontale.addView(cercle); //On ajoute la pastille au layout horizontale
+
+
+                    //On créer un layout vertical pour pouvoir y ajouter les mail et les pastiles
+                    LinearLayout layoutVerticale = new LinearLayout(getApplicationContext());
+                    layoutVerticale.setOrientation(LinearLayout.VERTICAL);
 
                         //Ajout de l'expéditeur
                         TextView expediteur = new TextView(getApplicationContext());
@@ -345,7 +373,7 @@ public class MailReception extends AppCompatActivity {
                         expediteur.setTextColor(Color.BLACK);//text en noir
                         expediteur.setLines(1);//Une ligne max
                         expediteur.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
-                        layout.addView(expediteur);
+                        layoutVerticale.addView(expediteur);
 
 
                         //Ajout du sujet
@@ -354,7 +382,7 @@ public class MailReception extends AppCompatActivity {
                         sujet.setTextSize(15);//Taille du text
                         sujet.setLines(1);//Une ligne max
                         sujet.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
-                        layout.addView(sujet);
+                        layoutVerticale.addView(sujet);
 
 
                         //Ajout de la description
@@ -363,7 +391,7 @@ public class MailReception extends AppCompatActivity {
                         description.setTextSize(10);//Taille du text
                         description.setMaxLines(3);//3 lignes max
                         description.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
-                        layout.addView(description);
+                        layoutVerticale.addView(description);
 
 
                         //Ajout du diviseur
@@ -372,7 +400,11 @@ public class MailReception extends AppCompatActivity {
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layout.getWidth(), 1);
                         params.setMargins(0, 20, 0, 20);
                         diviseur.setLayoutParams(params);
-                        layout.addView(diviseur);
+                        layoutVerticale.addView(diviseur);
+
+
+                        layoutHorizontale.addView(layoutVerticale);//On ajoute les informations du mail au layout verticale
+                        layout.addView(layoutHorizontale); //On ajoute le tout à notre layout principale (celui de l'activité)
 
                         /******************* Mise en place d'écouteur *******************/
                         sujet.setOnClickListener(new View.OnClickListener() {
