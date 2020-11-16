@@ -27,9 +27,21 @@
         android:hint="Enter message"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toStartOf="@+id/btnSend"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btnSend" />
+
+    <EditText
+        android:id="@+id/etToken"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Enter Token"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toStartOf="@+id/btnSend"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etMessage" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

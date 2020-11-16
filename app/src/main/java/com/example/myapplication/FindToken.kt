@@ -28,11 +28,12 @@ class FindToken : AppCompatActivity() {
             val newToken = it.token
 
             val data = hashMapOf(
-                    "token" to newToken
+                    "token" to newToken,
+                    "ID" to "p1913943"
             )
 
 
-            db!!.collection("Users").document("p1913943").set(data)
+            db!!.collection("Users").document().set(data)
 
             /******************* Changement de page  */
             val otherActivity = Intent(applicationContext, Information::class.java) //Ouverture d'une nouvelle activité

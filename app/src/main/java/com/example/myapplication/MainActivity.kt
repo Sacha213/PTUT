@@ -11,11 +11,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
+
+
 const val TOPIC = "/topics/myTopic"
 
 class MainActivity : AppCompatActivity() {
 
     private var db: FirebaseFirestore? = null
+
+    private lateinit var myToken: String
 
 
     val TAG = "MainActivity"
@@ -25,31 +30,31 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         db = FirebaseFirestore.getInstance()
 
-        val refToken = db!!.collection("Users").document("p1913943")
 
-        val recipientToken = refToken.get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+        db!!.collection("Users")
+                .whereEqualTo("ID", "p1913943")
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        for (document in task.result!!) {
+                            myToken = document.getString("Token").toString()
+                        }
                     } else {
-                        Log.d(TAG, "No such document")
+                        Log.w(TAG, "Error getting documents.", task.exception)
                     }
                 }
-                .addOnFailureListener { exception ->
-                    Log.d(TAG, "get failed with ", exception)
-                }
 
-        recipientToken as String
+
 
 
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
 
         btnSend.setOnClickListener {
             val message = etMessage.text.toString()
-            if(message.isNotEmpty() && recipientToken.isNotEmpty()) {
+            if(message.isNotEmpty()) {
                 PushNotification(
                         NotificationData(message),
-                        recipientToken
+                        myToken
                 ).also {
                     sendNotification(it)
                 }
@@ -72,5 +77,3 @@ class MainActivity : AppCompatActivity() {
 
 
 }
-
-
