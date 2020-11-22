@@ -62,9 +62,18 @@ public class MailLecture extends AppCompatActivity {
     private WebView contenu;
     private TextView sujet;
     private TextView expediteur;
+    private ImageView pastille;
 
     private ProgressBar progressBar;
     private TextView textChargement;
+
+    // Les dossiers
+    private Store store = null;
+    private Folder defaultFolder = null;
+    private Folder inbox = null;
+
+    private Message message;
+    boolean lu = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +93,7 @@ public class MailLecture extends AppCompatActivity {
         this.contenu = findViewById(R.id.scrollLectureMail);
         this.sujet = findViewById(R.id.textSujet);
         this.expediteur = findViewById(R.id.textExpediteur);
+        this.pastille = findViewById(R.id.pastille);
 
         this.progressBar = findViewById(R.id.barChargement);
         this.textChargement = findViewById(R.id.textChargement);
@@ -92,7 +102,6 @@ public class MailLecture extends AppCompatActivity {
 
         LectureMail mails = new LectureMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
         mails.execute();
-
 
 
         /******************* Gestion des évènements du menu *******************/
@@ -104,6 +113,10 @@ public class MailLecture extends AppCompatActivity {
                 /******************* Changement de page *******************/
                 Intent otherActivity = new Intent(getApplicationContext(), Calendrier.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
+
+                //On ferme tous ce qu'on a ouvert
+                FermetureMail fermetureMail = new FermetureMail();
+                fermetureMail.execute();
 
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
@@ -120,6 +133,10 @@ public class MailLecture extends AppCompatActivity {
                 Intent otherActivity = new Intent(getApplicationContext(), Note.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
 
+                //On ferme tous ce qu'on a ouvert
+                FermetureMail fermetureMail = new FermetureMail();
+                fermetureMail.execute();
+
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
@@ -133,6 +150,10 @@ public class MailLecture extends AppCompatActivity {
                 /******************* Changement de page *******************/
                 Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
+
+                //On ferme tous ce qu'on a ouvert
+                FermetureMail fermetureMail = new FermetureMail();
+                fermetureMail.execute();
 
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
@@ -148,6 +169,10 @@ public class MailLecture extends AppCompatActivity {
                 Intent otherActivity = new Intent(getApplicationContext(), Drive.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
 
+                //On ferme tous ce qu'on a ouvert
+                FermetureMail fermetureMail = new FermetureMail();
+                fermetureMail.execute();
+
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
@@ -161,6 +186,10 @@ public class MailLecture extends AppCompatActivity {
                 /******************* Changement de page *******************/
                 Intent otherActivity = new Intent(getApplicationContext(), Messagerie.class); //Ouverture d'une nouvelle activité
                 startActivity(otherActivity);
+
+                //On ferme tous ce qu'on a ouvert
+                FermetureMail fermetureMail = new FermetureMail();
+                fermetureMail.execute();
 
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
@@ -185,9 +214,6 @@ public class MailLecture extends AppCompatActivity {
             Session session = Session.getInstance(properties);
 
             // Les dossiers
-            Store store = null;
-            Folder defaultFolder = null;
-            Folder inbox = null;
             try {
                 store = session.getStore(new URLName("imaps://" + HOST));
                 store.connect(LOGIN, PASSWORD);
@@ -199,16 +225,6 @@ public class MailLecture extends AppCompatActivity {
 
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally { // Ne pas oublier de fermer tout ça !
-                close(inbox);
-                close(defaultFolder);
-                try {
-                    if (store != null && store.isConnected()) {
-                        store.close();
-                    }
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                }
             }
 
 
@@ -229,7 +245,8 @@ public class MailLecture extends AppCompatActivity {
             folder.open(Folder.READ_WRITE); //On peut lire et modifier des propriété du message
 
 
-            Message message = folder.getMessage(numeroMail);
+            message = folder.getMessage(numeroMail);
+
 
             //Récupération du contenu du mail
             String contenu = lectureContenuMail(message);
@@ -250,11 +267,7 @@ public class MailLecture extends AppCompatActivity {
             //On transforme le text s'il est encoder en utf-8 ou IS0
             textExpediteur = degodage(textExpediteur);
 
-            affichageDuMail(textExpediteur,sujet,contenu);
-
-            //On marque le mail comme lu
-            message.setFlag(Flags.Flag.SEEN,true);
-            message.saveChanges();
+            affichageDuMail(textExpediteur,sujet,contenu, message);
 
 
         } catch (MessagingException | UnsupportedEncodingException e) {
@@ -274,7 +287,7 @@ public class MailLecture extends AppCompatActivity {
     }
 
 
-    private void affichageDuMail(String textExpediteur, String object, String textContenu) {
+    private void affichageDuMail(String textExpediteur, String object, String textContenu, Message message) {
 
         runOnUiThread(new Runnable() {
             @Override
@@ -288,6 +301,18 @@ public class MailLecture extends AppCompatActivity {
                 //Ajout du contenu
                 contenu.loadDataWithBaseURL(null, textContenu, "text/html", "utf-8", null);
 
+                /******************* Ecouteur sur l'image pastille *******************/
+                pastille.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //On va changer de pastille
+                        pastille.setImageResource(R.drawable.cercle_bleu);
+
+                        //On modifie la variable lu pour que le message soit marquer comme non lu
+                        lu = false;
+
+                    }
+                });
             }
         });
 
@@ -435,6 +460,33 @@ public class MailLecture extends AppCompatActivity {
         return text;
     }
 
+    public class FermetureMail extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            //On va marquer le mail comme non lu ou non en fonction de la variable lu
+            try {
+                message.setFlag(Flags.Flag.SEEN,lu);
+                message.saveChanges();
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+
+            // On ferme les dossier ouvert
+            close(inbox);
+            close(defaultFolder);
+            try {
+                if (store != null && store.isConnected()) {
+                    store.close();
+                }
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
     /******************* Gestion du retour en arrière *******************/
     @Override
     public void onBackPressed() {
@@ -443,6 +495,9 @@ public class MailLecture extends AppCompatActivity {
         Intent otherActivity = new Intent(getApplicationContext(), MailReception.class); //Ouverture d'une nouvelle activité
         startActivity(otherActivity);
 
+        //On ferme tous ce qu'on a ouvert
+        FermetureMail fermetureMail = new FermetureMail();
+        fermetureMail.execute();
 
         finish();//Fermeture de l'ancienne activité
         overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité

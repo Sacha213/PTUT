@@ -41,6 +41,8 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -79,7 +81,6 @@ public class MailReception extends AppCompatActivity {
     private boolean echape ;
 
     private boolean messageEnvoye;
-
 
 
     @Override
@@ -253,7 +254,8 @@ public class MailReception extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally { // Ne pas oublier de fermer tout ça !
+        } finally {
+            // On ferme les dossier ouvert
             close(inbox);
             close(defaultFolder);
             try {
@@ -307,9 +309,14 @@ public class MailReception extends AppCompatActivity {
                 //On transforme le text s'il est encoder en utf-8 ou IS0
                 textExpediteur = degodage(textExpediteur);
 
-                boolean mailLu = message.isSet(Flags.Flag.SEEN); //On vérifie l'état du mail
+                boolean lu = message.isSet(Flags.Flag.SEEN); //On vérifie l'état du mail
 
-                affichageDuMail(textExpediteur,sujet,description,i,mailLu);
+                //On récupère la date d'envoie du mail
+                Date dateEnvoi = message.getSentDate();
+                SimpleDateFormat formateur = new SimpleDateFormat("dd/MM/yyyy");
+                String strDate= formateur.format(dateEnvoi);
+
+                affichageDuMail(textExpediteur,sujet,description,i,strDate, lu);
                 progressBar.setProgress(progressBar.getProgress()+1);//On augmente le chargement de la bar de 1
 
                 // Fin de l'asynctask plus tôt (si on quite l'activité)
@@ -332,7 +339,7 @@ public class MailReception extends AppCompatActivity {
         }
     }
 
-    private void affichageDuMail(String textExpediteur, String object, String textDescription, int numMail, boolean lu) {
+    private void affichageDuMail(String textExpediteur, String object, String textDescription, int numMail,String dateEnvoi, boolean lu) {
 
         runOnUiThread(new Runnable() {
 
@@ -344,26 +351,29 @@ public class MailReception extends AppCompatActivity {
                 layoutHorizontale.setOrientation(LinearLayout.HORIZONTAL);
                 
                 //On affiche une pastille bleu devant le mail
-                ImageView cercle = new ImageView(getApplicationContext());
-                cercle.setImageResource(R.drawable.cercle_bleu);
+                ImageView pastille = new ImageView(getApplicationContext());
+                pastille.setImageResource(R.drawable.cercle_bleu);
+
 
                 //Parametre de l'image
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(50, 50); // Dimenssion de l'image
                 lp.setMargins(5,10,5,10); //margin
-                cercle.setLayoutParams(lp);
+                pastille.setLayoutParams(lp);
                 //Centrer la pastiles
 
 
                 if(lu){ //Si le mail est lu on n'affiche pas la pastile
-                           cercle.setVisibility(View.INVISIBLE);
+                           pastille.setVisibility(View.INVISIBLE);
                         }
 
-                layoutHorizontale.addView(cercle); //On ajoute la pastille au layout horizontale
+
+                layoutHorizontale.addView(pastille); //On ajoute la pastille au layout horizontale
 
 
                     //On créer un layout vertical pour pouvoir y ajouter les mail et les pastiles
                     LinearLayout layoutVerticale = new LinearLayout(getApplicationContext());
                     layoutVerticale.setOrientation(LinearLayout.VERTICAL);
+
 
                         //Ajout de l'expéditeur
                         TextView expediteur = new TextView(getApplicationContext());
@@ -374,6 +384,13 @@ public class MailReception extends AppCompatActivity {
                         expediteur.setLines(1);//Une ligne max
                         expediteur.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
                         layoutVerticale.addView(expediteur);
+
+
+                        //On ajoute la date
+                        TextView date = new TextView(getApplicationContext());
+                        date.setText(dateEnvoi);
+                        date.setTextSize(10);//Taille de la date
+                        layoutVerticale.addView(date);
 
 
                         //Ajout du sujet
@@ -594,6 +611,7 @@ public class MailReception extends AppCompatActivity {
         return text;
     }
 
+
     /******************* Gestion du retour en arrière *******************/
     @Override
     public void onBackPressed() {
@@ -603,6 +621,7 @@ public class MailReception extends AppCompatActivity {
         startActivity(otherActivity);
 
         echape=true;//On stop l'async task
+
 
         finish();//Fermeture de l'ancienne activité
         overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
