@@ -119,7 +119,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         cursor.moveToFirst(); //On déplace le curseur à la première ligne
         String notes = "";
         while (!cursor.isAfterLast()) { //On parcours tout les résultats
-            notes +=  cursor.getString(0)+"--"+cursor.getString(1)+"---"; //On enregistre le résultat de la colone 1 dans la variable string matieres
+            notes +=  cursor.getString(0)+" --"+cursor.getString(1)+"---"; //On enregistre le résultat de la colone 1 dans la variable string matieres
             cursor.moveToNext(); //On avance de ligne
         }
         cursor.close(); //On ferme le curseur

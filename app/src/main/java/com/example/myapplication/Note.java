@@ -13,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
+
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -212,8 +215,9 @@ public class Note extends AppCompatActivity {
 
             String matiere = codeRssDescription[1].split(",")[0]; //On récupère la matière de la note
 
-            //Test
-            matiere = matiere.substring(0,5); //Pb d'acccent à régler
+            //On enlève la partie M12.. qui n'est pas interresente et on garde juste l'intitulé de la matière
+            int nbCaractere = matiere.split(" ")[0].length();//On compte le nombre de caractère à enlever grace au split
+            matiere = matiere.substring(nbCaractere+1);//On fait +1 pour enlever l'espace
 
             stockageNote(matiere,description,note);
         }
@@ -246,8 +250,15 @@ public class Note extends AppCompatActivity {
 
             TextView titreMatiere = new TextView(getApplicationContext());
             titreMatiere.setText(mat);
-            titreMatiere.setTextSize(15);//Taille de la matiere
+            titreMatiere.setTextSize(20);//Taille de la matiere
+            titreMatiere.setPadding(10,10,10,10);
+            //titreMatiere.setGravity(Gravity.CENTER);
+            titreMatiere.setBackgroundColor(getResources().getColor(R.color.matiere));
+            LinearLayout.LayoutParams paramsM = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            paramsM.setMargins(0,50,0,20);
+            titreMatiere.setLayoutParams(paramsM);
             layoutVertical.addView(titreMatiere);//On l'ajoute au layout
+
 
             //Etape 4 : On récupère toutes les notes de la matière
             String[] tabNote = databaseManager.getNotes(mat).split("---");
@@ -258,13 +269,27 @@ public class Note extends AppCompatActivity {
             LinearLayout layoutHorizontale = new LinearLayout(getApplicationContext());
             layoutHorizontale.setOrientation(LinearLayout.HORIZONTAL);
 
-            for(String not : tabNote){
-                //Etape 6 : On affiche la note et sa description
+            for(int i=0; i< tabNote.length;i++ ){
 
+                if(i%3==0 && i!=0){ //On va créer un nouveau linearlayout horizontale toutes les 3 notes
+                    //On ajoute le layout Horizontale au layout vertical
+                    layoutVertical.addView(layoutHorizontale);
+
+                    layoutHorizontale = new LinearLayout(getApplicationContext()); //On crée un nouveau layout
+                    layoutHorizontale.setOrientation(LinearLayout.HORIZONTAL);
+                }
+
+                //Etape 6 : On affiche la note et sa description
                 TextView textNote = new TextView(getApplicationContext());
-                textNote.setText(not);
-                textNote.setTextSize(10);//Taille de la matiere
+                textNote.setText(tabNote[i]);
+                textNote.setTextSize(15);//Taille de la matiere
+                textNote.setBackgroundColor(getResources().getColor(R.color.note));
+                textNote.setPadding(10,10,10,10);
+                LinearLayout.LayoutParams paramsN = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                paramsN.setMargins(10,10,10,10);
+                textNote.setLayoutParams(paramsN);
                 layoutHorizontale.addView(textNote);//On l'ajoute au layout
+
             }
 
             //On ajoute le layout Horizontale au layout vertical

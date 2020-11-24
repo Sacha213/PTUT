@@ -13,4 +13,6 @@
     <color name="gris_claire">#EAECEE</color>
     <color name="gris_cheval_kikou">#EEEEEE</color>
     <color name="fond_app">#F9F9F9</color>
+    <color name="matiere">#A3E4D7</color>
+    <color name="note">#85C1E9</color>
 </resources>

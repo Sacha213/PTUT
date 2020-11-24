@@ -14,6 +14,94 @@
         android:textSize="40dp"
         android:gravity="center" />
 
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_above="@+id/boutonAccueil"
+        android:layout_below="@id/textAccueil">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+
+            <ImageView
+                android:id="@+id/etape1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/etape_1" />
+
+            <EditText
+                android:id="@+id/adresseMail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Adresse mail Lyon 1"
+                android:inputType="textEmailAddress"
+                android:layout_gravity="center"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+
+            <ImageView
+                android:id="@+id/etape2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/etape_2" />
+
+            <EditText
+                android:id="@+id/adresseTommus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Flux RSS Tomuss"
+                android:inputType="textEmailAddress"
+                android:layout_gravity="center"
+                />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+
+            <ImageView
+                android:id="@+id/etape3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/etape_3" />
+
+            <EditText
+                android:id="@+id/adresseCalendrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Lien calendrier"
+                android:inputType="textEmailAddress"
+                android:layout_gravity="center"
+                />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/boutonAccueil"
         android:layout_width="match_parent"
@@ -23,73 +111,4 @@
         android:background="@color/bleu_claire"
         android:text="Continuer" />
 
-
-    <ImageView
-        android:id="@+id/etape1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/boutonAccueil"
-        android:layout_below="@+id/textAccueil"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="277dp"
-        android:layout_marginRight="277dp"
-        android:layout_marginBottom="450dp"
-        app:srcCompat="@drawable/etape_1" />
-
-    <EditText
-        android:id="@+id/adresseMail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/etape1"
-        android:layout_alignBottom="@+id/etape1"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="102dp"
-        android:layout_marginBottom="3dp"
-        android:ems="10"
-        android:hint="Adresse mail Lyon 1"
-        android:inputType="textEmailAddress"
-        android:layout_alignLeft="@+id/etape1"
-        android:layout_marginLeft="102dp" />
-
-    <ImageView
-        android:id="@+id/etape2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/boutonAccueil"
-        android:layout_below="@+id/textAccueil"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="250dp"
-        android:layout_marginEnd="275dp"
-        android:layout_marginRight="275dp"
-        android:layout_marginBottom="250dp"
-        app:srcCompat="@drawable/etape_2" />
-
-    <ImageView
-        android:id="@+id/etape3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/boutonAccueil"
-        android:layout_below="@+id/textAccueil"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="450dp"
-        android:layout_marginEnd="275dp"
-        android:layout_marginRight="275dp"
-        android:layout_marginBottom="50dp"
-        app:srcCompat="@drawable/etape_3" />
 </RelativeLayout>
