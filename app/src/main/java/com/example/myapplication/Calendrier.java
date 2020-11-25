@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -17,6 +19,8 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Calendrier extends AppCompatActivity {
 
@@ -28,11 +32,15 @@ public class Calendrier extends AppCompatActivity {
     private ImageView messagerie;
 
     private Button deconnexion;
+    private TextView datecourante;
+    private LinearLayout layout;
 
     //Base de données
     private DatabaseManager databaseManager;
 
     private FirebaseAuth mAuth;
+
+
 
     private String url = "https://adelb.univ-lyon1.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=40699&projectId=2&calType=ical&firstDate=2020-11-23&lastDate=2020-11-28";
 
@@ -51,14 +59,17 @@ public class Calendrier extends AppCompatActivity {
 
         this.deconnexion = findViewById(R.id.boutonDeconnexion);
 
+        this.layout = findViewById(R.id.layoutCalendrier);
+        this.datecourante = findViewById(R.id.textjour);
+
         databaseManager = new DatabaseManager(this);
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE); //Gestionnaire connexion réseau
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo(); //Information du réseau
 
-
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
 
         if (networkInfo.isAvailable()) { //On vérifie qu'il y a une connexion à internet
 
@@ -239,5 +250,29 @@ public class Calendrier extends AppCompatActivity {
 
     public void affichageCalendrier(){
         //Gérer l'affichage avec le linéare layout
+
+        /******************* affichage date *******************/
+        Date d = new Date();
+        SimpleDateFormat annee = new SimpleDateFormat("yyyy");
+        SimpleDateFormat mois = new SimpleDateFormat("MM");
+        SimpleDateFormat jour = new SimpleDateFormat("dd");
+        String s1 = annee.format(d);
+        String s2 = mois.format(d);
+        String s3 = jour.format(d);
+        datecourante.setText(s3+" "+s2+" "+s1);
+
+        String [] tabdate={"08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"};
+
+        for (int i = 0; i<tabdate.length; i++){
+            TextView affdate = new TextView(this);
+            affdate.setText(tabdate[i]);
+            affdate.setPadding(20,20,10,20);
+            affdate.setTextSize(25);
+            View afftrait = new View(this);
+            afftrait.measure(100,10);
+            afftrait.setBackgroundColor(getResources().getColor(R.color.gris_cheval_kikou));
+
+            layout.addView(affdate);
+            layout.addView(afftrait);
     }
 }
