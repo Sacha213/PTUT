@@ -5,13 +5,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.Date;
+
 /******************* Classe représentant notre base de données *******************/
 public class DatabaseManager extends SQLiteOpenHelper {
 
     /******************* Attribut *******************/
 
     private static final String DATABASE_NAME = "Etu.bd"; //Nom de la base de données
-    private static final int DATABASE_VERSION = 6; //Version de la base de données
+    private static final int DATABASE_VERSION = 7; //Version de la base de données
 
     /******************* Constructeur *******************/
     public DatabaseManager( Context context){
@@ -27,7 +29,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String strSql2 = "create table MATIERES (matiere text primary key)"; //Génération de la requette SQL pour créer un table Matiere de l'utilisateur
         db.execSQL(strSql2); //On exécute la requette
 
-        String strSql3 = "create table NOTES (note text, description text, matiere text, foreign key (matiere) references MATIERES(matiere))"; //Génération de la requette SQL pour créer un table Users qui va contenir les identifiants de l'utilisateur
+        String strSql3 = "create table NOTES (note text, description text, matiere text, datePub text, foreign key (matiere) references MATIERES(matiere))"; //Génération de la requette SQL pour créer un table Users qui va contenir les identifiants de l'utilisateur
         db.execSQL(strSql3); //On exécute la requette
 
     }
@@ -95,7 +97,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return matieres;
     }
 
-    /******************* Méthode qui permet de suprimmer toutes les matières *******************/
+    /******************* Méthode qui permet de suprimmer les données de la table Matière *******************/
     public void deleteAllMatieres(){
         String strsql = "DELETE FROM MATIERES "; //Génération de la requette SQL
 
@@ -103,8 +105,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     /******************* Méthode qui permet d'insérer une note *******************/
-    public void insertNote(String note, String description, String matiere){
-        String strSql = "insert into NOTES values ('"+note+"','"+description+"','"+matiere+"')"; //Génération de la requette SQL
+    public void insertNote(String note, String description, String matiere, String datePub){
+        String strSql = "insert into NOTES values ('"+note+"','"+description+"','"+matiere+"','"+datePub+"')"; //Génération de la requette SQL
 
         this.getWritableDatabase().execSQL(strSql); //Exécution de la requette
     }
@@ -119,13 +121,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
         cursor.moveToFirst(); //On déplace le curseur à la première ligne
         String notes = "";
         while (!cursor.isAfterLast()) { //On parcours tout les résultats
-            notes +=  cursor.getString(0)+" --"+cursor.getString(1)+"---"; //On enregistre le résultat de la colone 1 dans la variable string matieres
+            notes +=  cursor.getString(0)+" --"+cursor.getString(1)+cursor.getString(3)+"---"; //On enregistre le résultat de la colone 1 dans la variable string matieres
             cursor.moveToNext(); //On avance de ligne
         }
         cursor.close(); //On ferme le curseur
 
         return notes;
     }
+
 
     /******************* Méthode qui permet de suprimmer toutes les notes *******************/
     public void deleteAllNotes(){

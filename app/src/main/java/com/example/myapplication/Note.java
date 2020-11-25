@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,6 +25,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Note extends AppCompatActivity {
 
@@ -40,6 +43,8 @@ public class Note extends AppCompatActivity {
     private DatabaseManager databaseManager;
 
     private String url = "https://tomuss.univ-lyon1.fr/S/2020/Automne/rss/a06907256c4369f";
+
+    private String[] nouvelleNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +175,7 @@ public class Note extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             //On affiche les notes
             affichageNotes();
+
             
         }
     }
@@ -198,6 +204,7 @@ public class Note extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        conn.disconnect();//On ferme la connection
         return codeRss;
     }
 
@@ -219,11 +226,17 @@ public class Note extends AppCompatActivity {
             int nbCaractere = matiere.split(" ")[0].length();//On compte le nombre de caractère à enlever grace au split
             matiere = matiere.substring(nbCaractere+1);//On fait +1 pour enlever l'espace
 
-            stockageNote(matiere,description,note);
+            //On va récuperer la date de publication de la note
+            String dateNote = codeRssItem[i].split("<pubDate>")[1]; //On récupère la partie après le <pubDate>
+            dateNote = dateNote.split("</pubDate>")[0];//On récupère la partie avant </pubDate>
+            Date date = new Date(dateNote); //On transforme la date dans le format Date
+            SimpleDateFormat formateur = new SimpleDateFormat("dd/MM/yyyy");//On créer un foprmateur pour la date
+            String strDateNote = formateur.format(date);//On formate la date de publication
+            stockageNote(matiere,description,note,strDateNote);
         }
     }
 
-    public void stockageNote(String matiere, String description, String note){
+    public void stockageNote(String matiere, String description, String note, String dateNote){
 
         //On récupère les matières de la BD
         String[] tabMatiere = databaseManager.getMatieres().split("/");
@@ -237,7 +250,7 @@ public class Note extends AppCompatActivity {
         if(!trouver)databaseManager.insertMatiere(matiere);//Si la matière n'existe pas dans la BD on l'ajoute
 
         //On ajoute la note dans la BD
-        databaseManager.insertNote(note, description, matiere);
+        databaseManager.insertNote(note, description, matiere, dateNote);
     }
 
     public void affichageNotes(){
@@ -280,14 +293,32 @@ public class Note extends AppCompatActivity {
                 }
 
                 //Etape 6 : On affiche la note et sa description
+
+                String textNot = tabNote[i].substring(0,tabNote[i].length()-10);//On enlève la partie de la date qui fait 10 caractère
+                String datePub = tabNote[i].substring(tabNote[i].length()-10);//On garde la partie de la date
+
+                Date dateToday = new Date();//ON récupère la date d'aujourd'hui
+                SimpleDateFormat formateur = new SimpleDateFormat("dd/MM/yyyy");//On créer un foprmateur pour la date
+                String strDateToday = formateur.format(dateToday);//Pareil pour la date d'aujourd'hui
+
                 TextView textNote = new TextView(getApplicationContext());
-                textNote.setText(tabNote[i]);
+                textNote.setText(textNot);
                 textNote.setTextSize(15);//Taille de la matiere
-                textNote.setBackgroundColor(getResources().getColor(R.color.note));
+
+
+                if(datePub.equals(strDateToday)){//Si la date de publication est celle d'aujourd'hui on met une couleur d'affiche différente
+                    textNote.setBackgroundColor(getResources().getColor(R.color.nouvelleNote));
+                }
+                else{ //Sinon on affiche la couleur de base
+                    textNote.setBackgroundColor(getResources().getColor(R.color.note));
+                }
                 textNote.setPadding(10,10,10,10);
                 LinearLayout.LayoutParams paramsN = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 paramsN.setMargins(10,10,10,10);
                 textNote.setLayoutParams(paramsN);
+
+                textNote.setMaxWidth(250);//On met un nombre max pour la taille de la note
+                textNote.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
                 layoutHorizontale.addView(textNote);//On l'ajoute au layout
 
             }

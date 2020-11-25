@@ -34,7 +34,7 @@ public class Calendrier extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
-    private String url = "http://adelb.univ-lyon1.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=40699&projectId=2&calType=ical&firstDate=2020-11-23&lastDate=2020-11-28";
+    private String url = "https://adelb.univ-lyon1.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=40699&projectId=2&calType=ical&firstDate=2020-11-23&lastDate=2020-11-28";
 
 
     @Override

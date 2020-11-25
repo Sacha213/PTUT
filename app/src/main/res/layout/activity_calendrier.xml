@@ -15,6 +15,37 @@
         android:textSize="40dp"
         android:gravity="center"/>
 
+    <TextView
+        android:id="@+id/textjour"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:textSize="25dp"
+        android:gravity="center"
+        android:textColor="@color/gris_cheval_kikou"/>
+
+    <ImageView
+        android:id="@+id/flechegauche"
+        android:adjustViewBounds ="true"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:gravity="right"
+        android:layout_marginTop="83dp"
+        android:layout_marginLeft="100dp"
+        app:srcCompat="@drawable/fleche_gauche"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentLeft="true" />
+
+    <ImageView
+        android:id="@+id/flechedroite"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="83dp"
+        android:layout_marginRight="100dp"
+        app:srcCompat="@drawable/fleche_droite"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="false"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
