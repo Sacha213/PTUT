@@ -20,6 +20,8 @@ private const val CHANNEL_ID = "my_channel"
 
 class FirebaseService : FirebaseMessagingService() {
 
+    private var databaseManager: DatabaseManager? = null
+
     companion object {
         var sharedPref: SharedPreferences? = null
 
@@ -42,6 +44,8 @@ class FirebaseService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
+        databaseManager = DatabaseManager(this)
+
         val intent = Intent(this, MainActivity::class.java)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationID = Random.nextInt()
@@ -53,14 +57,23 @@ class FirebaseService : FirebaseMessagingService() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, FLAG_ONE_SHOT)
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle(message.data["title"])
-                .setContentText(message.data["message"])
+                .setContentTitle(message.data["message"])
+                .setContentText(message.data["sender"])
                 .setSmallIcon(R.drawable.ic_android_black_24dp)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .build()
 
         notificationManager.notify(notificationID, notification)
+
+        val pseudoSender = message.data["sender"]
+        val message = message.data["message"]
+
+        databaseManager!!.insertMessage(message, pseudoSender)
+
+
+
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

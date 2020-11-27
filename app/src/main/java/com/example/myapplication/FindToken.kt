@@ -3,7 +3,6 @@ package com.example.myapplication
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
@@ -15,6 +14,9 @@ class FindToken : AppCompatActivity() {
 
     private var db: FirebaseFirestore? = null
 
+    private var databaseManager: DatabaseManager? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -22,18 +24,21 @@ class FindToken : AppCompatActivity() {
 
         db = FirebaseFirestore.getInstance()
 
+        databaseManager = DatabaseManager(this)
+
+
+
+
         FirebaseService.sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
             FirebaseService.token = it.token
             val newToken = it.token
 
             val data = hashMapOf(
-                    "token" to newToken,
-                    "ID" to "p1913943"
+                    "token" to newToken
             )
 
-
-            db!!.collection("Users").document().set(data)
+            db!!.collection("Users").document(databaseManager!!.pseudo.toString()).set(data)
 
             /******************* Changement de page  */
             val otherActivity = Intent(applicationContext, Information::class.java) //Ouverture d'une nouvelle activité

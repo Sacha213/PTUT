@@ -12,8 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-
-
 const val TOPIC = "/topics/myTopic"
 
 class MainActivity : AppCompatActivity() {
@@ -32,16 +30,11 @@ class MainActivity : AppCompatActivity() {
 
 
         db!!.collection("Users")
-                .whereEqualTo("ID", "p1913943")
+                .document("p1913943")
                 .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        for (document in task.result!!) {
-                            myToken = document.getString("Token").toString()
-                        }
-                    } else {
-                        Log.w(TAG, "Error getting documents.", task.exception)
-                    }
+                .addOnSuccessListener { document ->
+
+                    myToken = document.getString("token").toString()
                 }
 
 
@@ -51,9 +44,10 @@ class MainActivity : AppCompatActivity() {
 
         btnSend.setOnClickListener {
             val message = etMessage.text.toString()
-            if(message.isNotEmpty()) {
+            val sender = "Mathis"
+            if(message.isNotEmpty() && sender.isNotEmpty()) {
                 PushNotification(
-                        NotificationData(message),
+                        NotificationData(sender, message),
                         myToken
                 ).also {
                     sendNotification(it)

@@ -4,35 +4,18 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.JsonToken;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.Map;
-
-import android.content.Context;
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.gson.Gson;
+
 
 
 
@@ -73,12 +56,26 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
 
 
 
-            /******************* Changement de page *******************/
-            Intent otherActivity = new Intent(getApplicationContext(), FindToken.class); //Ouverture d'une nouvelle activité
-            startActivity(otherActivity);
+            String pseudo = databaseManager.getPseudo();
 
-            finish();//Fermeture de l'ancienne activité
-            overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+            if (pseudo == null) {
+                Intent otherActivity = new Intent(getApplicationContext(), Accueil.class);
+                startActivity(otherActivity);
+
+                finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+            }
+            else {
+                Intent otherActivity = new Intent(getApplicationContext(), FindToken.class); //Ouverture d'une nouvelle activité
+                startActivity(otherActivity);
+
+                finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+            }
+
+            /******************* Changement de page *******************/
+
+
 
         }
         catch (android.database.CursorIndexOutOfBoundsException e){ //Si une erreur se décanche c'est qu'il n'y a pas d'itentifiant
