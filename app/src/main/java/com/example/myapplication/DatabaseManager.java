@@ -13,7 +13,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Attribut *******************/
 
     private static final String DATABASE_NAME = "Etu.bd"; //Nom de la base de données
-    private static final int DATABASE_VERSION = 7; //Version de la base de données
+    private static final int DATABASE_VERSION = 8; //Version de la base de données
 
     /******************* Constructeur *******************/
     public DatabaseManager( Context context){
@@ -32,6 +32,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String strSql3 = "create table NOTES (note text, description text, matiere text, datePub text, foreign key (matiere) references MATIERES(matiere))"; //Génération de la requette SQL pour créer un table Users qui va contenir les identifiants de l'utilisateur
         db.execSQL(strSql3); //On exécute la requette
 
+        String strSql4 = "create table CALENDRIER(IDcal varchar2(16) primary key,HDEB number(4) not null,HFIN number(4) not null,date text not null, nom text, salle text, prof text)";
+        db.execSQL(strSql4); //On exécute la requette
     }
 
     /******************* Méthode appelé automatiquement si la version de la base de données a changée *******************/
@@ -137,10 +139,100 @@ public class DatabaseManager extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL(strsql); //Exécution de la requette
     }
 
+    /******************* Méthode pour insérer un cours de l'utilisateur dans la table Users *******************/
+    public void insertCours(String idcal, int HDEB,int HFIN,String date,String nom, String salle, String prof){
+        String strSql = "insert into CALENDRIER values ('"+idcal+"',"+HDEB+","+HFIN+",'"+date+"','"+nom+"','"+salle+"','"+prof+"')"; //Génération de la requette SQL
+
+        this.getWritableDatabase().execSQL(strSql); //Exécution de la requette
+    }
+
+    /******************* Méthode qui permet de connaître les données de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
+    public String[] getCours(String dateJour){
+
+        String strsql = "select IDcal from CALENDRIER where date ="+dateJour; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
 
 
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+        String[] idcal = new String[cursor.getCount()];
+        int i=0;
+        while (!cursor.isAfterLast()) { //On parcours tout les résultats
+            idcal[i] =  cursor.getString(0); //On enregistre le résultat de la première colone dans la variable string IDcal
+            cursor.moveToNext(); //On avance de ligne
+        }
 
+        cursor.close(); //On ferme le curseur
 
+        return idcal;
+    }
+    /******************* Méthode qui permet de connaître l'heure de debut d'un cours en fonction de l'id de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
+    public int getHDEB(String idcal){
 
+        String strsql = "select HDEB from CALENDRIER where IDcal ="+idcal; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+
+        int hdeb = cursor.getInt(0); //On enregistre le résultat de la colone 1 dans la variable string id
+        cursor.close(); //On ferme le curseur
+
+        return hdeb;
+    }
+    /******************* Méthode qui permet de connaître l'heure de fin d'un cours en fonction de l'id de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
+    public int getHFIN(String idcal){
+
+        String strsql = "select HFIN from CALENDRIER where IDcal ="+idcal; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+
+        int hfin = cursor.getInt(0); //On enregistre le résultat de la colone 1 dans la variable string id
+        cursor.close(); //On ferme le curseur
+
+        return hfin;
+    }
+
+    /******************* Méthode qui permet de connaître le nom d'un cours en fonction de l'id de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
+    public String getNomCours(String idcal){
+
+        String strsql = "select nom from CALENDRIER where IDcal ="+idcal; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+
+        String nom = cursor.getString(0); //On enregistre le résultat de la colone 1 dans la variable string id
+        cursor.close(); //On ferme le curseur
+
+        return nom;
+    }
+
+    /******************* Méthode qui permet de connaître la salle d'un cours en fonction de l'id de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
+    public String getSalle(String idcal){
+
+        String strsql = "select salle from CALENDRIER where IDcal ="+idcal; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+
+        String salle = cursor.getString(0); //On enregistre le résultat de la colone 1 dans la variable string id
+        cursor.close(); //On ferme le curseur
+
+        return salle;
+    }
+
+    /******************* Méthode qui permet de connaître le professeur d'un cours en fonction de l'id de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
+    public String getProf(String idcal){
+
+        String strsql = "select prof from CALENDRIER where IDcal ="+idcal; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+
+        String prof = cursor.getString(0); //On enregistre le résultat de la colone 1 dans la variable string id
+        cursor.close(); //On ferme le curseur
+
+        return prof;
+    }
+    /******************* Méthode qui permet de suprimmer les données de la table Calendrier *******************/
+    public void deleteAllCours(){
+        String strsql = "DELETE FROM CALENDRIER "; //Génération de la requette SQL
+
+        this.getWritableDatabase().execSQL(strsql); //Exécution de la requette
+    }
 
 }

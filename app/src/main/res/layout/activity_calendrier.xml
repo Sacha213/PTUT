@@ -50,13 +50,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/boutonDeconnexion"
-        android:layout_below="@+id/textCalendrier">
+        android:layout_below="@+id/textjour">
 
-        <LinearLayout
-            android:id="@+id/layoutCalendrier"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"/>
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/layoutCalendrierBack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
+
+
+            <LinearLayout
+                android:id="@+id/layoutCalendrierFront"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
+        </RelativeLayout>
+
+
 
     </ScrollView>
 
