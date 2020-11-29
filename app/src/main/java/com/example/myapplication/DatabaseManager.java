@@ -30,6 +30,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         String strSql3 = "create table Message (id number(255) primary key, pseudoSender varchar2(255), message varchar(2))";
         db.execSQL(strSql3);
+
+        String strSql4 = "create table Token (token varchar2(255) primary key)";
+        db.execSQL(strSql4);
     }
 
     /******************* Méthode appelé automatiquement si la version de la base de données a changée *******************/
@@ -112,6 +115,42 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return list;
     }
 
+    public String[] getSender() {
+        String[] list = new String[100];
 
+        String strsql = "select distinct pseudoSender from message";
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
+        if(cursor.getCount() != 0)
+        {
+            cursor.moveToFirst();
 
+            for(int i = 0; cursor.getString(0) != null; i++)
+            {
+                list[i] = cursor.getString(0);
+                cursor.moveToNext();
+            }
+            cursor.close(); //On ferme le curseur
+
+        }
+        return list;
+    }
+
+    public void insertToken(String token)
+    {
+        String strsql = "DELETE FROM Token"; //Génération de la requette SQL
+        this.getWritableDatabase().execSQL(strsql);
+        String strSql = "insert into Token values ('"+token+"')";
+        this.getWritableDatabase().execSQL(strSql);
+    }
+
+    public String getToken()
+    {
+        String strsql = "select token from Token";
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
+        cursor.moveToFirst();
+        String token = cursor.getString(0);
+        String strsql2 = "DELETE FROM Token"; //Génération de la requette SQL
+        this.getWritableDatabase().execSQL(strsql2);
+        return token;
+    }
 }

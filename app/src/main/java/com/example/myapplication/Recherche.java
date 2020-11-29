@@ -1,34 +1,84 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-public class Annonce extends AppCompatActivity {
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-    /******************* Attribut *******************/
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Recherche extends AppCompatActivity implements ListAdapter.OnNoteListener {
+
+    private static final String TAG = "Recherche";
+    private FirebaseFirestore db; //Base de donnée Firestore
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private ListAdapter listAdapter;
+
+    private List<Affichage> listeUsers = new ArrayList<>();
+    private String tmp;
+
     private ImageView calendrier; //Icônes du menu
     private ImageView notes;
     private ImageView informations;
     private ImageView drive;
     private ImageView messagerie;
+    private TextView pseudo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_annonce);
+        setContentView(R.layout.activity_recherche);
+
+
+        db = FirebaseFirestore.getInstance();
+
+        db.collection("Users")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            tmp = document.getString("pseudo");
+                            listeUsers.add(new Affichage(tmp));
+                        }
+                        recyclerView = findViewById(R.id.recyclerview_pers);
+
+                        layoutManager = new LinearLayoutManager(this);
+
+                        recyclerView.setLayoutManager(layoutManager);
+
+                        listAdapter = new ListAdapter(listeUsers,this);
+
+                        recyclerView.setAdapter(listAdapter);
+                    }
+                });
 
 
 
-        /******************* Initialisation des variables *******************/
+
         this.calendrier = findViewById(R.id.calendrier);
         this.notes = findViewById(R.id.notes);
         this.informations = findViewById(R.id.informations);
         this.drive = findViewById(R.id.drive);
         this.messagerie = findViewById(R.id.messagerie);
+
+
 
         /******************* Gestion des évènements du menu *******************/
 
@@ -57,6 +107,7 @@ public class Annonce extends AppCompatActivity {
 
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
             }
         });
 
@@ -102,4 +153,17 @@ public class Annonce extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onNoteClick(int position) {
+        Log.d(TAG, "onNoteClick: ");
+        Intent intent = new Intent(this,MainActivity.class);
+        String tmp = listeUsers.get(position).getPseudo();
+        intent.putExtra("users", tmp);
+        startActivity(intent);
+    }
 }
+
+
+
+

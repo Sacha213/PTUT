@@ -85,18 +85,12 @@ public class Accueil extends AppCompatActivity {
         /******************* Mise en place d'écouteur *******************/
         continuer.setOnClickListener(new View.OnClickListener() {
 
-            String pseudo = casePseudo.getText().toString();
-
             @Override
             public void onClick(View v) {
                 String pseudo = casePseudo.getText().toString();
-                System.out.println("laaaaaaaaaaaaaaaaa !!!!!!!!!!!");
-
-                System.out.println(pseudo);
 
                 databaseManager.insertPseudo(pseudo);
 
-                System.out.println(databaseManager.getPseudo());
 
                 /******************* Changement de page *******************/
                 Intent otherActivity = new Intent(getApplicationContext(), FindToken.class); //Ouverture d'une nouvelle activité

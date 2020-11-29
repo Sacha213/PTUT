@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    tools:context=".Recherche">
+
+    <TextView
+        android:id="@+id/textChat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chat"
+        android:textSize="50dp"
+        android:gravity="center"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_pers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:layout_below="@+id/textChat"
+        android:layout_above="@+id/calendrier" />
+
+    <ImageView
+        android:id="@+id/calendrier"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="25.75dp"
+        android:layout_marginLeft="25.75dp"
+        android:layout_marginEnd="327.25dp"
+        android:layout_marginRight="327.25dp"
+        android:layout_marginBottom="5dp"
+        app:srcCompat="@drawable/calendrier" />
+
+    <ImageView
+        android:id="@+id/notes"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="101.5dp"
+        android:layout_marginLeft="101.5dp"
+        android:layout_marginEnd="251.5dp"
+        android:layout_marginRight="251.5dp"
+        android:layout_marginBottom="5dp"
+        app:srcCompat="@drawable/classe" />
+
+    <ImageView
+        android:id="@+id/informations"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="177.25dp"
+        android:layout_marginLeft="177.25dp"
+        android:layout_marginEnd="175.75dp"
+        android:layout_marginRight="175.75dp"
+        android:layout_marginBottom="5dp"
+        app:srcCompat="@drawable/actualite" />
+
+    <ImageView
+        android:id="@+id/drive"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="253dp"
+        android:layout_marginLeft="253dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginBottom="5dp"
+        app:srcCompat="@drawable/nuage" />
+
+    <ImageView
+        android:id="@+id/messagerie"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="327.25dp"
+        android:layout_marginLeft="327.25dp"
+        android:layout_marginEnd="25.75dp"
+        android:layout_marginRight="25.75dp"
+        android:layout_marginBottom="5dp"
+        app:srcCompat="@drawable/messagerie" />
+
+
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="60dp"
+        android:background="@color/gris_claire" />
+
+
+
+</RelativeLayout>

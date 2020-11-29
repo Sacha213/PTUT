@@ -35,7 +35,8 @@ class FindToken : AppCompatActivity() {
             val newToken = it.token
 
             val data = hashMapOf(
-                    "token" to newToken
+                    "token" to newToken,
+                    "pseudo" to databaseManager!!.pseudo.toString()
             )
 
             db!!.collection("Users").document(databaseManager!!.pseudo.toString()).set(data)

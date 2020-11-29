@@ -18,7 +18,9 @@ class MainActivity : AppCompatActivity() {
 
     private var db: FirebaseFirestore? = null
 
-    private lateinit var myToken: String
+    private lateinit var tmp : String
+
+    private var databaseManager: DatabaseManager? = null
 
 
     val TAG = "MainActivity"
@@ -28,23 +30,35 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         db = FirebaseFirestore.getInstance()
 
+        databaseManager = DatabaseManager(this)
 
-        db!!.collection("Users")
-                .document("p1913943")
-                .get()
-                .addOnSuccessListener { document ->
+        if(intent != null) {
 
-                    myToken = document.getString("token").toString()
-                }
+            if (intent.hasExtra("users")) {
+                tmp = intent.getStringExtra("users")
+
+                println("laaaaaaaa")
+                println(tmp)
 
 
+                db!!.collection("Users")
+                        .document(tmp)
+                        .get()
+                        .addOnSuccessListener { document ->
 
+                            var myToken = document.getString("token").toString()
+                            databaseManager!!.insertToken(myToken)
+                        }
+
+            }
+        }
 
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
 
         btnSend.setOnClickListener {
             val message = etMessage.text.toString()
             val sender = "Mathis"
+            val myToken = databaseManager!!.token
             if(message.isNotEmpty() && sender.isNotEmpty()) {
                 PushNotification(
                         NotificationData(sender, message),
@@ -68,6 +82,5 @@ class MainActivity : AppCompatActivity() {
             Log.e(TAG, e.toString())
         }
     }
-
 
 }

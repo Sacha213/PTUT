@@ -1,13 +1,25 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-public class Annonce extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainList extends AppCompatActivity implements ListAdapter.OnNoteListener {
+
+    private static final String TAG = "MainList";
+    private DatabaseManager databaseManager;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private ListAdapter listAdapter;
 
     /******************* Attribut *******************/
     private ImageView calendrier; //Icônes du menu
@@ -15,11 +27,36 @@ public class Annonce extends AppCompatActivity {
     private ImageView informations;
     private ImageView drive;
     private ImageView messagerie;
+    private ImageView write;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_annonce);
+        setContentView(R.layout.activity_main_list);
+
+
+
+        databaseManager = new DatabaseManager(this);
+
+        String[] array = databaseManager.getSender();
+
+        List<Affichage> listeSender = new ArrayList<>();
+
+        for(int i = 0; i < array.length; i++) {
+            listeSender.add(new Affichage(array[i]));
+        }
+
+
+        recyclerView = findViewById(R.id.recyclerview_conv);
+
+        layoutManager = new LinearLayoutManager(this);
+
+        recyclerView.setLayoutManager(layoutManager );
+
+        listAdapter = new ListAdapter(listeSender, this);
+
+        recyclerView.setAdapter(listAdapter);
 
 
 
@@ -29,8 +66,26 @@ public class Annonce extends AppCompatActivity {
         this.informations = findViewById(R.id.informations);
         this.drive = findViewById(R.id.drive);
         this.messagerie = findViewById(R.id.messagerie);
+        this.write = findViewById((R.id.write));
+
+
 
         /******************* Gestion des évènements du menu *******************/
+
+        write.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /******************* Changement de page *******************/
+                Intent otherActivity = new Intent(getApplicationContext(), Recherche.class); //Ouverture d'une nouvelle activité
+                startActivity(otherActivity);
+
+                finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
+
+            }
+        });
 
         calendrier.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,5 +156,16 @@ public class Annonce extends AppCompatActivity {
 
             }
         });
+
+
+
+    }
+
+
+    @Override
+    public void onNoteClick(int position) {
+        Log.d(TAG, "onNoteClick: ");
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
     }
 }

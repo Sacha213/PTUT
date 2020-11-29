@@ -13,7 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FindTokenTest"></activity>
 
         <service
             android:name=".FirebaseService"
@@ -36,12 +35,20 @@
         <activity android:name=".Article" />
         <activity android:name=".Annonce" />
         <activity android:name=".MailReception" />
-        <activity android:name=".Accueil" />
+        <activity android:name=".Accueil" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+        </activity>
         <activity android:name=".Messagerie" />
         <activity android:name=".Drive" />
         <activity android:name=".Note" />
         <activity android:name=".Calendrier" />
         <activity android:name=".Information" />
+        <activity android:name=".MainList"/>
+        <activity android:name=".Recherche"/>
         <activity android:name=".Connexion">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
