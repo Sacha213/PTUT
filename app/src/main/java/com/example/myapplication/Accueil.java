@@ -87,7 +87,7 @@ public class Accueil extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                String pseudo = casePseudo.getText().toString();
+                String pseudo = casePseudo.getText().toString().toLowerCase();
 
                 databaseManager.insertPseudo(pseudo);
 

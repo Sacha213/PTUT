@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /******************* Classe représentant notre base de données *******************/
 public class DatabaseManager extends SQLiteOpenHelper {
 
@@ -12,7 +15,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "Etu.bd"; //Nom de la base de données
     private static final int DATABASE_VERSION = 1; //Version de la base de données
-    static int id = 0;
 
     /******************* Constructeur *******************/
     public DatabaseManager( Context context){
@@ -28,7 +30,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String strSql2 = "create table Pseudo (pseudo varchar2(255) primary key)";
         db.execSQL(strSql2);
 
-        String strSql3 = "create table Message (id number(255) primary key, pseudoSender varchar2(255), message varchar(2))";
+        String strSql3 = "create table Message (id integer primary key autoincrement, pseudoSender varchar2(255), message varchar(255))";
         db.execSQL(strSql3);
 
         String strSql4 = "create table Token (token varchar2(255) primary key)";
@@ -93,8 +95,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     public void insertMessage(String message, String pseudoSender)
     {
-        String strSql = "insert into Message values ('"+id+"','"+pseudoSender+"','"+message+"')";
-        id++;
+        String strSql = "INSERT INTO `Message` (`pseudoSender`, `message`) VALUES ('"+pseudoSender+"','"+message+"')";
         this.getWritableDatabase().execSQL(strSql);
     }
 
@@ -115,18 +116,19 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return list;
     }
 
-    public String[] getSender() {
-        String[] list = new String[100];
+    public List<String> getSender() {
+        List<String> list = new ArrayList<>();
 
-        String strsql = "select distinct pseudoSender from message";
+        String strsql = "select distinct pseudoSender from Message";
         Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
+
         if(cursor.getCount() != 0)
         {
             cursor.moveToFirst();
 
-            for(int i = 0; cursor.getString(0) != null; i++)
+            for(int i = 0; i < cursor.getCount(); i++)
             {
-                list[i] = cursor.getString(0);
+                list.add(cursor.getString(0));
                 cursor.moveToNext();
             }
             cursor.close(); //On ferme le curseur
@@ -149,8 +151,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
         cursor.moveToFirst();
         String token = cursor.getString(0);
-        String strsql2 = "DELETE FROM Token"; //Génération de la requette SQL
-        this.getWritableDatabase().execSQL(strsql2);
         return token;
     }
 }

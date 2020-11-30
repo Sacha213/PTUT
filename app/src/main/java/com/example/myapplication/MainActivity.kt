@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity() {
 
         databaseManager = DatabaseManager(this)
 
+        println(intent.getStringExtra("users"))
+
         if(intent != null) {
 
             if (intent.hasExtra("users")) {
@@ -47,6 +49,7 @@ class MainActivity : AppCompatActivity() {
                         .addOnSuccessListener { document ->
 
                             var myToken = document.getString("token").toString()
+                            println(myToken)
                             databaseManager!!.insertToken(myToken)
                         }
 
@@ -57,11 +60,12 @@ class MainActivity : AppCompatActivity() {
 
         btnSend.setOnClickListener {
             val message = etMessage.text.toString()
-            val sender = "Mathis"
+            val sender = intent.getStringExtra("users")
             val myToken = databaseManager!!.token
+            println(myToken)
             if(message.isNotEmpty() && sender.isNotEmpty()) {
                 PushNotification(
-                        NotificationData(sender, message),
+                        NotificationData(message, sender),
                         myToken
                 ).also {
                     sendNotification(it)

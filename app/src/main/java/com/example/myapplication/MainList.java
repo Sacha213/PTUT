@@ -20,6 +20,7 @@ public class MainList extends AppCompatActivity implements ListAdapter.OnNoteLis
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private ListAdapter listAdapter;
+    private List<Affichage> listeSender = new ArrayList<>();
 
     /******************* Attribut *******************/
     private ImageView calendrier; //Icônes du menu
@@ -39,13 +40,15 @@ public class MainList extends AppCompatActivity implements ListAdapter.OnNoteLis
 
         databaseManager = new DatabaseManager(this);
 
-        String[] array = databaseManager.getSender();
+        List<String> array = databaseManager.getSender();
 
         List<Affichage> listeSender = new ArrayList<>();
 
-        for(int i = 0; i < array.length; i++) {
-            listeSender.add(new Affichage(array[i]));
+        for(int i = 0; i < array.size(); i++) {
+            listeSender.add(new Affichage(array.get(i)));
         }
+
+        System.out.println(listeSender);
 
 
         recyclerView = findViewById(R.id.recyclerview_conv);
@@ -164,8 +167,19 @@ public class MainList extends AppCompatActivity implements ListAdapter.OnNoteLis
 
     @Override
     public void onNoteClick(int position) {
+        List<String> array = databaseManager.getSender();
+
+        List<Affichage> listeSender = new ArrayList<>();
+
+        for(int i = 0; i < array.size(); i++) {
+            listeSender.add(new Affichage(array.get(i)));
+        }
+
         Log.d(TAG, "onNoteClick: ");
         Intent intent = new Intent(this,MainActivity.class);
+        System.out.println(listeSender);
+        String tmp = listeSender.get(position).getPseudo();
+        intent.putExtra("users", tmp);
         startActivity(intent);
     }
 }
