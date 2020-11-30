@@ -4,111 +4,112 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_connexion2"
     tools:context=".Accueil">
 
-    <TextView
-        android:id="@+id/textAccueil"
+    <LinearLayout
+        android:id="@+id/layoutAccueil"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Accueil"
-        android:textSize="40dp"
-        android:gravity="center" />
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_above="@+id/boutonAccueil"
-        android:layout_below="@id/textAccueil">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp">
-
-            <ImageView
-                android:id="@+id/etape1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/etape_1" />
-
-            <EditText
-                android:id="@+id/adresseMail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Adresse mail Lyon 1"
-                android:inputType="textEmailAddress"
-                android:layout_gravity="center"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp">
-
-            <ImageView
-                android:id="@+id/etape2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/etape_2" />
-
-            <EditText
-                android:id="@+id/adresseTommus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Flux RSS Tomuss"
-                android:inputType="textEmailAddress"
-                android:layout_gravity="center"
-                />
-
-        </LinearLayout>
+        android:orientation="vertical">
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp">
+            android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/etape3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/etape_3" />
+                android:src="@drawable/light_1"
+                android:layout_marginLeft="30dp"/>
 
-            <EditText
-                android:id="@+id/adresseCalendrier"
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Lien calendrier"
-                android:inputType="textEmailAddress"
-                android:layout_gravity="center"
-                />
+                android:src="@drawable/light_2"
+                android:layout_marginLeft="40dp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/clock"
+                android:layout_marginLeft="60dp"
+                android:layout_marginTop="70dp"/>
 
         </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/connexion"
+            android:textSize="35sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="120dp"
+            android:gravity="center" />
+
 
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/boutonAccueil"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="78dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="0dp"
-        android:background="@color/bleu_claire"
-        android:text="Continuer" />
+        android:layout_marginBottom="50dp">
+
+        <EditText
+            android:id="@+id/adresseMail"
+            android:layout_width="300dp"
+            android:layout_height="70dp"
+            android:hint="Adresse mail Lyon 1"
+            android:textSize="20sp"
+            android:inputType="textEmailAddress"
+            android:background="@drawable/rounded_corner"
+            android:layout_gravity="center"/>
+
+
+
+        <EditText
+            android:id="@+id/adresseTommus"
+            android:layout_width="300dp"
+            android:layout_height="70dp"
+            android:hint="Flux RSS Tomuss"
+            android:inputType="textUri"
+            android:textSize="20sp"
+            android:background="@drawable/rounded_corner"
+            android:layout_gravity="center"/>
+
+        <EditText
+            android:id="@+id/adresseCalendrier"
+            android:layout_width="300dp"
+            android:layout_height="70dp"
+            android:hint="Lien du calendrier"
+            android:inputType="textUri"
+            android:textSize="20sp"
+            android:background="@drawable/rounded_corner"
+            android:layout_gravity="center"/>
+
+
+
+        <Button
+            android:id="@+id/boutonAccueil"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/bouton_connexion"
+            android:text="Continuer"
+            android:textColor="@color/white"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+
+
+
 
 </RelativeLayout>

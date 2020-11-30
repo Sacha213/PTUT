@@ -227,7 +227,7 @@ public class Calendrier extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            //On affiche les notes
+            //On affiche les cours
             affichageCalendrier();
 
         }
@@ -276,14 +276,6 @@ public class Calendrier extends AppCompatActivity {
                 String date = event[i].split("DTSTART:")[1].substring(0,8);
 
                 System.out.println("Prof"+prof);
-                System.out.println("salle"+salle);
-                System.out.println("debutCours"+debutCours);
-                System.out.println("fin"+finCours);
-                System.out.println("nom"+nomCours);
-                System.out.println("id"+idCours);
-                System.out.println("date"+date);
-
-
 
                 //on ajoute 100 equivalent a 1h a chauqe horaire car basé sur le fuseau horaire anglais
                 debutCours +=100;
@@ -294,6 +286,7 @@ public class Calendrier extends AppCompatActivity {
                 String mois = date.substring(4,6);
                 String jour = date.substring(6,8);
                 date = jour+"/"+mois+"/"+annee;
+                System.out.println(date+"HD"+debutCours);
 
                 stockageCalendrier(debutCours,finCours,nomCours,salle,prof,idCours,date);
             }
@@ -322,8 +315,12 @@ public class Calendrier extends AppCompatActivity {
         datecourante.setText(s3 + " " + s2 + " " + s1);
 
 
-        String[] tabId = databaseManager.getCours("27/11/2020");
+        String[] tabId = databaseManager.getCours("26/11/2020");
 
+        for(String id : tabId){
+            System.out.println("salle : "+databaseManager.getNomCours(id));
+
+        }
 
         //Parcourir toutes le minutes de la journée de 8h à 20h
         //Gérer l'affichage des traits, des cours et des heures (easy peasy)
@@ -349,7 +346,7 @@ public class Calendrier extends AppCompatActivity {
                 //Ajout du trait
                 View trait = new View(getApplicationContext());
                 trait.setBackgroundColor(Color.GRAY);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(lCalHori.getWidth(), 3);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutBack.getWidth(), 3);
                 //params.setMargins(0, 20, 0, 20);
                 trait.setLayoutParams(params);
                 lCalHori.addView(trait);
@@ -359,12 +356,15 @@ public class Calendrier extends AppCompatActivity {
             }
             //Etape 2 : affichage des cours
             for(String id : tabId){
+
+                //System.out.println("Hdeb : "+databaseManager.getHDEB(id));
+
                 if(databaseManager.getHDEB(id)==i){
                     int duree = databaseManager.getHFIN(id)-databaseManager.getHDEB(id);
                     TextView blockCours = new TextView(getApplicationContext());
                     blockCours.setText(databaseManager.getNomCours(id));
                     blockCours.setBackgroundColor(getResources().getColor(R.color.vert_claire));
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(lCalHori.getWidth(), duree);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutFront.getWidth(), duree);
                     blockCours.setLayoutParams(params);
                     layoutFront.addView(blockCours);
                 }

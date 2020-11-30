@@ -13,7 +13,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Attribut *******************/
 
     private static final String DATABASE_NAME = "Etu.bd"; //Nom de la base de données
-    private static final int DATABASE_VERSION = 8; //Version de la base de données
+    private static final int DATABASE_VERSION = 10; //Version de la base de données
 
     /******************* Constructeur *******************/
     public DatabaseManager( Context context){
@@ -43,6 +43,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE USERS");
         db.execSQL("DROP TABLE MATIERES");
         db.execSQL("DROP TABLE NOTES");
+        db.execSQL("DROP TABLE CALENDRIER");
         onCreate(db);
 
     }
@@ -149,7 +150,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Méthode qui permet de connaître les données de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
     public String[] getCours(String dateJour){
 
-        String strsql = "select IDcal from CALENDRIER where date ="+dateJour; //Génération de la requette SQL
+        String strsql = "select IDcal from CALENDRIER where date ='"+dateJour+"'"; //Génération de la requette SQL
         Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
 
 
@@ -159,6 +160,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         while (!cursor.isAfterLast()) { //On parcours tout les résultats
             idcal[i] =  cursor.getString(0); //On enregistre le résultat de la première colone dans la variable string IDcal
             cursor.moveToNext(); //On avance de ligne
+            i+=1;
         }
 
         cursor.close(); //On ferme le curseur
@@ -168,11 +170,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Méthode qui permet de connaître l'heure de debut d'un cours en fonction de l'id de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
     public int getHDEB(String idcal){
 
-        String strsql = "select HDEB from CALENDRIER where IDcal ="+idcal; //Génération de la requette SQL
+        String strsql = "select HDEB from CALENDRIER where IDcal='"+idcal+"'"; //Génération de la requette SQL
         Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
         cursor.moveToFirst(); //On déplace le curseur à la première ligne
 
-        int hdeb = cursor.getInt(0); //On enregistre le résultat de la colone 1 dans la variable string id
+        int hdeb = cursor.getInt(cursor.getColumnIndex("HDEB")); //On enregistre le résultat de la colone 1 dans la variable hdeb
         cursor.close(); //On ferme le curseur
 
         return hdeb;
@@ -180,7 +182,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Méthode qui permet de connaître l'heure de fin d'un cours en fonction de l'id de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
     public int getHFIN(String idcal){
 
-        String strsql = "select HFIN from CALENDRIER where IDcal ="+idcal; //Génération de la requette SQL
+        String strsql = "select HFIN from CALENDRIER where IDcal ='"+idcal+"'"; //Génération de la requette SQL
         Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
         cursor.moveToFirst(); //On déplace le curseur à la première ligne
 
@@ -193,7 +195,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Méthode qui permet de connaître le nom d'un cours en fonction de l'id de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
     public String getNomCours(String idcal){
 
-        String strsql = "select nom from CALENDRIER where IDcal ="+idcal; //Génération de la requette SQL
+        String strsql = "select nom from CALENDRIER where IDcal ='"+idcal+"'"; //Génération de la requette SQL
         Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
         cursor.moveToFirst(); //On déplace le curseur à la première ligne
 
@@ -206,7 +208,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Méthode qui permet de connaître la salle d'un cours en fonction de l'id de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
     public String getSalle(String idcal){
 
-        String strsql = "select salle from CALENDRIER where IDcal ="+idcal; //Génération de la requette SQL
+        String strsql = "select salle from CALENDRIER where IDcal ='"+idcal+"'"; //Génération de la requette SQL
         Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
         cursor.moveToFirst(); //On déplace le curseur à la première ligne
 
@@ -219,7 +221,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Méthode qui permet de connaître le professeur d'un cours en fonction de l'id de la table CALENDRIER préalablement enregistrés dans la base de données *******************/
     public String getProf(String idcal){
 
-        String strsql = "select prof from CALENDRIER where IDcal ="+idcal; //Génération de la requette SQL
+        String strsql = "select prof from CALENDRIER where IDcal ='"+idcal+"'"; //Génération de la requette SQL
         Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
         cursor.moveToFirst(); //On déplace le curseur à la première ligne
 
