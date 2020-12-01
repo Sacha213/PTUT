@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import java.util.*
 import kotlin.random.Random
 
 private const val CHANNEL_ID = "my_channel"
@@ -21,6 +22,8 @@ private const val CHANNEL_ID = "my_channel"
 class FirebaseService : FirebaseMessagingService() {
 
     private var databaseManager: DatabaseManager? = null
+
+    private lateinit var date: Date
 
     companion object {
         var sharedPref: SharedPreferences? = null
@@ -69,7 +72,9 @@ class FirebaseService : FirebaseMessagingService() {
         val pseudoSender = message.data["sender"]
         val message = message.data["message"]
 
-        databaseManager!!.insertMessage(message, pseudoSender)
+        date = Date()
+
+        databaseManager!!.insertMessage(message, pseudoSender, 1, date)
 
 
 

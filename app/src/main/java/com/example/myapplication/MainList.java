@@ -42,8 +42,6 @@ public class MainList extends AppCompatActivity implements ListAdapter.OnNoteLis
 
         List<String> array = databaseManager.getSender();
 
-        List<Affichage> listeSender = new ArrayList<>();
-
         for(int i = 0; i < array.size(); i++) {
             listeSender.add(new Affichage(array.get(i)));
         }
@@ -181,5 +179,7 @@ public class MainList extends AppCompatActivity implements ListAdapter.OnNoteLis
         String tmp = listeSender.get(position).getPseudo();
         intent.putExtra("users", tmp);
         startActivity(intent);
+        finish(); //Fermeture de l'ancienne activité
+        overridePendingTransition(0, 0);
     }
 }

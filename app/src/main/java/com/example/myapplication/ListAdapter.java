@@ -16,6 +16,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.RecyclerViewHo
     List<Affichage> listePseudo;
     private OnNoteListener onNoteListener;
 
+
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView pseudo;
@@ -23,7 +24,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.RecyclerViewHo
 
         public RecyclerViewHolder(@NonNull View itemView, OnNoteListener onNoteListener) {
             super(itemView);
-            pseudo = itemView.findViewById(R.id.nomSender);
+            pseudo = itemView.findViewById(R.id.message_text);
             this.onNoteListener = onNoteListener;
             itemView.setOnClickListener(this);
         }
@@ -43,10 +44,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.RecyclerViewHo
     @Override
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_list, parent, false);
-        RecyclerViewHolder recyclerViewHolder = new RecyclerViewHolder(view, onNoteListener);
-        return recyclerViewHolder;
-    }
+            return new RecyclerViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_list, parent, false), onNoteListener);
+        }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {

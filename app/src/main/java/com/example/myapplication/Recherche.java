@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,6 +42,8 @@ public class Recherche extends AppCompatActivity implements ListAdapter.OnNoteLi
     private ImageView drive;
     private ImageView messagerie;
     private TextView pseudo;
+    private Button button;
+    private EditText recherche;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +81,15 @@ public class Recherche extends AppCompatActivity implements ListAdapter.OnNoteLi
         this.informations = findViewById(R.id.informations);
         this.drive = findViewById(R.id.drive);
         this.messagerie = findViewById(R.id.messagerie);
+        this.button = findViewById(R.id.button2);
+        this.recherche = findViewById(R.id.recherche);
+
+       // button.setOnClickListener(new View.OnClickListener() {
+         //   @Override
+         //   public void onClick(View v) {
+        //        String temp = recherche.getText().toString();
+
+
 
 
 
@@ -161,6 +174,8 @@ public class Recherche extends AppCompatActivity implements ListAdapter.OnNoteLi
         String tmp = listeUsers.get(position).getPseudo();
         intent.putExtra("users", tmp);
         startActivity(intent);
+        finish(); //Fermeture de l'ancienne activité
+        overridePendingTransition(0, 0);
     }
 }
 

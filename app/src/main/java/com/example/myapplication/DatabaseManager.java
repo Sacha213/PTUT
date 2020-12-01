@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /******************* Classe représentant notre base de données *******************/
@@ -30,7 +31,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String strSql2 = "create table Pseudo (pseudo varchar2(255) primary key)";
         db.execSQL(strSql2);
 
-        String strSql3 = "create table Message (id integer primary key autoincrement, pseudoSender varchar2(255), message varchar(255))";
+        String strSql3 = "create table Message (id integer primary key autoincrement, pseudoSender varchar2(255), message varchar(255), type integer, date LONG)";
         db.execSQL(strSql3);
 
         String strSql4 = "create table Token (token varchar2(255) primary key)";
@@ -93,23 +94,23 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
 
-    public void insertMessage(String message, String pseudoSender)
+    public void insertMessage(String message, String pseudoSender, int type, Date date)
     {
-        String strSql = "INSERT INTO `Message` (`pseudoSender`, `message`) VALUES ('"+pseudoSender+"','"+message+"')";
+        String strSql = "INSERT INTO `Message` (`pseudoSender`, `message`, `type`, `date`) VALUES ('"+pseudoSender+"','"+message+"','"+type+"','"+date+"')";
         this.getWritableDatabase().execSQL(strSql);
     }
 
-    public String[] listMessage(String pseudoSender)
+    public List<Message> listMessage(String pseudoSender)
     {
-        String[] list = new String[20];
+        List<Message> list = new ArrayList<>();
 
-        String strsql = "select message from Message where pseudoSender = '"+pseudoSender+"'";
+        String strsql = "select message, type, date from Message where pseudoSender = '"+pseudoSender+"'";
         Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
         cursor.moveToFirst();
 
-        for(int i = 0; cursor.getString(0) != null; i++)
+        for(int i = 0; i < cursor.getCount(); i++)
         {
-            list[i] = cursor.getString(0);
+            list.add(new Message(cursor.getString(0), cursor.getInt(1), cursor.getLong(2)));
             cursor.moveToNext();
         }
         cursor.close(); //On ferme le curseur
