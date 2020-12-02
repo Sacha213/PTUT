@@ -50,6 +50,8 @@ class FirebaseService : FirebaseMessagingService() {
         databaseManager = DatabaseManager(this)
 
         val intent = Intent(this, MainActivity::class.java)
+        println(message.data["sender"])
+        intent.putExtra("users", message.data["sender"])
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationID = Random.nextInt()
 

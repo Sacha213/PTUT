@@ -22,6 +22,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
     }
 
+
     /******************* Méthode appelé automatiquement lors de la première utilisation *******************/
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -117,8 +118,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return list;
     }
 
-    public List<String> getSender() {
-        List<String> list = new ArrayList<>();
+    public List<Affichage> getSender() {
+        List<Affichage> list = new ArrayList<>();
 
         String strsql = "select distinct pseudoSender from Message";
         Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
@@ -129,7 +130,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
             for(int i = 0; i < cursor.getCount(); i++)
             {
-                list.add(cursor.getString(0));
+                String strsql2 = "select message from Message where pseudoSender = '"+cursor.getString(0)+"'";
+                Cursor cursor2 = this.getReadableDatabase().rawQuery(strsql2, null);
+                cursor2.moveToLast();
+                list.add(new Affichage(cursor.getString(0), cursor2.getString(  0)));
                 cursor.moveToNext();
             }
             cursor.close(); //On ferme le curseur
@@ -153,5 +157,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
         cursor.moveToFirst();
         String token = cursor.getString(0);
         return token;
+    }
+
+    public String getFirstMessage(String sender) {
+        String strsql = "select message from Message where pseudoSender = '"+sender+"'";
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
+        cursor.moveToFirst();
+        String tmp = cursor.getString(0);
+        return tmp;
     }
 }

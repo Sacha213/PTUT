@@ -21,6 +21,7 @@ public class MainList extends AppCompatActivity implements ListAdapter.OnNoteLis
     private RecyclerView.LayoutManager layoutManager;
     private ListAdapter listAdapter;
     private List<Affichage> listeSender = new ArrayList<>();
+    private List<String> listeMessage = new ArrayList<>();
 
     /******************* Attribut *******************/
     private ImageView calendrier; //Icônes du menu
@@ -40,11 +41,10 @@ public class MainList extends AppCompatActivity implements ListAdapter.OnNoteLis
 
         databaseManager = new DatabaseManager(this);
 
-        List<String> array = databaseManager.getSender();
+        listeSender = databaseManager.getSender();
 
-        for(int i = 0; i < array.size(); i++) {
-            listeSender.add(new Affichage(array.get(i)));
-        }
+
+
 
         System.out.println(listeSender);
 
@@ -78,8 +78,9 @@ public class MainList extends AppCompatActivity implements ListAdapter.OnNoteLis
             public void onClick(View v) {
 
                 /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Recherche.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
+                Intent intent = new Intent(getApplicationContext(), Recherche.class);
+                intent.putExtra("mode", "mainlist");//Ouverture d'une nouvelle activité
+                startActivity(intent);
 
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
@@ -165,14 +166,8 @@ public class MainList extends AppCompatActivity implements ListAdapter.OnNoteLis
 
     @Override
     public void onNoteClick(int position) {
-        List<String> array = databaseManager.getSender();
 
-        List<Affichage> listeSender = new ArrayList<>();
-
-        for(int i = 0; i < array.size(); i++) {
-            listeSender.add(new Affichage(array.get(i)));
-        }
-
+        List<Affichage> listeSender = databaseManager.getSender();
         Log.d(TAG, "onNoteClick: ");
         Intent intent = new Intent(this,MainActivity.class);
         System.out.println(listeSender);

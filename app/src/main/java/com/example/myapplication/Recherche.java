@@ -53,25 +53,60 @@ public class Recherche extends AppCompatActivity implements ListAdapter.OnNoteLi
 
         db = FirebaseFirestore.getInstance();
 
-        db.collection("Users")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            tmp = document.getString("pseudo");
-                            listeUsers.add(new Affichage(tmp));
+        System.out.println(getIntent().getStringExtra("mode"));
+
+        if(getIntent().getStringExtra("mode").equals("mainlist")) {
+            System.out.println("yooo");
+            db.collection("Users")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                tmp = document.getString("pseudo");
+                                listeUsers.add(new Affichage(tmp, null));
+                            }
+                            recyclerView = findViewById(R.id.recyclerview_pers);
+
+                            layoutManager = new LinearLayoutManager(this);
+
+                            recyclerView.setLayoutManager(layoutManager);
+
+                            listAdapter = new ListAdapter(listeUsers,this);
+
+                            recyclerView.setAdapter(listAdapter);
                         }
-                        recyclerView = findViewById(R.id.recyclerview_pers);
+                    });
+        }
 
-                        layoutManager = new LinearLayoutManager(this);
+        if(getIntent().getStringExtra("mode").equals("this")) {
+            String temp = getIntent().getStringExtra("recherche");
+            System.out.println(temp);
+            db.collection("Users")
+                    .whereEqualTo("pseudo", temp)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                tmp = document.getString("pseudo");
+                                System.out.println(tmp);
+                                listeUsers.add(new Affichage(tmp, null));
+                            }
+                            recyclerView = findViewById(R.id.recyclerview_pers);
 
-                        recyclerView.setLayoutManager(layoutManager);
+                            layoutManager = new LinearLayoutManager(this);
 
-                        listAdapter = new ListAdapter(listeUsers,this);
+                            recyclerView.setLayoutManager(layoutManager);
 
-                        recyclerView.setAdapter(listAdapter);
-                    }
-                });
+                            listAdapter = new ListAdapter(listeUsers,this);
+
+                            recyclerView.setAdapter(listAdapter);
+                        }
+                    });
+        }
+
+
+
+
 
 
 
@@ -84,10 +119,19 @@ public class Recherche extends AppCompatActivity implements ListAdapter.OnNoteLi
         this.button = findViewById(R.id.button2);
         this.recherche = findViewById(R.id.recherche);
 
-       // button.setOnClickListener(new View.OnClickListener() {
-         //   @Override
-         //   public void onClick(View v) {
-        //        String temp = recherche.getText().toString();
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String temp = recherche.getText().toString();
+                System.out.println(temp);
+                Intent intent = new Intent(getApplicationContext(), Recherche.class);
+                intent.putExtra("mode", "this");
+                intent.putExtra("recherche",temp);//Ouverture d'une nouvelle activité
+                startActivity(intent);
+                finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0, 0);
+            }
+        });
 
 
 

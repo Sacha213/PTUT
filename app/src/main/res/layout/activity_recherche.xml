@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:ems="10"
-        android:hint="Enter message"
+        android:hint="recherche"
         android:inputType="textPersonName"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:layout_below="@+id/etMessage"
+        android:layout_below="@+id/recherche"
         android:layout_above="@+id/calendrier" />
 
     <ImageView

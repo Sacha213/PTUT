@@ -17,14 +17,17 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.RecyclerViewHo
     private OnNoteListener onNoteListener;
 
 
+
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        TextView pseudo;
+        TextView pseudo, text;
         OnNoteListener onNoteListener;
+
 
         public RecyclerViewHolder(@NonNull View itemView, OnNoteListener onNoteListener) {
             super(itemView);
-            pseudo = itemView.findViewById(R.id.message_text);
+            pseudo = itemView.findViewById(R.id.message_titre);
+            text = itemView.findViewById(R.id.message_text);
             this.onNoteListener = onNoteListener;
             itemView.setOnClickListener(this);
         }
@@ -50,8 +53,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.RecyclerViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
 
+
         Affichage affichage = listePseudo.get(position);
         holder.pseudo.setText(affichage.getPseudo());
+        holder.text.setText(affichage.getLastMessage());
 
     }
 
