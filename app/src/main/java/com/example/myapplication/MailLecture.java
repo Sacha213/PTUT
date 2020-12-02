@@ -1,11 +1,15 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -17,6 +21,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.jsoup.Jsoup;
 
@@ -54,8 +65,8 @@ public class MailLecture extends AppCompatActivity {
     private ImageView messagerie;
 
     private static String HOST = "accesbv.univ-lyon1.fr";
-    private static String LOGIN = "p1908066";
-    private static String PASSWORD = "31052001sM";
+    private static String LOGIN;
+    private static String PASSWORD;
 
     private int numeroMail;
 
@@ -66,6 +77,11 @@ public class MailLecture extends AppCompatActivity {
 
     private ProgressBar progressBar;
     private TextView textChargement;
+
+    //Base de données local
+    private DatabaseManager databaseManager;
+    private FirebaseFirestore db; //Base de donnée Firestore
+    private FirebaseAuth mAuth;
 
     // Les dossiers
     private Store store = null;
@@ -98,10 +114,36 @@ public class MailLecture extends AppCompatActivity {
         this.progressBar = findViewById(R.id.barChargement);
         this.textChargement = findViewById(R.id.textChargement);
 
+        databaseManager = new DatabaseManager(this);
+        db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
+        mAuth = FirebaseAuth.getInstance();
+
+        //On récupère le login de l'utilisateur
+        LOGIN=databaseManager.getIdentifiant();
+
         /******************* Reception des mails *******************/
 
-        LectureMail mails = new LectureMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
-        mails.execute();
+            db.collection("users")
+                    .whereEqualTo("Uid",mAuth.getCurrentUser().getUid())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                    // On récupère le mot de passe de l'utilisateur
+                                    PASSWORD = document.getString("Password");
+                                }
+
+                                /******************* Reception des mails *******************/
+                                LectureMail mails = new LectureMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
+                                mails.execute();
+                            }
+                        }
+                    });
+
 
 
         /******************* Gestion des évènements du menu *******************/
@@ -306,7 +348,7 @@ public class MailLecture extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         //On va changer de pastille
-                        pastille.setImageResource(R.drawable.cercle_bleu);
+                        pastille.setImageResource(R.drawable.pastille_bleu);
 
                         //On modifie la variable lu pour que le message soit marquer comme non lu
                         lu = false;

@@ -4,6 +4,7 @@ package com.example.myapplication;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -254,6 +255,7 @@ public class Information extends AppCompatActivity {
                                 titre.setText(document.getString("Nom"));
                                 titre.setGravity(Gravity.CENTER);//Centrage du titre
                                 titre.setTextSize(25);//Taille du titre
+                                titre.setTypeface(null, Typeface.BOLD);//Gras
                                 layout.addView(titre);
 
                                 //Ajout d'un espace pour séparer les articles

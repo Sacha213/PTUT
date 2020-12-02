@@ -6,13 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".Article">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background_information"
+        android:rotation="-4"
+        android:layout_above="@id/scrollArticle"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginTop="-20dp"
+        android:layout_marginRight="-10dp"/>
+
+
+
     <TextView
         android:id="@+id/textTitre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Titre"
-        android:textSize="30dp"
-        android:gravity="center"/>
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"/>
 
 
 
@@ -23,7 +38,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/textTitre"
-        android:layout_above="@+id/divider">
+        android:layout_above="@+id/divider"
+        android:layout_marginTop="15dp">
 
 
         <RelativeLayout
@@ -110,7 +126,7 @@
         android:layout_marginEnd="251.5dp"
         android:layout_marginRight="251.5dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/classe" />
+        app:srcCompat="@drawable/cartable" />
 
     <ImageView
         android:id="@+id/informations"
@@ -126,7 +142,7 @@
         android:layout_marginEnd="175.75dp"
         android:layout_marginRight="175.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/actualite" />
+        app:srcCompat="@drawable/news_v2" />
 
     <ImageView
         android:id="@+id/drive"

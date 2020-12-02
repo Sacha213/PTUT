@@ -6,20 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".NouvelleAnnonce">
 
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background_information"
+        android:rotation="-4"
+        android:layout_above="@id/titreNewAnnonce"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginTop="-20dp"
+        android:layout_marginRight="-10dp"/>
+
+
+
     <TextView
         android:id="@+id/textNouvelleAnnonce"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Nouvelle Annonce"
-        android:textSize="40dp"
-        android:gravity="center"/>
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"/>
 
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/textNouvelleAnnonce"
-        android:background="@color/gris_claire" />
 
     <EditText
         android:id="@+id/titreNewAnnonce"
@@ -29,7 +39,7 @@
         android:ems="10"
         android:hint="Titre"
         android:inputType="text"
-        android:layout_below="@+id/divider2"
+        android:layout_below="@+id/textNouvelleAnnonce"
         android:layout_marginTop="15dp"
         />
 
@@ -115,18 +125,21 @@
             android:layout_height="match_parent"
             android:inputType="textMultiLine"
             android:text="\n\n"
-            android:background="@color/gris_claire"/>
+            android:background="#FFECDA"/>
     </ScrollView>
 
     <Button
         android:id="@+id/boutonPublierAnnonce"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="60dp"
-        android:layout_above="@+id/divider"
-        android:background="@color/vert_claire"
+        android:background="@drawable/bouton_annonce"
         android:text="Publier Annonce"
-        android:textSize="20dp"
-        android:textColor="@color/white" />
+        android:textSize="17sp"
+        android:textColor="@color/white"
+        android:layout_above="@+id/divider"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="20dp"
+        />
 
     <!-- Menu  -->
 
@@ -162,7 +175,7 @@
         android:layout_marginEnd="251.5dp"
         android:layout_marginRight="251.5dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/classe" />
+        app:srcCompat="@drawable/cartable" />
 
     <ImageView
         android:id="@+id/informations"
@@ -178,7 +191,7 @@
         android:layout_marginEnd="175.75dp"
         android:layout_marginRight="175.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/actualite" />
+        app:srcCompat="@drawable/news_v2" />
 
     <ImageView
         android:id="@+id/drive"

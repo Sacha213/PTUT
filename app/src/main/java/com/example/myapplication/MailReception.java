@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +10,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +30,12 @@ import javax.mail.Flags;
 import javax.mail.internet.MimeUtility;
 
 import com.google.android.gms.common.util.IOUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
 import java.io.BufferedReader;
@@ -41,6 +50,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.security.AllPermission;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -75,8 +85,13 @@ public class MailReception extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private static String HOST = "accesbv.univ-lyon1.fr";
-    private static String LOGIN = "p1908066";
-    private static String PASSWORD = "31052001sM";
+    private static String LOGIN;
+    private static String PASSWORD;
+
+    //Base de données local
+    private DatabaseManager databaseManager;
+    private FirebaseFirestore db; //Base de donnée Firestore
+    private FirebaseAuth mAuth;
 
     private boolean echape ;
 
@@ -99,27 +114,51 @@ public class MailReception extends AppCompatActivity {
         this.progressBar = findViewById(R.id.progressBar);
         this.layout = findViewById(R.id.scrollReceptionMail);
 
+        databaseManager = new DatabaseManager(this);
+        db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
+        mAuth = FirebaseAuth.getInstance();
+
         Intent intent = getIntent();//On récupaire les données transmise venant de l'ancienne activité
         messageEnvoye = intent.getBooleanExtra("MessageEnvoyer",false);
 
         echape = false;
 
+        //On récupère le login de l'utilisateur
+        LOGIN=databaseManager.getIdentifiant();
 
         /******************* Reception des mails *******************/
 
+            db.collection("users")
+                    .whereEqualTo("Uid",mAuth.getCurrentUser().getUid())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-        TelechargementMail mails = new TelechargementMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
-        mails.execute();
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
 
+                                    // On récupère le mot de passe de l'utilisateur
+                                    PASSWORD = document.getString("Password");
 
-        /******************* Affichage de la boite de dialogue si message envoyer *******************/
-        if (messageEnvoye){
-            AlertDialog.Builder msgEnvoyer = new AlertDialog.Builder(this);
+                                }
 
-            msgEnvoyer.setTitle("Mail envoyé"); //Titre
-            msgEnvoyer.setIcon(R.drawable.valider); //Ajout de l'émoji valider
-            msgEnvoyer.show(); //Affichage de la boîte de dialogue
-        }
+                                /******************* Reception des mails *******************/
+                                TelechargementMail mails = new TelechargementMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
+                                mails.execute();
+                            }
+                        }
+                    });
+
+            if(messageEnvoye){
+                /******************* Affichage de la boîte de dialogue d'envoie d'un message *******************/
+                AlertDialog.Builder erreur = new AlertDialog.Builder(this);
+                erreur.setTitle("Super..."); //Titre
+                erreur.setMessage("Votre message à bien été envoyé."); //Message
+                erreur.setIcon(R.drawable.mail_sent); //Ajout de l'émoji caca
+                erreur.show(); //Affichage de la boîte de dialogue
+            }
+
 
 
         /******************* Mise en place d'écouteur *******************/
@@ -358,7 +397,7 @@ public class MailReception extends AppCompatActivity {
                 
                 //On affiche une pastille bleu devant le mail
                 ImageView pastille = new ImageView(getApplicationContext());
-                pastille.setImageResource(R.drawable.cercle_bleu);
+                pastille.setImageResource(R.drawable.pastille_bleu);
 
 
                 //Parametre de l'image

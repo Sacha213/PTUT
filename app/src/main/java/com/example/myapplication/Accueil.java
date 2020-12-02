@@ -30,6 +30,8 @@ public class Accueil extends AppCompatActivity {
     private Button continuer;
     private AlertDialog.Builder bienvenueDialogue; //Boite de dialogue pour un message de bienvenue
     private EditText mail;
+    private EditText adresseTomuss;
+    private EditText adresseCalendrier;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db; //Base de donnée Firestore
@@ -42,6 +44,8 @@ public class Accueil extends AppCompatActivity {
     private String nom;
     private String prenom;
 
+    private AlertDialog.Builder erreur;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,8 @@ public class Accueil extends AppCompatActivity {
         this.continuer = findViewById(R.id.boutonAccueil);
         bienvenueDialogue = new AlertDialog.Builder(this); //Création de la boîte de dialogue
         this.mail = findViewById(R.id.adresseMail);
+        this.adresseCalendrier = findViewById(R.id.adresseCalendrier);
+        this.adresseTomuss = findViewById(R.id.adresseTommus);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -63,14 +69,19 @@ public class Accueil extends AppCompatActivity {
         id = intent.getStringExtra("Identifiant");
         mdp = intent.getStringExtra("MotDePasse");
 
+        erreur = new AlertDialog.Builder(this); //création de la boîte de dialogue
+
 
 
         /******************* Affichage de la boîte de dialogue de bienvenue *******************/ // à enlever après avoir créer un parcours d'initialisation de l'application pour l'utilisateur
-        bienvenueDialogue.setTitle("Bienvenue"); //Titre
-        bienvenueDialogue.setMessage("Bravo, tu as réussi à te connecter "); //Message
-        bienvenueDialogue.setIcon(R.drawable.valider); //Ajout de l'icone valider
+        bienvenueDialogue.setTitle("Tu y est presque..."); //Titre
+        bienvenueDialogue.setMessage("Nous avons encore besoin de quelques informations pour pouvoir activer toutes les fonctionnalités de l’application.\n" +
+                "\n" +
+                "* Il te faut maintenant renseigner ton adresse mail de l’université Lyon 1.\n" +
+                "* Mais aussi le lien du flux RSS de tes notes que tu retrouveras sur Tomuss.\n" +
+                "* Et enfin le lien de ton calendrier accessible en l’exportant depuis internet."); //Message
+        bienvenueDialogue.setIcon(R.drawable.checklist); //Ajout de l'icone valider
         bienvenueDialogue.show(); //Affichage de la boîte de dialogue
-
 
 
         /******************* Mise en place d'écouteur *******************/
@@ -78,6 +89,14 @@ public class Accueil extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+
+                //On récupère les information entrées par l'utilisateur
+                String adresseMail = String.valueOf(mail.getText()); //Adresse mail
+                String lienTomuss = String.valueOf(adresseTomuss.getText());
+                String lienCalendrier = String.valueOf(adresseCalendrier.getText());
+
+                //On vérifie que l'utilisateur à bien remplie tout les champs
+                if (adresseMail.length()>10 && lienCalendrier.length()>10 && lienTomuss.length()>10){
 
 
                 /******************* Connection de l'utilisateur *******************/
@@ -88,8 +107,8 @@ public class Accueil extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 //Etape 2 : Si l'utilisateur est connecté on change d'activité
 
-                                //On enregistre l'id lyon1 dans la base de données local
-                                databaseManager.insertIdentifiant(id);
+                                //On enregistre les données de l'utilisateur dans la base de données local
+                                databaseManager.insertUser(id, adresseMail, lienTomuss, lienCalendrier);
 
                                 /******************* Changement de page *******************/
 
@@ -105,7 +124,6 @@ public class Accueil extends AppCompatActivity {
                                 //Si il n'y a pas de compte, on en créer un
 
                                 //On récupère les différentes informations du mail
-                                String adresseMail = String.valueOf(mail.getText()); //Adresse mail
                                 String partie1 = adresseMail.split("@")[0]; //La partie avant @
                                 prenom = partie1.split("\\.")[0]; //Avant le .
                                 nom = partie1.split("\\.")[1]; //Après le .
@@ -132,8 +150,8 @@ public class Accueil extends AppCompatActivity {
 
                                                 db.collection("users").add(data);
 
-                                                //On enregistre l'id lyon1 dans la base de données local
-                                                databaseManager.insertIdentifiant(id);
+                                                //On enregistre les données de l'utilisateur dans la base de données local
+                                                databaseManager.insertUser(id, adresseMail, lienTomuss, lienCalendrier);
 
                                                 //Etape 4 : On change d'activité
 
@@ -146,15 +164,19 @@ public class Accueil extends AppCompatActivity {
                                                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
 
-                                            } else {
+                                            }
+                                            else {
                                                 //Etape 3 : Il y a un problème de création de compte ou de connection (ex : pas d'internet)
 
-                                                // On affiche un message d'erreur
-                                                System.out.println("We have a problem");
+                                                /******************* Affichage de la boîte de dialogue d'erreur *******************/
+                                                erreur.setTitle("Oups..."); //Titre
+                                                erreur.setMessage("Un problème est survenu lors de la création de votre compte, veuillez réessayer plus tard"); //Message
+                                                erreur.setIcon(R.drawable.road_closure); //Ajout de l'émoji caca
+                                                erreur.show(); //Affichage de la boîte de dialogue
 
                                             }
 
-                                            // ...
+
                                             }
                                         });
 
@@ -163,6 +185,17 @@ public class Accueil extends AppCompatActivity {
                         });
 
 
+                }
+
+                else{
+                    //On affiche une erreur
+
+                    /******************* Affichage de la boîte de dialogue d'erreur *******************/
+                    erreur.setTitle("Oups..."); //Titre
+                    erreur.setMessage("Il semblerait que vous n'avez pas entré toutes les informations"); //Message
+                    erreur.setIcon(R.drawable.road_closure); //Ajout de l'émoji caca
+                    erreur.show(); //Affichage de la boîte de dialogue
+                }
 
             }
         });

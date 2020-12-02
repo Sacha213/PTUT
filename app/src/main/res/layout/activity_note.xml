@@ -4,16 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fond_accueil"
+    android:background="@color/white"
     tools:context=".Note">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background_note"
+        android:layout_above="@+id/scrollNote"
+        android:rotation="-4"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginTop="-20dp"
+        android:layout_marginRight="-10dp"/>
+
+
 
     <TextView
         android:id="@+id/textNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Notes"
-        android:textSize="40dp"
-        android:gravity="center"/>
+        android:text="Note"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"/>
 
 
     <ScrollView
@@ -21,7 +37,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/divider"
-        android:layout_below="@+id/textNote">
+        android:layout_below="@+id/textNote"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/background_tree_and_area_v2">
 
         <LinearLayout
             android:id="@+id/dynamiqueLayoutNotes"
@@ -66,7 +84,7 @@
         android:layout_marginEnd="251.5dp"
         android:layout_marginRight="251.5dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/classe" />
+        app:srcCompat="@drawable/cartable_v2" />
 
     <ImageView
         android:id="@+id/informations"
@@ -82,7 +100,7 @@
         android:layout_marginEnd="175.75dp"
         android:layout_marginRight="175.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/actualite" />
+        app:srcCompat="@drawable/news" />
 
     <ImageView
         android:id="@+id/drive"

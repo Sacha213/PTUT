@@ -154,9 +154,9 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
 
             else{
                 /******************* Affichage de la boîte de dialogue d'erreur *******************/
-                erreur.setTitle("Oupsi"); //Titre
-                erreur.setMessage("Il semblerait que votre identifiant et/ou votre mot de passe soit incorect"); //Message
-                erreur.setIcon(R.drawable.caca); //Ajout de l'émoji caca
+                erreur.setTitle("Oups..."); //Titre
+                erreur.setMessage("Il semblerait que votre identifiant et/ou votre mot de passe soit incorrect"); //Message
+                erreur.setIcon(R.drawable.road_closure); //Ajout de l'émoji caca
                 erreur.show(); //Affichage de la boîte de dialogue
             }
         }

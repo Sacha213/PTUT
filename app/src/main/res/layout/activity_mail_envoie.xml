@@ -8,25 +8,45 @@
     tools:context=".MailEnvoie">
 
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background_mail"
+        android:layout_above="@+id/editTextDestinataire"
+        android:rotation="-4"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginTop="-20dp"
+        android:layout_marginRight="-10dp"/>
+
+
+
     <TextView
         android:id="@+id/textMail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Mail"
-        android:textSize="40dp"
-        android:gravity="center"/>
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"/>
 
     <ImageView
         android:id="@+id/imageEnvoyer"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginEnd="0dp"
-        android:layout_marginRight="0dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginTop="5dp"
         android:layout_above="@+id/editTextDestinataire"
-        app:srcCompat="@drawable/envoyer" />
+        app:srcCompat="@drawable/send"
+        android:elevation="4dp"
+        android:background="@drawable/shadow"
+        />
+
+
 
 
     <EditText
@@ -47,6 +67,7 @@
         android:layout_below="@+id/editTextDestinataire"
         android:ems="100"
         android:hint="Object :"
+        android:textStyle="bold"
         android:inputType="textEmailSubject"
         android:backgroundTint="@color/gris_claire"
         />
@@ -66,7 +87,6 @@
             android:layout_height="match_parent"
             android:inputType="textMultiLine"
             android:hint="Message"
-            android:text="\n\nEnvoyé depuis mon Iphone"
             android:background="@android:color/transparent"/>
     </ScrollView>
 
@@ -104,7 +124,7 @@
         android:layout_marginEnd="251.5dp"
         android:layout_marginRight="251.5dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/classe" />
+        app:srcCompat="@drawable/cartable" />
 
     <ImageView
         android:id="@+id/informations"
@@ -120,7 +140,7 @@
         android:layout_marginEnd="175.75dp"
         android:layout_marginRight="175.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/actualite" />
+        app:srcCompat="@drawable/news" />
 
     <ImageView
         android:id="@+id/drive"
@@ -152,7 +172,7 @@
         android:layout_marginEnd="25.75dp"
         android:layout_marginRight="25.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/messagerie" />
+        app:srcCompat="@drawable/messagerie_v2" />
 
 
 

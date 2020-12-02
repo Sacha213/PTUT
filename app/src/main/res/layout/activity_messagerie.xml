@@ -9,41 +9,68 @@
 
 
 
-    <ImageView
-        android:id="@+id/mail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_above="@+id/divider"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="106dp"
-        android:layout_marginLeft="106dp"
-        android:layout_marginTop="363dp"
-        android:layout_marginEnd="105dp"
-        android:layout_marginRight="105dp"
-        android:layout_marginBottom="107dp"
-        app:srcCompat="@drawable/mail" />
+        android:weightSum="2"
+        android:background="@drawable/background_mail">
 
-    <ImageView
-        android:id="@+id/chat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:src="@drawable/background_chat"
+            android:layout_weight="1"
+            android:rotation="-4"
+            android:layout_marginLeft="-15dp"
+            android:layout_marginTop="-20dp"
+            android:layout_marginRight="-10dp"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:src="@drawable/background_mail"
+            android:layout_weight="1"
+            android:rotation="-4"
+            android:layout_marginLeft="-15dp"
+            android:layout_marginRight="-15dp"/>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_above="@+id/divider"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="106dp"
-        android:layout_marginLeft="106dp"
-        android:layout_marginTop="69dp"
-        android:layout_marginEnd="105dp"
-        android:layout_marginRight="105dp"
-        android:layout_marginBottom="401dp"
-        app:srcCompat="@drawable/chat" />
+        android:weightSum="2">
+
+        <ImageView
+            android:id="@+id/chat"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/chat"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/mail"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/secured_letter"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+
+
+
+
+
+
 
     <!-- Menu  -->
 
@@ -77,7 +104,7 @@
         android:layout_marginEnd="251.5dp"
         android:layout_marginRight="251.5dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/classe" />
+        app:srcCompat="@drawable/cartable" />
 
     <ImageView
         android:id="@+id/informations"
@@ -93,7 +120,7 @@
         android:layout_marginEnd="175.75dp"
         android:layout_marginRight="175.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/actualite" />
+        app:srcCompat="@drawable/news" />
 
     <ImageView
         android:id="@+id/drive"
@@ -125,7 +152,7 @@
         android:layout_marginEnd="25.75dp"
         android:layout_marginRight="25.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/messagerie" />
+        app:srcCompat="@drawable/messagerie_v2" />
 
 
 

@@ -13,7 +13,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Attribut *******************/
 
     private static final String DATABASE_NAME = "Etu.bd"; //Nom de la base de données
-    private static final int DATABASE_VERSION = 10; //Version de la base de données
+    private static final int DATABASE_VERSION = 11; //Version de la base de données
 
     /******************* Constructeur *******************/
     public DatabaseManager( Context context){
@@ -23,7 +23,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Méthode appelé automatiquement lors de la première utilisation *******************/
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String strSql1 = "create table USERS (idEtudiant varchar2(8) primary key)"; //Génération de la requette SQL pour créer un table Users qui va contenir les identifiants de l'utilisateur
+        String strSql1 = "create table USERS (idEtudiant varchar2(8) primary key, mail text, lienTomuss text, lienCalendrier text)"; //Génération de la requette SQL pour créer un table Users qui va contenir les identifiants de l'utilisateur
         db.execSQL(strSql1); //On exécute la requette
 
         String strSql2 = "create table MATIERES (matiere text primary key)"; //Génération de la requette SQL pour créer un table Matiere de l'utilisateur
@@ -48,9 +48,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     }
 
-    /******************* Méthode pour insérer l'identifiant de l'utilisateur dans la table Users *******************/
-    public void insertIdentifiant(String id){
-        String strSql = "insert into Users values ('"+id+"')"; //Génération de la requette SQL
+    /******************* Méthode pour insérer un utilisateur dans la table Users *******************/
+    public void insertUser(String id, String mail, String lienTomuss, String lienCalendrier){
+        String strSql = "insert into Users values ('"+id+"','"+mail+"','"+lienTomuss+"','"+lienCalendrier+"')"; //Génération de la requette SQL
 
         this.getWritableDatabase().execSQL(strSql); //Exécution de la requette
     }
@@ -66,6 +66,45 @@ public class DatabaseManager extends SQLiteOpenHelper {
         cursor.close(); //On ferme le curseur
 
         return id;
+    }
+
+    /******************* Méthode qui permet de connaître l'email de l'utilisateur *******************/
+    public String getMail(){
+
+        String strsql = "select mail from Users"; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+
+        String mail = cursor.getString(0); //On enregistre le résultat de la colone 1 dans la variable string id
+        cursor.close(); //On ferme le curseur
+
+        return mail;
+    }
+
+    /******************* Méthode qui permet de récupérer le lien Tomuss *******************/
+    public String getLienTomuss(){
+
+        String strsql = "select lienTomuss from Users"; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+
+        String lien = cursor.getString(0); //On enregistre le résultat de la colone 1 dans la variable string id
+        cursor.close(); //On ferme le curseur
+
+        return lien;
+    }
+
+    /******************* Méthode qui permet de récupérer le lien du calendrier *******************/
+    public String getLienCalendrier(){
+
+        String strsql = "select lienCalendrier from Users"; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+
+        String lien = cursor.getString(0); //On enregistre le résultat de la colone 1 dans la variable string id
+        cursor.close(); //On ferme le curseur
+
+        return lien;
     }
 
 

@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -50,8 +51,12 @@ public class MailEnvoie extends AppCompatActivity {
 
     private static String HOST = "smtpbv.univ-lyon1.fr";
     private static String LOGIN;
-    private static String ACCOUNT = "sacha.montel@etu.univ-lyon1.fr";
-    private static String PASSWORD ;
+    private static String ACCOUNT;
+    private static String PASSWORD;
+    private static String NOM;
+    private static String PRENOM;
+
+    private boolean sent;
 
 
     @Override
@@ -78,7 +83,9 @@ public class MailEnvoie extends AppCompatActivity {
 
         LOGIN = databaseManager.getIdentifiant();
 
-        // On récupère le mot de passe de l'utilisateur
+        ACCOUNT = databaseManager.getMail();
+
+        // On récupère le mot de passe de l'utilisateur, son nom et son prénom
         db.collection("users")
                 .whereEqualTo("Uid",mAuth.getCurrentUser().getUid())
                 .limit(1)
@@ -91,6 +98,11 @@ public class MailEnvoie extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
 
                                 PASSWORD = document.getString("Password");
+                                NOM = document.getString("Nom");
+                                PRENOM = document.getString("Prénom");
+
+                                //On ajoute la signature à la fin du mail
+                                contenu.setText("Bonjour,\n\n\n\nCordialement,\n"+PRENOM+" "+NOM);
 
                             }
                         } else {
@@ -99,16 +111,28 @@ public class MailEnvoie extends AppCompatActivity {
                     }
                 });
 
-        /******************* Mise en place d'écouteur *******************/
-        envoyer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /******************* Envoie d'un mail *******************/
-                EnvoieMessage message = new EnvoieMessage(); // On instanci l'objet message de la classe EnvoieMessage qui est dans une AsyncTask
-                message.execute(object.getText().toString(),contenu.getText().toString(),destinataire.getText().toString());
 
-            }
-        });
+        /******************* Gestion de l'envoi d'un mail *******************/
+
+            /******************* Mise en place d'écouteur *******************/
+            envoyer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    /******************* Envoie d'un mail *******************/
+                    EnvoieMessage message = new EnvoieMessage(); // On instanci l'objet message de la classe EnvoieMessage qui est dans une AsyncTask
+                    message.execute(object.getText().toString(), contenu.getText().toString(), destinataire.getText().toString());
+
+
+                }
+            });
+
+
+
+
+
+
+
 
 
 
@@ -226,6 +250,8 @@ public class MailEnvoie extends AppCompatActivity {
                 //message.addRecipients(Message.RecipientType.CC, copyDest);
             } catch (MessagingException e) {
                 e.printStackTrace();
+
+                sent=false;//Le message n'est pas envoyé
             }
 
             //Envoi du message
@@ -234,8 +260,12 @@ public class MailEnvoie extends AppCompatActivity {
                 transport = session.getTransport("smtp");
                 transport.connect(LOGIN, PASSWORD);
                 transport.sendMessage(message, new Address[] { new InternetAddress(destinataire)});
+
+                sent=true;//Le message est envoyé
             } catch (MessagingException e) {
                 e.printStackTrace();
+
+                sent=false;//Le message n'est pas envoyé
             } finally {
                 try {
                     if (transport != null) {
@@ -250,15 +280,28 @@ public class MailEnvoie extends AppCompatActivity {
         }
 
         protected void onPostExecute(Void voids) {
-            System.out.println("Message envoyer");
 
-            /******************* Changement de page *******************/
-            Intent otherActivity = new Intent(getApplicationContext(), MailReception.class); //Ouverture d'une nouvelle activité
-            otherActivity.putExtra("MessageEnvoyer",true); //Envoie de donner dans la nouvelle activité (message envoyé)
-            startActivity(otherActivity);
+            if(sent){//S'il n'y a pas eu d'erreur alors on retourne à la page mail
+                /******************* Changement de page *******************/
+                Intent otherActivity = new Intent(getApplicationContext(), MailReception.class); //Ouverture d'une nouvelle activité
+                otherActivity.putExtra("MessageEnvoyer", true); //Envoie de donner dans la nouvelle activité (message envoyé)
+                startActivity(otherActivity);
 
-            finish();//Fermeture de l'ancienne activité
-            overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+                finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
+            }
+            else{
+
+                        /******************* Affichage de la boîte de dialogue d'erreur *******************/
+                        AlertDialog.Builder erreur = new AlertDialog.Builder(MailEnvoie.this);
+                        erreur.setTitle("Oups..."); //Titre
+                        erreur.setMessage("Une erreur est survenue, avez-vous mis une adresse mail valide ?"); //Message
+                        erreur.setIcon(R.drawable.road_closure); //Ajout de l'émoji caca
+                        erreur.show(); //Affichage de la boîte de dialogue
+
+
+
+            }
 
         }
     }

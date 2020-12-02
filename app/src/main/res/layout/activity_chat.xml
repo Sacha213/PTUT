@@ -6,13 +6,48 @@
     android:layout_height="match_parent"
     tools:context=".Chat">
 
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background_chat"
+        android:rotation="-4"
+        android:layout_above="@id/scrollChat"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginTop="-20dp"
+        android:layout_marginRight="-10dp"/>
+
+
+
     <TextView
         android:id="@+id/textChat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Chat"
-        android:textSize="40dp"
-        android:gravity="center"/>
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"/>
+
+    <ScrollView
+        android:id="@+id/scrollChat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/divider"
+        android:layout_below="@+id/textChat"
+        android:layout_marginTop="15dp">
+
+        <LinearLayout
+            android:id="@+id/dynamiqueLayoutChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+
+    </ScrollView>
 
     <!-- Menu  -->
 
@@ -46,7 +81,7 @@
         android:layout_marginEnd="251.5dp"
         android:layout_marginRight="251.5dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/classe" />
+        app:srcCompat="@drawable/cartable" />
 
     <ImageView
         android:id="@+id/informations"
@@ -62,7 +97,7 @@
         android:layout_marginEnd="175.75dp"
         android:layout_marginRight="175.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/actualite" />
+        app:srcCompat="@drawable/news" />
 
     <ImageView
         android:id="@+id/drive"
@@ -94,7 +129,7 @@
         android:layout_marginEnd="25.75dp"
         android:layout_marginRight="25.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/messagerie" />
+        app:srcCompat="@drawable/messagerie_v2" />
 
 
 

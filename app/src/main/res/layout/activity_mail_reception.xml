@@ -6,20 +6,36 @@
     android:layout_height="match_parent"
     tools:context=".MailReception">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background_mail"
+        android:layout_above="@+id/progressBar"
+        android:rotation="-4"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginTop="-20dp"
+        android:layout_marginRight="-10dp"/>
+
+
+
     <TextView
         android:id="@+id/textMail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Mail"
-        android:textSize="40dp"
-        android:gravity="center"/>
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"/>
 
     <View
         android:id="@+id/divider2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/textMail"
-        android:background="@color/gris_claire" />
+        android:background="@color/gris_claire"
+        android:rotation="-4"/>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -27,7 +43,21 @@
         android:progressTint="@color/bleu_claire"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/divider2"/>
+        android:layout_below="@+id/divider2"
+        android:rotation="-4"/>
+
+    <ImageView
+        android:id="@+id/imageEcrire"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_above="@id/progressBar"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        app:srcCompat="@drawable/crayon"
+        android:elevation="4dp"
+        android:background="@drawable/shadow"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -44,16 +74,6 @@
     </ScrollView>
 
 
-    <ImageView
-        android:id="@+id/imageEcrire"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_above="@id/divider2"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginEnd="0dp"
-        android:layout_marginRight="0dp"
-        app:srcCompat="@drawable/ecrire" />
 
     <!-- Menu  -->
 
@@ -87,7 +107,7 @@
         android:layout_marginEnd="251.5dp"
         android:layout_marginRight="251.5dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/classe" />
+        app:srcCompat="@drawable/cartable" />
 
     <ImageView
         android:id="@+id/informations"
@@ -103,7 +123,7 @@
         android:layout_marginEnd="175.75dp"
         android:layout_marginRight="175.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/actualite" />
+        app:srcCompat="@drawable/news" />
 
     <ImageView
         android:id="@+id/drive"
@@ -135,7 +155,7 @@
         android:layout_marginEnd="25.75dp"
         android:layout_marginRight="25.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/messagerie" />
+        app:srcCompat="@drawable/messagerie_v2" />
 
 
 

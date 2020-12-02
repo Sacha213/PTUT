@@ -12,9 +12,10 @@
         android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/divider">
+        android:layout_above="@+id/divider"
+        />
 
-    </WebView>
+
 
     <!-- Menu  -->
 
@@ -48,7 +49,7 @@
         android:layout_marginEnd="251.5dp"
         android:layout_marginRight="251.5dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/classe" />
+        app:srcCompat="@drawable/cartable" />
 
     <ImageView
         android:id="@+id/informations"
@@ -64,7 +65,7 @@
         android:layout_marginEnd="175.75dp"
         android:layout_marginRight="175.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/actualite" />
+        app:srcCompat="@drawable/news" />
 
     <ImageView
         android:id="@+id/drive"
@@ -80,7 +81,7 @@
         android:layout_marginEnd="100dp"
         android:layout_marginRight="100dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/nuage" />
+        app:srcCompat="@drawable/nuage_v2" />
 
     <ImageView
         android:id="@+id/messagerie"

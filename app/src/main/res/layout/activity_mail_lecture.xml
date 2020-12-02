@@ -7,31 +7,60 @@
     tools:context=".MailLecture"
     android:background="@color/white">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background_mail"
+        android:layout_above="@+id/textExpediteur"
+        android:rotation="-4"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginTop="-20dp"
+        android:layout_marginRight="-10dp"/>
+
+
+
     <TextView
         android:id="@+id/textMail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Mail"
-        android:textSize="40dp"
-        android:gravity="center"/>
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"/>
+
+    <ImageView
+        android:id="@+id/pastille"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_above="@id/textExpediteur"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        app:srcCompat="@drawable/cercle_vide"
+        android:elevation="4dp"
+        android:background="@drawable/shadow"/>
 
     <TextView
         android:id="@+id/textExpediteur"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="De : "
-        android:textSize="25dp"
+        android:textSize="25sp"
+        android:textStyle="bold"
         android:layout_below="@+id/textMail"
-        android:layout_marginLeft="25dp"/>
+        android:layout_marginTop="15dp"/>
 
     <TextView
         android:id="@+id/textSujet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Objet : "
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:layout_below="@+id/textExpediteur"
-        android:layout_marginLeft="25dp"/>
+        />
 
 
     <View
@@ -70,15 +99,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/pastille"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
-            android:src="@drawable/cercle_vide"/>
 
             <WebView
                 android:id="@+id/scrollLectureMail"
@@ -124,7 +144,7 @@
         android:layout_marginEnd="251.5dp"
         android:layout_marginRight="251.5dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/classe" />
+        app:srcCompat="@drawable/cartable" />
 
     <ImageView
         android:id="@+id/informations"
@@ -140,7 +160,7 @@
         android:layout_marginEnd="175.75dp"
         android:layout_marginRight="175.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/actualite" />
+        app:srcCompat="@drawable/news" />
 
     <ImageView
         android:id="@+id/drive"
@@ -172,7 +192,7 @@
         android:layout_marginEnd="25.75dp"
         android:layout_marginRight="25.75dp"
         android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/messagerie" />
+        app:srcCompat="@drawable/messagerie_v2" />
 
 
 

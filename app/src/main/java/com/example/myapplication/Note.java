@@ -3,28 +3,22 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.flexbox.FlexWrap;
-import com.google.android.flexbox.FlexboxLayoutManager;
-
 import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -42,9 +36,7 @@ public class Note extends AppCompatActivity {
     //Base de données
     private DatabaseManager databaseManager;
 
-    private String url = "https://tomuss.univ-lyon1.fr/S/2020/Automne/rss/a06907256c4369f";
-
-    private String[] nouvelleNote;
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +53,8 @@ public class Note extends AppCompatActivity {
         this.layoutVertical = findViewById(R.id.dynamiqueLayoutNotes);
 
         databaseManager = new DatabaseManager(this);
+
+        url = databaseManager.getLienTomuss();
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE); //Gestionnaire connexion réseau
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo(); //Information du réseau
@@ -264,9 +258,12 @@ public class Note extends AppCompatActivity {
             TextView titreMatiere = new TextView(getApplicationContext());
             titreMatiere.setText(mat);
             titreMatiere.setTextSize(20);//Taille de la matiere
+            titreMatiere.setTextColor(getResources().getColor(R.color.white));
+            titreMatiere.setTypeface(null, Typeface.BOLD);
+            titreMatiere.setPadding(5,5,5,5);
             titreMatiere.setPadding(10,10,10,10);
             //titreMatiere.setGravity(Gravity.CENTER);
-            titreMatiere.setBackgroundColor(getResources().getColor(R.color.matiere));
+            titreMatiere.setBackgroundColor(getResources().getColor(R.color.rougePale));
             LinearLayout.LayoutParams paramsM = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             paramsM.setMargins(0,50,0,20);
             titreMatiere.setLayoutParams(paramsM);
@@ -295,6 +292,10 @@ public class Note extends AppCompatActivity {
                 //Etape 6 : On affiche la note et sa description
 
                 String textNot = tabNote[i].substring(0,tabNote[i].length()-10);//On enlève la partie de la date qui fait 10 caractère
+                String note = textNot.split("--")[0];//On sépare la note de sa description
+                String description = textNot.split("--")[1];
+                String textND = "<strong>"+note+"</strong>"+"<br/>"+description;
+
                 String datePub = tabNote[i].substring(tabNote[i].length()-10);//On garde la partie de la date
 
                 Date dateToday = new Date();//ON récupère la date d'aujourd'hui
@@ -302,22 +303,22 @@ public class Note extends AppCompatActivity {
                 String strDateToday = formateur.format(dateToday);//Pareil pour la date d'aujourd'hui
 
                 TextView textNote = new TextView(getApplicationContext());
-                textNote.setText(textNot);
+                textNote.setText(Html.fromHtml(textND));
                 textNote.setTextSize(15);//Taille de la matiere
 
 
                 if(datePub.equals(strDateToday)){//Si la date de publication est celle d'aujourd'hui on met une couleur d'affiche différente
-                    textNote.setBackgroundColor(getResources().getColor(R.color.nouvelleNote));
-                }
+                    textNote.setBackgroundResource(R.drawable.background_note_nouvelle);                }
                 else{ //Sinon on affiche la couleur de base
-                    textNote.setBackgroundColor(getResources().getColor(R.color.note));
+                    textNote.setBackgroundResource(R.drawable.background_note_ancienne);
                 }
+
                 textNote.setPadding(10,10,10,10);
                 LinearLayout.LayoutParams paramsN = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 paramsN.setMargins(10,10,10,10);
                 textNote.setLayoutParams(paramsN);
-
-                textNote.setMaxWidth(250);//On met un nombre max pour la taille de la note
+                textNote.setWidth(250);//On met un nombre max pour la taille de la note
+                textNote.setLines(3);
                 textNote.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
                 layoutHorizontale.addView(textNote);//On l'ajoute au layout
 
