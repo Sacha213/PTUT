@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:src="@drawable/background_calendrier"
         android:rotation="-4"
-        android:layout_above="@id/scrollCalendrier"
+        android:layout_above="@id/menuJour"
         android:layout_marginLeft="-10dp"
         android:layout_marginTop="-20dp"
         android:layout_marginRight="-10dp"/>
@@ -31,43 +31,55 @@
         android:layout_marginTop="40dp"
         android:layout_marginLeft="10dp"/>
 
-    <TextView
-        android:id="@+id/textjour"
+
+
+    <LinearLayout
+        android:id="@+id/menuJour"
+        android:layout_below="@+id/textCalendrier"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:textSize="25dp"
-        android:gravity="center"
-        android:textColor="@color/white"/>
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:layout_marginTop="15dp">
 
-    <ImageView
-        android:id="@+id/flechegauche"
-        android:adjustViewBounds ="true"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:gravity="right"
-        android:layout_marginTop="83dp"
-        android:layout_marginLeft="100dp"
-        app:srcCompat="@drawable/fleche_gauche"
-        android:layout_alignParentRight="false"
-        android:layout_alignParentLeft="true" />
+        <ImageView
+            android:id="@+id/flechegauche"
+            android:adjustViewBounds ="true"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:srcCompat="@drawable/fleche_gauche"
+            android:layout_weight="1"/>
 
-    <ImageView
-        android:id="@+id/flechedroite"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="83dp"
-        android:layout_marginRight="100dp"
-        app:srcCompat="@drawable/fleche_droite"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentLeft="false"/>
+        <TextView
+            android:id="@+id/textjour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:text="Jour"
+            android:gravity="center"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/flechedroite"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:srcCompat="@drawable/fleche_droite"
+            android:layout_weight="1"/>
+
+
+    </LinearLayout>
+
+
 
     <ScrollView
         android:id="@+id/scrollCalendrier"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/boutonDeconnexion"
-        android:layout_below="@+id/textjour">
+        android:layout_below="@+id/menuJour"
+
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -85,7 +97,11 @@
                 android:id="@+id/layoutCalendrierFront"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:orientation="vertical"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="27dp"
+                android:gravity="center_vertical"/>
 
         </RelativeLayout>
 

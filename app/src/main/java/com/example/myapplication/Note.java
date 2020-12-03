@@ -308,7 +308,9 @@ public class Note extends AppCompatActivity {
 
 
                 if(datePub.equals(strDateToday)){//Si la date de publication est celle d'aujourd'hui on met une couleur d'affiche différente
-                    textNote.setBackgroundResource(R.drawable.background_note_nouvelle);                }
+                    textNote.setBackgroundResource(R.drawable.background_note_nouvelle);
+                    textNote.setTextColor(getResources().getColor(R.color.white));
+                }
                 else{ //Sinon on affiche la couleur de base
                     textNote.setBackgroundResource(R.drawable.background_note_ancienne);
                 }

@@ -51,7 +51,9 @@
         android:textSize="25sp"
         android:textStyle="bold"
         android:layout_below="@+id/textMail"
-        android:layout_marginTop="15dp"/>
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="2dp"
+        />
 
     <TextView
         android:id="@+id/textSujet"
@@ -59,6 +61,7 @@
         android:layout_height="wrap_content"
         android:text="Objet : "
         android:textSize="25sp"
+        android:layout_marginLeft="2dp"
         android:layout_below="@+id/textExpediteur"
         />
 

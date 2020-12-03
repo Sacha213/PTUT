@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Calendrier extends AppCompatActivity {
@@ -39,6 +41,8 @@ public class Calendrier extends AppCompatActivity {
     private ImageView flecheGauche;
     private ImageView flecheDroite;
 
+    private Calendar dateAffiche;
+
     //Base de données
     private DatabaseManager databaseManager;
 
@@ -46,7 +50,7 @@ public class Calendrier extends AppCompatActivity {
 
 
 
-    private String url = "https://adelb.univ-lyon1.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=40699&projectId=2&calType=ical&firstDate=2020-11-23&lastDate=2020-11-28";
+    private String url = "https://adelb.univ-lyon1.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=40699&projectId=2&calType=ical&firstDate=2020-11-30&lastDate=2021-02-01";
 
 
     @Override
@@ -70,6 +74,7 @@ public class Calendrier extends AppCompatActivity {
         this.flecheGauche = findViewById(R.id.flechegauche);
 
         databaseManager = new DatabaseManager(this);
+        dateAffiche = Calendar.getInstance();
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE); //Gestionnaire connexion réseau
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo(); //Information du réseau
@@ -90,7 +95,11 @@ public class Calendrier extends AppCompatActivity {
         flecheGauche.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //code pour changer date et appeller affichage
+                //On diminue le jours de 1 et on apelle l'affichage
+                dateAffiche.add(Calendar.DATE,-1);
+                layoutBack.removeAllViews();
+                layoutFront.removeAllViews();
+                affichageCalendrier();
             }
         });
 
@@ -98,7 +107,12 @@ public class Calendrier extends AppCompatActivity {
         flecheDroite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //code pour changer date et appeller affichage
+                //On augmente le jours de 1 et on apelle l'affichage
+                dateAffiche.add(Calendar.DATE,1);
+                layoutBack.removeAllViews();
+                layoutFront.removeAllViews();
+                affichageCalendrier();
+
             }
         });
 
@@ -269,7 +283,8 @@ public class Calendrier extends AppCompatActivity {
                 int debutCours = Integer.parseInt(event[i].split("DTSTART:")[1].substring(9,13));
                 int finCours = Integer.parseInt(event[i].split("DTEND:")[1].substring(9,13));
                 String nomCours = event[i].split("SUMMARY:")[1].split("LOCATION:")[0];
-                nomCours = nomCours.substring(nomCours.split(" ")[0].length()+1);
+                //Trouver la solution
+                //nomCours = nomCours.substring(nomCours.split(" ")[0].length()+1);
                 String salle = event[i].split("LOCATION:")[1].split("DESCRIPTION:")[0];
                 String prof = event[i].split("DESCRIPTION:")[1].split(String.valueOf("n"))[3];
                 String idCours = event[i].split("DTSTART:")[1].split("DTEND:")[0];
@@ -286,7 +301,6 @@ public class Calendrier extends AppCompatActivity {
                 String mois = date.substring(4,6);
                 String jour = date.substring(6,8);
                 date = jour+"/"+mois+"/"+annee;
-                System.out.println(date+"HD"+debutCours);
 
                 stockageCalendrier(debutCours,finCours,nomCours,salle,prof,idCours,date);
             }
@@ -305,22 +319,14 @@ public class Calendrier extends AppCompatActivity {
         //Gérer l'affichage avec le linéare layout
 
         /******************* affichage date *******************/
-        Date d = new Date();
-        SimpleDateFormat annee = new SimpleDateFormat("yyyy");
-        SimpleDateFormat mois = new SimpleDateFormat("MM");
-        SimpleDateFormat jour = new SimpleDateFormat("dd");
-        String s1 = annee.format(d);
-        String s2 = mois.format(d);
-        String s3 = jour.format(d);
-        datecourante.setText(s3 + " " + s2 + " " + s1);
+
+        SimpleDateFormat formateur = new SimpleDateFormat("dd/MM/yyyy");
+        String strDateAffiche= formateur.format(dateAffiche.getTime());
+        datecourante.setText(strDateAffiche);
 
 
-        String[] tabId = databaseManager.getCours("26/11/2020");
+        String[] tabId = databaseManager.getCours(strDateAffiche);
 
-        for(String id : tabId){
-            System.out.println("salle : "+databaseManager.getNomCours(id));
-
-        }
 
         //Parcourir toutes le minutes de la journée de 8h à 20h
         //Gérer l'affichage des traits, des cours et des heures (easy peasy)
@@ -328,50 +334,95 @@ public class Calendrier extends AppCompatActivity {
         for (int i = 800; i <=2000; i++){
             LinearLayout lCalHori = new LinearLayout(getApplicationContext());
             lCalHori.setOrientation(LinearLayout.HORIZONTAL);
+            lCalHori.setGravity(Gravity.CENTER_VERTICAL);
+            LinearLayout.LayoutParams paramslayoutCal = new LinearLayout.LayoutParams(layoutBack.getWidth(), 150);
+            lCalHori.setLayoutParams(paramslayoutCal);
+
 
             //Etape 1 : On regarde si c une heure
             if(i%100==0){
                 //On affiche l'heure tt les deux Heure
-                if(i%200==0){
-                    TextView heure = new TextView(getApplicationContext());
-                    if(i<1000){
-                        heure.setText("0"+String.valueOf(i).substring(0,1)+":00");
-                    }else{
-                        heure.setText(String.valueOf(i).substring(0,2)+":00");
-                    }
-                    heure.setTextSize(20);
-                    lCalHori.addView(heure);
+
+                TextView heure = new TextView(getApplicationContext());
+                if(i<1000){
+                    heure.setText("0"+String.valueOf(i).substring(0,1)+":00 ");
+                }else{
+                    heure.setText(String.valueOf(i).substring(0,2)+":00 ");
                 }
+                heure.setTextSize(20);
+
+                if(i%200!=0){  //Si c pas une heure paire on ne l'affiche pas zeubi
+                    heure.setVisibility(View.INVISIBLE);
+                }
+                lCalHori.addView(heure);
 
                 //Ajout du trait
                 View trait = new View(getApplicationContext());
                 trait.setBackgroundColor(Color.GRAY);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutBack.getWidth(), 3);
-                //params.setMargins(0, 20, 0, 20);
+                params.setMargins(0, 20, 0, 20);
                 trait.setLayoutParams(params);
                 lCalHori.addView(trait);
 
                 layoutBack.addView(lCalHori);
 
             }
+
             //Etape 2 : affichage des cours
-            for(String id : tabId){
+            if(i%100<=60){ //Si i à une minute < 60 pour le fichier
 
-                //System.out.println("Hdeb : "+databaseManager.getHDEB(id));
+                if(i%10==0){//toute les dix minutes
+                    boolean coursTrouve = false;
 
-                if(databaseManager.getHDEB(id)==i){
-                    int duree = databaseManager.getHFIN(id)-databaseManager.getHDEB(id);
-                    TextView blockCours = new TextView(getApplicationContext());
-                    blockCours.setText(databaseManager.getNomCours(id));
-                    blockCours.setBackgroundColor(getResources().getColor(R.color.vert_claire));
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutFront.getWidth(), duree);
-                    blockCours.setLayoutParams(params);
-                    layoutFront.addView(blockCours);
+                    for(String id : tabId){
+
+                        if(databaseManager.getHDEB(id)==i){
+                            int duree = databaseManager.getHFIN(id)-databaseManager.getHDEB(id);
+                            duree = conversionHeureMinute(duree) *150/60;
+                            TextView blockCours = new TextView(getApplicationContext());
+                            blockCours.setText(databaseManager.getNomCours(id));
+                            blockCours.setBackgroundColor(getResources().getColor(R.color.vert_claire));
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutFront.getWidth(), duree);
+                            blockCours.setLayoutParams(params);
+                            layoutFront.addView(blockCours);
+
+                            coursTrouve = true;
+                        }
+
+                        if (databaseManager.getHDEB(id)<i && databaseManager.getHFIN(id)>i){ //On vérifie qu'un cours n'est pas en cours ahaha
+                            coursTrouve = true;
+                        }
+
+                        System.out.println(i+"..."+coursTrouve+databaseManager.getHDEB(id));
+                    }
+
+                    if (!coursTrouve){
+                        TextView blockVide = new TextView(getApplicationContext());
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutFront.getWidth(), 25);//60 minutes = 150 donc 10 = 25
+                        blockVide.setLayoutParams(params);
+                        layoutFront.addView(blockVide);
+                    }
                 }
+
+
+
             }
+
+
+
 
 
         }
 
+    }
+
+    public int conversionHeureMinute(int duree){
+        int convertion;
+
+        convertion = duree%100 ;//On récupère les minute (les deux chiffre à droite)
+
+        convertion += (duree/100)*60;//On récupere les heure qu'on convertie en minutes
+
+        return convertion;
     }
 }
