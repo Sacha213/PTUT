@@ -47,11 +47,7 @@ public class Information extends AppCompatActivity {
 
     private LinearLayout layout;// afficheur scroll
 
-    private ImageView calendrier; //Icônes du menu
-    private ImageView notes;
-    private ImageView informations;
-    private ImageView drive;
-    private ImageView messagerie;
+    private Menu menu;
 
     private Button annonce;
 
@@ -71,12 +67,7 @@ public class Information extends AppCompatActivity {
         /******************* Initialisation des variables *******************/
         databaseManager = new DatabaseManager(this);
         this.layout = findViewById(R.id.dynamiqueLayout); // liaison avec le scroll layout
-
-        this.calendrier = findViewById(R.id.calendrier);
-        this.notes = findViewById(R.id.notes);
-        this.informations = findViewById(R.id.informations);
-        this.drive = findViewById(R.id.drive);
-        this.messagerie = findViewById(R.id.messagerie);
+        this.menu = new Menu(this);
 
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -120,78 +111,6 @@ public class Information extends AppCompatActivity {
         });
 
 
-        /******************* Gestion des évènements du menu *******************/
-
-        calendrier.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Calendrier.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-
-            }
-        });
-
-        notes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Note.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        informations.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        drive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Drive.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        messagerie.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Messagerie.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
 
 
 

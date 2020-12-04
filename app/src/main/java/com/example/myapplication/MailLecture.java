@@ -58,11 +58,7 @@ import javax.mail.internet.MimeUtility;
 public class MailLecture extends AppCompatActivity {
 
     /******************* Attribut *******************/
-    private ImageView calendrier; //Icônes du menu
-    private ImageView notes;
-    private ImageView informations;
-    private ImageView drive;
-    private ImageView messagerie;
+    private Menu menu;
 
     private static String HOST = "accesbv.univ-lyon1.fr";
     private static String LOGIN;
@@ -97,11 +93,7 @@ public class MailLecture extends AppCompatActivity {
         setContentView(R.layout.activity_mail_lecture);
 
         /******************* Initialisation des variables *******************/
-        this.calendrier = findViewById(R.id.calendrier);
-        this.notes = findViewById(R.id.notes);
-        this.informations = findViewById(R.id.informations);
-        this.drive = findViewById(R.id.drive);
-        this.messagerie = findViewById(R.id.messagerie);
+        this.menu = new Menu(this);
 
         Intent intent = getIntent();//On récupaire les données transmise venant de l'ancienne activité
         numeroMail = intent.getIntExtra("Numéro",1);
@@ -145,99 +137,6 @@ public class MailLecture extends AppCompatActivity {
                     });
 
 
-
-        /******************* Gestion des évènements du menu *******************/
-
-        calendrier.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Calendrier.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                //On ferme tous ce qu'on a ouvert
-                FermetureMail fermetureMail = new FermetureMail();
-                fermetureMail.execute();
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-
-            }
-        });
-
-        notes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Note.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                //On ferme tous ce qu'on a ouvert
-                FermetureMail fermetureMail = new FermetureMail();
-                fermetureMail.execute();
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        informations.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                //On ferme tous ce qu'on a ouvert
-                FermetureMail fermetureMail = new FermetureMail();
-                fermetureMail.execute();
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        drive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Drive.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                //On ferme tous ce qu'on a ouvert
-                FermetureMail fermetureMail = new FermetureMail();
-                fermetureMail.execute();
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        messagerie.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Messagerie.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                //On ferme tous ce qu'on a ouvert
-                FermetureMail fermetureMail = new FermetureMail();
-                fermetureMail.execute();
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
 
     }
 

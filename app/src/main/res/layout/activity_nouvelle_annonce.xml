@@ -28,7 +28,8 @@
         android:textStyle="bold"
         android:textColor="@color/white"
         android:layout_marginTop="40dp"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp" />
 
 
     <EditText
@@ -38,9 +39,12 @@
         android:layout_centerHorizontal="true"
         android:ems="10"
         android:hint="Titre"
+        android:textStyle="bold"
         android:inputType="text"
+        android:background="@drawable/rounded_corner"
         android:layout_below="@+id/textNouvelleAnnonce"
         android:layout_marginTop="15dp"
+
         />
 
     <TextView
@@ -48,43 +52,49 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Type d'annonce :"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:layout_marginLeft="10dp"
         android:layout_below="@+id/titreNewAnnonce"
         android:layout_marginTop="30dp"
-        />
+        android:layout_marginStart="10dp"/>
 
     <RadioGroup
         android:id="@+id/radioAnnonce"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textTypeAnnonce"
         android:orientation="horizontal"
         android:layout_centerHorizontal="true"
+        android:weightSum="4"
         >
 
         <RadioButton
             android:id="@+id/checkBoxPerte"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Perdu/Trouvé" />
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:text="Perdu/Trouvé"
+            android:buttonTint="#FFBD81"/>
 
         <RadioButton
             android:id="@+id/checkBoxInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
             android:text="Information"
+            android:buttonTint="#FFBD81"
             />
 
         <RadioButton
             android:id="@+id/checkBoxEnquete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
             android:text="Enquêtes"
-            android:onClick="onCheckBoxClicked"
+            android:buttonTint="#FFBD81"
             />
 
 
@@ -93,8 +103,10 @@
             android:id="@+id/checkBoxAutres"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
             android:text="Autres"
+            android:buttonTint="#FFBD81"
             />
 
     </RadioGroup>
@@ -143,99 +155,58 @@
 
     <!-- Menu  -->
 
-
-
-    <ImageView
-        android:id="@+id/calendrier"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="25.75dp"
-        android:layout_marginLeft="25.75dp"
-        android:layout_marginEnd="327.25dp"
-        android:layout_marginRight="327.25dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/calendrier" />
-
-    <ImageView
-        android:id="@+id/notes"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="101.5dp"
-        android:layout_marginLeft="101.5dp"
-        android:layout_marginEnd="251.5dp"
-        android:layout_marginRight="251.5dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/cartable" />
-
-    <ImageView
-        android:id="@+id/informations"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="177.25dp"
-        android:layout_marginLeft="177.25dp"
-        android:layout_marginEnd="175.75dp"
-        android:layout_marginRight="175.75dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/news_v2" />
-
-    <ImageView
-        android:id="@+id/drive"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="253dp"
-        android:layout_marginLeft="253dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/nuage" />
-
-    <ImageView
-        android:id="@+id/messagerie"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="327.25dp"
-        android:layout_marginLeft="327.25dp"
-        android:layout_marginEnd="25.75dp"
-        android:layout_marginRight="25.75dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/messagerie" />
-
-
-
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="60dp"
+        android:layout_above="@+id/menu"
         android:background="@color/gris_claire" />
 
+    <LinearLayout
+        android:id="@+id/menu"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        android:layout_alignParentBottom="true"
+        android:gravity="center">
 
+        <ImageView
+            android:id="@+id/calendrier"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/calendrier" />
+
+        <ImageView
+            android:id="@+id/notes"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/cartable" />
+
+        <ImageView
+            android:id="@+id/informations"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/news_v2" />
+
+        <ImageView
+            android:id="@+id/drive"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/nuage" />
+
+        <ImageView
+            android:id="@+id/messagerie"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/messagerie" />
+
+    </LinearLayout>
 
 
 </RelativeLayout>

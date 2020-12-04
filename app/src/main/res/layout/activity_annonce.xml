@@ -6,6 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".Annonce">
 
+    <ScrollView
+        android:id="@+id/scrollAnnonce"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/boutonCreerAnnonces"
+        android:layout_below="@+id/textAnnonce"
+        android:layout_marginTop="-20dp">
+
+        <LinearLayout
+            android:id="@+id/dynamiqueLayoutAnnonce"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/boutonAnnonces"
+            android:layout_below="@+id/textInformation"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </ScrollView>
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,24 +48,7 @@
         android:layout_marginTop="40dp"
         android:layout_marginLeft="10dp"/>
 
-    <ScrollView
-        android:id="@+id/scrollAnnonce"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/boutonCreerAnnonces"
-        android:layout_below="@+id/textAnnonce"
-        android:layout_marginTop="15dp">
 
-        <LinearLayout
-            android:id="@+id/dynamiqueLayoutAnnonce"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/boutonAnnonces"
-            android:layout_below="@+id/textInformation"
-            android:orientation="vertical">
-
-        </LinearLayout>
-    </ScrollView>
 
     <Button
         android:id="@+id/boutonCreerAnnonces"
@@ -63,94 +65,57 @@
 
     <!-- Menu  -->
 
-    <ImageView
-        android:id="@+id/calendrier"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="25.75dp"
-        android:layout_marginLeft="25.75dp"
-        android:layout_marginEnd="327.25dp"
-        android:layout_marginRight="327.25dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/calendrier" />
-
-    <ImageView
-        android:id="@+id/notes"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="101.5dp"
-        android:layout_marginLeft="101.5dp"
-        android:layout_marginEnd="251.5dp"
-        android:layout_marginRight="251.5dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/cartable" />
-
-    <ImageView
-        android:id="@+id/informations"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="177.25dp"
-        android:layout_marginLeft="177.25dp"
-        android:layout_marginEnd="175.75dp"
-        android:layout_marginRight="175.75dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/news_v2" />
-
-    <ImageView
-        android:id="@+id/drive"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="253dp"
-        android:layout_marginLeft="253dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/nuage" />
-
-    <ImageView
-        android:id="@+id/messagerie"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="327.25dp"
-        android:layout_marginLeft="327.25dp"
-        android:layout_marginEnd="25.75dp"
-        android:layout_marginRight="25.75dp"
-        android:layout_marginBottom="5dp"
-        app:srcCompat="@drawable/messagerie" />
-
-
-
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="60dp"
+        android:layout_above="@+id/menu"
         android:background="@color/gris_claire" />
+
+    <LinearLayout
+        android:id="@+id/menu"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        android:layout_alignParentBottom="true"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/calendrier"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/calendrier" />
+
+        <ImageView
+            android:id="@+id/notes"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/cartable" />
+
+        <ImageView
+            android:id="@+id/informations"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/news_v2" />
+
+        <ImageView
+            android:id="@+id/drive"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/nuage" />
+
+        <ImageView
+            android:id="@+id/messagerie"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/messagerie" />
+
+    </LinearLayout>
 
 </RelativeLayout>

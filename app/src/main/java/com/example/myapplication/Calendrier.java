@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,16 +29,12 @@ import java.util.Date;
 public class Calendrier extends AppCompatActivity {
 
     /******************* Attribut *******************/
-    private ImageView calendrier; //Icônes du menu
-    private ImageView notes;
-    private ImageView informations;
-    private ImageView drive;
-    private ImageView messagerie;
+    private Menu menu;
 
     private Button deconnexion;
     private TextView datecourante;
-    private LinearLayout layoutFront;
-    private LinearLayout layoutBack;
+    private RelativeLayout layoutFront;
+    private RelativeLayout layoutBack;
     private ImageView flecheGauche;
     private ImageView flecheDroite;
 
@@ -59,11 +56,7 @@ public class Calendrier extends AppCompatActivity {
         setContentView(R.layout.activity_calendrier);
 
         /******************* Initialisation des variables *******************/
-        this.calendrier = findViewById(R.id.calendrier);
-        this.notes = findViewById(R.id.notes);
-        this.informations = findViewById(R.id.informations);
-        this.drive = findViewById(R.id.drive);
-        this.messagerie = findViewById(R.id.messagerie);
+        this.menu = new Menu(this);
 
         this.deconnexion = findViewById(R.id.boutonDeconnexion);
 
@@ -130,78 +123,7 @@ public class Calendrier extends AppCompatActivity {
             }
         });
 
-        /******************* Gestion des évènements du menu *******************/
 
-        calendrier.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Calendrier.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
-
-
-            }
-        });
-
-        notes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Note.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        informations.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        drive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Drive.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        messagerie.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Messagerie.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
     }
 
     /******************* Gestion du retour en arrière *******************/
@@ -283,14 +205,11 @@ public class Calendrier extends AppCompatActivity {
                 int debutCours = Integer.parseInt(event[i].split("DTSTART:")[1].substring(9,13));
                 int finCours = Integer.parseInt(event[i].split("DTEND:")[1].substring(9,13));
                 String nomCours = event[i].split("SUMMARY:")[1].split("LOCATION:")[0];
-                //Trouver la solution
-                //nomCours = nomCours.substring(nomCours.split(" ")[0].length()+1);
                 String salle = event[i].split("LOCATION:")[1].split("DESCRIPTION:")[0];
-                String prof = event[i].split("DESCRIPTION:")[1].split(String.valueOf("n"))[3];
+                String prof = event[i].split("DESCRIPTION:")[1];
                 String idCours = event[i].split("DTSTART:")[1].split("DTEND:")[0];
                 String date = event[i].split("DTSTART:")[1].substring(0,8);
 
-                System.out.println("Prof"+prof);
 
                 //on ajoute 100 equivalent a 1h a chauqe horaire car basé sur le fuseau horaire anglais
                 debutCours +=100;
@@ -302,21 +221,15 @@ public class Calendrier extends AppCompatActivity {
                 String jour = date.substring(6,8);
                 date = jour+"/"+mois+"/"+annee;
 
-                stockageCalendrier(debutCours,finCours,nomCours,salle,prof,idCours,date);
+                //Insertion dans la base de donnée
+                databaseManager.insertCours(idCours,debutCours,finCours,date,nomCours,salle,prof);
             }
 
 
     }
 
-    public void stockageCalendrier(int debutC,int finC, String nomC, String salleC, String profC,String idC, String dateC){
-
-        //Faire les insertion dans la base de donnée
-
-        databaseManager.insertCours(idC,debutC,finC,dateC,nomC,salleC,profC);
-    }
 
     public void affichageCalendrier() {
-        //Gérer l'affichage avec le linéare layout
 
         /******************* affichage date *******************/
 
@@ -327,90 +240,57 @@ public class Calendrier extends AppCompatActivity {
 
         String[] tabId = databaseManager.getCours(strDateAffiche);
 
+        int position = 0;
 
         //Parcourir toutes le minutes de la journée de 8h à 20h
-        //Gérer l'affichage des traits, des cours et des heures (easy peasy)
+        for(int i=8;i<=20;i++){
 
-        for (int i = 800; i <=2000; i++){
             LinearLayout lCalHori = new LinearLayout(getApplicationContext());
             lCalHori.setOrientation(LinearLayout.HORIZONTAL);
             lCalHori.setGravity(Gravity.CENTER_VERTICAL);
             LinearLayout.LayoutParams paramslayoutCal = new LinearLayout.LayoutParams(layoutBack.getWidth(), 150);
+            paramslayoutCal.setMargins(0, position, 0, 0);
             lCalHori.setLayoutParams(paramslayoutCal);
 
-
-            //Etape 1 : On regarde si c une heure
-            if(i%100==0){
-                //On affiche l'heure tt les deux Heure
-
-                TextView heure = new TextView(getApplicationContext());
-                if(i<1000){
-                    heure.setText("0"+String.valueOf(i).substring(0,1)+":00 ");
-                }else{
-                    heure.setText(String.valueOf(i).substring(0,2)+":00 ");
-                }
-                heure.setTextSize(20);
-
-                if(i%200!=0){  //Si c pas une heure paire on ne l'affiche pas zeubi
-                    heure.setVisibility(View.INVISIBLE);
-                }
-                lCalHori.addView(heure);
-
-                //Ajout du trait
-                View trait = new View(getApplicationContext());
-                trait.setBackgroundColor(Color.GRAY);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutBack.getWidth(), 3);
-                params.setMargins(0, 20, 0, 20);
-                trait.setLayoutParams(params);
-                lCalHori.addView(trait);
-
-                layoutBack.addView(lCalHori);
-
+            //On affiche l'heure tt les deux Heure
+            TextView heure = new TextView(getApplicationContext());
+            if(i<10){
+                heure.setText("0"+String.valueOf(i).substring(0,1)+":00 ");
+            }else{
+                heure.setText(String.valueOf(i).substring(0,2)+":00 ");
             }
+            heure.setTextSize(20);
 
-            //Etape 2 : affichage des cours
-            if(i%100<=60){ //Si i à une minute < 60 pour le fichier
-
-                if(i%10==0){//toute les dix minutes
-                    boolean coursTrouve = false;
-
-                    for(String id : tabId){
-
-                        if(databaseManager.getHDEB(id)==i){
-                            int duree = databaseManager.getHFIN(id)-databaseManager.getHDEB(id);
-                            duree = conversionHeureMinute(duree) *150/60;
-                            TextView blockCours = new TextView(getApplicationContext());
-                            blockCours.setText(databaseManager.getNomCours(id));
-                            blockCours.setBackgroundColor(getResources().getColor(R.color.vert_claire));
-                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutFront.getWidth(), duree);
-                            blockCours.setLayoutParams(params);
-                            layoutFront.addView(blockCours);
-
-                            coursTrouve = true;
-                        }
-
-                        if (databaseManager.getHDEB(id)<i && databaseManager.getHFIN(id)>i){ //On vérifie qu'un cours n'est pas en cours ahaha
-                            coursTrouve = true;
-                        }
-
-                        System.out.println(i+"..."+coursTrouve+databaseManager.getHDEB(id));
-                    }
-
-                    if (!coursTrouve){
-                        TextView blockVide = new TextView(getApplicationContext());
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutFront.getWidth(), 25);//60 minutes = 150 donc 10 = 25
-                        blockVide.setLayoutParams(params);
-                        layoutFront.addView(blockVide);
-                    }
-                }
-
-
-
+            if(i%2!=0){  //Si c pas une heure paire on ne l'affiche pas zeubi
+                heure.setVisibility(View.INVISIBLE);
             }
+            lCalHori.addView(heure);
 
+            //Ajout du trait
+            View trait = new View(getApplicationContext());
+            trait.setBackgroundColor(Color.GRAY);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutBack.getWidth(), 3);
+            trait.setLayoutParams(params);
+            lCalHori.addView(trait);
 
+            layoutBack.addView(lCalHori);
 
+            position+=60*2;
 
+        }
+
+        //On affiche les cours
+        for(String id : tabId){
+            int duree = databaseManager.getHFIN(id)-databaseManager.getHDEB(id);
+            duree = conversionHeureMinute(duree)*2;
+            position = conversionHeureMinute(databaseManager.getHDEB(id)-800) *2;
+            TextView blockCours = new TextView(getApplicationContext());
+            blockCours.setText(databaseManager.getNomCours(id));
+            blockCours.setBackgroundColor(getResources().getColor(R.color.vert_claire));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutFront.getWidth(), duree);
+            params.setMargins(0, position, 0, 0);
+            blockCours.setLayoutParams(params);
+            layoutFront.addView(blockCours);
 
         }
 
