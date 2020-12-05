@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+
 public class Drive extends AppCompatActivity {
 
     /******************* Attribut *******************/
@@ -33,6 +34,8 @@ public class Drive extends AppCompatActivity {
     private String idUtilisateur;
     private String passwordUtilisateur;
 
+    private String urlClaroline;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +45,8 @@ public class Drive extends AppCompatActivity {
         this.webView = findViewById(R.id.webView);
 
         this.menu = new Menu(this);
+
+        urlClaroline = "https://cas.univ-lyon1.fr/cas/login?service=https%3A%2F%2Fclarolineconnect.univ-lyon1.fr%2Flogin_check";
 
         databaseManager = new DatabaseManager(this);
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
@@ -74,7 +79,7 @@ public class Drive extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);//Activer le javascript sur le navigateur
         //webView.getSettings().setDomStorageEnabled(true);
 
-        webView.loadUrl("https://cas.univ-lyon1.fr/cas/login?service=https%3A%2F%2Fclarolineconnect.univ-lyon1.fr%2Flogin_check");
+        webView.loadUrl(urlClaroline);
 
         webView.setWebViewClient(new WebViewClient() {
 
@@ -86,14 +91,20 @@ public class Drive extends AppCompatActivity {
 
             @Override
             public void onPageFinished(WebView view, String url){
+
+                if (url.equals(urlClaroline)){
                 view.loadUrl("javascript:var x = document.getElementById('username').value = '"+idUtilisateur+"';");
                 view.loadUrl("javascript:var x = document.getElementById('password').value = '"+passwordUtilisateur+"';");
-                view.loadUrl("javascript:document.getElementsByName('submit')[0].click();");
+                //view.loadUrl("javascript:var x = document.getElementsByName('submit')[0].click();");
+                }
             }
+
         });
 
 
     }
+
+
 
     /******************* Gestion du retour en arrière *******************/
     @Override

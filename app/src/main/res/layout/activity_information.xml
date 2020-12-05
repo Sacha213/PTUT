@@ -18,10 +18,16 @@
         <LinearLayout
             android:id="@+id/dynamiqueLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/boutonAnnonces"
-            android:layout_below="@+id/textInformation"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                />
 
         </LinearLayout>
 
@@ -48,7 +54,17 @@
         android:textStyle="bold"
         android:textColor="@color/white"
         android:layout_marginTop="40dp"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp" />
+
+    <ProgressBar
+        android:id="@+id/progressBarActu"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progressTint="#F4CBB6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textInformation"
+        android:rotation="-4"/>
 
 
 

@@ -4,6 +4,7 @@ package com.example.myapplication;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -46,6 +48,8 @@ public class Information extends AppCompatActivity {
     private StorageReference storageReference;
 
     private LinearLayout layout;// afficheur scroll
+    private ProgressBar progressBar;
+    private int tailleProgresseBar;
 
     private Menu menu;
 
@@ -73,6 +77,7 @@ public class Information extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
 
         this.annonce = findViewById(R.id.boutonAnnonces);
+        this.progressBar = findViewById(R.id.progressBarActu);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -125,15 +130,13 @@ public class Information extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            tailleProgresseBar = task.getResult().size();
+                            progressBar.setMax(tailleProgresseBar);//On initialise la progresse bar avec un max de la progression
+
                             for (QueryDocumentSnapshot document : task.getResult()) {
-
-
                                 afficherImage(document);
-
-
                             }
-                        } else {
-                            System.out.println("Pas de document trouvé ");
+
                         }
                     }
                 });
@@ -141,51 +144,71 @@ public class Information extends AppCompatActivity {
 
     public void afficherImage(QueryDocumentSnapshot document){
 
-        final StorageReference monImage = storageReference.child("Images/"+document.getString("Image")+".jpg");
+        final StorageReference monImage = storageReference.child("Images/"+document.getString("Image"));
 
         File localFile = null;
 
         try {
-            localFile = File.createTempFile(document.getString("Image"),"jpg");
+
+            //On récupère le nom de l'image et son extension
+            String nomImage = document.getString("Image").split("\\.")[0];
+            String extension = document.getString("Image").split("\\.")[1];
+            localFile = File.createTempFile(nomImage,extension);
         }
         catch (IOException e){
             System.out.println(e);
         }
+
 
         monImage.getFile(localFile)
                 .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
 
+                        //On créer un layout pour ajouter l'image et le titre de l'annonce
+                        LinearLayout layoutInformation = new LinearLayout(getApplicationContext());
+                        layoutInformation.setOrientation(LinearLayout.VERTICAL);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(0, 0, 0, 0);
+                        layoutInformation.setLayoutParams(params);
+                        layoutInformation.setPadding(0,0,0,0);
+                        //layoutInformation.setBackgroundResource(R.drawable.background_info);
+
                         monImage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
 
+
                                 //Ajout de l'image de l'article
                                 ImageView image = new ImageView(getApplicationContext());
-                                ViewGroup.LayoutParams params = new ActionBar.LayoutParams(750,750); // Dimenssion de l'image
-                                image.setLayoutParams(params);
-                                image.setX(175);//Centrage de l'image
+                                LinearLayout.LayoutParams paramsImage = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,layout.getWidth()); // Dimenssion de l'image
+                                image.setLayoutParams(paramsImage);
                                 Picasso.get().load(uri).into(image);
-                                layout.addView(image);
+                                layoutInformation.addView(image);
 
                                 //Ajout du titre de l'article
                                 TextView titre = new TextView(getApplicationContext());
-                                titre.setText(document.getString("Nom"));
-                                titre.setGravity(Gravity.CENTER);//Centrage du titre
-                                titre.setTextSize(25);//Taille du titre
+                                titre.setText(document.getString("Titre"));
                                 titre.setTypeface(null, Typeface.BOLD);//Gras
-                                layout.addView(titre);
+                                titre.setTextSize(20);//Taille du titre
+                                titre.setTextColor(getResources().getColor(R.color.gris_fonce));
+                                layoutInformation.addView(titre);
 
-                                //Ajout d'un espace pour séparer les articles
-                                TextView espace = new TextView(getApplicationContext());
-                                espace.setText("   ");
-                                layout.addView(espace);
+                                //Ajout du diviseur
+                                View diviseur = new View(getApplicationContext());
+                                diviseur.setBackgroundColor(getResources().getColor(R.color.beige_claire));
+                                LinearLayout.LayoutParams paramsDiviseur = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                                paramsDiviseur.setMargins(0, 40, 0, 0);
+                                diviseur.setLayoutParams(paramsDiviseur);
+                                layoutInformation.addView(diviseur);
+
+                                layout.addView(layoutInformation);
+
 
 
 
                                 /******************* Mise en place d'écouteur *******************/
-                                image.setOnClickListener(new View.OnClickListener() {
+                                layoutInformation.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         /******************* Changement de page *******************/
@@ -199,10 +222,17 @@ public class Information extends AppCompatActivity {
                                 });
                             }
 
+
+
                         }
-                        ).addOnFailureListener(new OnFailureListener() {
+                        ).addOnCompleteListener(new OnCompleteListener<Uri>() {
                             @Override
-                            public void onFailure(@NonNull Exception e) {
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                //On augmente le chargement de la bar de 1
+                                progressBar.setProgress(progressBar.getProgress()+1);
+
+                                //Supression de la progressbar
+                                if(progressBar.getProgress()==tailleProgresseBar)progressBar.setVisibility(View.INVISIBLE);
 
                             }
                         });

@@ -52,7 +52,7 @@
         android:textStyle="bold"
         android:layout_below="@+id/textMail"
         android:layout_marginTop="15dp"
-        android:layout_marginLeft="2dp"
+        android:layout_marginLeft="10dp"
         />
 
     <TextView
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:text="Objet : "
         android:textSize="25sp"
-        android:layout_marginLeft="2dp"
+        android:layout_marginLeft="10dp"
         android:layout_below="@+id/textExpediteur"
         />
 
@@ -72,7 +72,7 @@
         android:layout_height="1dp"
         android:layout_below="@+id/textSujet"
         android:background="@color/gris_claire"
-        android:layout_marginLeft="25dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"/>
 
     <ProgressBar
@@ -92,27 +92,39 @@
         android:text="Chargement ..."
         android:textSize="30dp" />
 
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/divider2"
-        android:layout_above="@+id/divider">
+        android:layout_above="@id/divider">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <WebView
                 android:id="@+id/scrollLectureMail"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:id="@+id/layoutPieceJoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"/>
 
         </LinearLayout>
 
-
-
     </ScrollView>
+
+
+
+
+
+
+
 
 
     <!-- Menu  -->

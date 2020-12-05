@@ -43,6 +43,7 @@ public class Menu {
                 activity.overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
 
+                //if(activite==)
             }
         });
 

@@ -118,9 +118,9 @@ public class NouvelleAnnonce extends AppCompatActivity {
                 else{
 
                     /******************* Affichage de la boîte de dialogue de bienvenue *******************/
-                    erreurAnnonceDialogue.setTitle("Erreur publication"); //Titre
-                    erreurAnnonceDialogue.setMessage("Veuillez renseigner les champs \"Titre\" et \"contenu\". "); //Message
-                    erreurAnnonceDialogue.setIcon(R.drawable.erreur); //Ajout de l'icone erreur
+                    erreurAnnonceDialogue.setTitle("Oups..."); //Titre
+                    erreurAnnonceDialogue.setMessage("Votre annonce n'a pas pu être publié, vous devez choisir un titre et écrire du contenu"); //Message
+                    erreurAnnonceDialogue.setIcon(R.drawable.road_closure); //Ajout de l'icone erreur
                     erreurAnnonceDialogue.show(); //Affichage de la boîte de dialogue
                 }
             }

@@ -6,14 +6,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Xml;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
@@ -28,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
 
@@ -38,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -70,6 +77,7 @@ public class MailLecture extends AppCompatActivity {
     private TextView sujet;
     private TextView expediteur;
     private ImageView pastille;
+    private LinearLayout layout;
 
     private ProgressBar progressBar;
     private TextView textChargement;
@@ -102,6 +110,7 @@ public class MailLecture extends AppCompatActivity {
         this.sujet = findViewById(R.id.textSujet);
         this.expediteur = findViewById(R.id.textExpediteur);
         this.pastille = findViewById(R.id.pastille);
+        this.layout = findViewById(R.id.layoutPieceJoint);
 
         this.progressBar = findViewById(R.id.barChargement);
         this.textChargement = findViewById(R.id.textChargement);
@@ -239,7 +248,7 @@ public class MailLecture extends AppCompatActivity {
                 //Ajout du sujet
                 sujet.setText(object);
 
-                //Ajout du contenu
+                //Ajout du contenu dans la webview
                 contenu.loadDataWithBaseURL(null, textContenu, "text/html", "utf-8", null);
 
                 /******************* Ecouteur sur l'image pastille *******************/
@@ -247,7 +256,7 @@ public class MailLecture extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         //On va changer de pastille
-                        pastille.setImageResource(R.drawable.pastille_bleu);
+                        pastille.setImageResource(R.drawable.cercle_plein);
 
                         //On modifie la variable lu pour que le message soit marquer comme non lu
                         lu = false;
@@ -316,18 +325,99 @@ public class MailLecture extends AppCompatActivity {
                 }
             }
 
-            else if (bp.isMimeType("image/jpeg") || bp.isMimeType("image/png")){
+            else if (bp.isMimeType("application/pdf") || bp.isMimeType("image/jpeg") || bp.isMimeType("image/png") ) {
 
                 /*
-                DataHandler dh = bp.getDataHandler();
-                File file = new File(PATH_TO_DATA + "/received_" + fileName);
-                FileOutputStream fos = new FileOutputStream(file);
-                dh.writeTo(fos);*/
+
+                // save an attachment from a MimeBodyPart to a file
+
+                //String fileName = bp.getFileName().split("\\.")[0];
+                //String extension = bp.getFileName().split("\\.")[1];
+
+                String fileName = "controle";
+                String extension = "pdf";
+
+                File localFile = File.createTempFile(fileName,extension);
+                FileOutputStream output = new FileOutputStream(localFile);
+                InputStream input = bp.getInputStream();
+
+                byte[] buffer = new byte[4096];
+
+                int byteRead;
+
+                while ((byteRead = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, byteRead);
+                }
+                output.close();
+                System.out.println(localFile.toURI());
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
 
 
-                System.out.println("piece jointe  : "+bp.getContentType()+bp.getFileName()+bp.getInputStream());
+                        Bitmap myBitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+
+                        ImageView image = new ImageView(getApplicationContext());
+                        image.setImageBitmap(myBitmap);
+                        //image.setImageDrawable(d);
+                        //Picasso.get().load(String.valueOf(localFile.toURI())).into(image);
+                        layout.addView(image);
+
+
+
+
+                    }
+                });
+
+
+
+
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //On créer un layout pour mettre l'image et le nom du document
+                        LinearLayout layoutPieceJoite = new LinearLayout(getApplicationContext());
+                        layoutPieceJoite.setOrientation(LinearLayout.VERTICAL);
+
+                        //On affiche l'icone piece jointe
+                        ImageView image = new ImageView(getApplicationContext());
+                        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(200,200); // Dimenssion de l'image
+                        image.setLayoutParams(params);
+                        image.setImageResource(R.drawable.attach);
+                        layoutPieceJoite.addView(image);
+
+                        //On affiche le titre de la piece jointe
+
+                        TextView text = new TextView(getApplicationContext());
+                        try {
+
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                String fileName = bp.getFileName().split(String.valueOf("?"))[3];
+                                byte[] decoded = Base64.getDecoder().decode(fileName);
+                                System.out.println(new String(decoded));
+                            }
+
+
+                        } catch (MessagingException e) {
+                            e.printStackTrace();
+                        }
+                        layoutPieceJoite.addView(text);
+
+
+
+                        layout.addView(layoutPieceJoite);
+                    }
+                });
+
+
+                 */
+
             }
-            else System.out.println("else"+bp.getContentType());
+
+            else System.out.println("else "+bp.getContentType());
+
 
         } catch (MessagingException | IOException e) {
             e.printStackTrace();

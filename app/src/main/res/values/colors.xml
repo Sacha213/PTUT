@@ -21,4 +21,7 @@
     <color name="violetPale">#FF8C2480</color>
     <color name="rougePale">#FFCE587D</color>
     <color name="orangePale">#FFFF9485</color>
+    <color name="black">#000</color>
+    <color name="gris_fonce">#B2000000</color>
+    <color name="beige_claire">#F4CBB6</color>
 </resources>

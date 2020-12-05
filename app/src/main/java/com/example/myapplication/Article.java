@@ -7,10 +7,12 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,6 +31,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Article extends AppCompatActivity {
 
@@ -40,9 +44,9 @@ public class Article extends AppCompatActivity {
 
     private TextView titre;
     private TextView contenu;
-    private TextView auteur;
-    private TextView date;
+    private TextView auteurDate;
     private ImageView image;
+    private LinearLayout layout;
 
     private StorageReference storageReference;
 
@@ -56,9 +60,9 @@ public class Article extends AppCompatActivity {
 
         this.titre = findViewById(R.id.textTitre);
         this.contenu = findViewById(R.id.textContenu);
-        this.auteur = findViewById(R.id.textAuteur);
-        this.date = findViewById(R.id.textDate);
+        this.auteurDate = findViewById(R.id.textAuteurDate);
         this.image = findViewById(R.id.imageArticle);
+        this.layout = findViewById(R.id.dynamiqueLayoutArticle);
 
 
 
@@ -86,10 +90,15 @@ public class Article extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentSnapshot document) {
 
-                                titre.setText(document.getString("Nom"));
-                                contenu.setText(document.getString("Contenu"));
-                                auteur.setText(document.getString("Auteur"));
-                               // date.setText(document.getTimestamp("Date").toString());
+                                titre.setText(document.getString("Titre"));
+                                contenu.setText(Html.fromHtml(document.getString("Contenu")));
+
+                                String auteur = document.getString("Auteur");
+                                Date date = document.getTimestamp("Date").toDate();
+                                SimpleDateFormat formateur = new SimpleDateFormat("dd/MM/yyyy");
+                                String strDate= formateur.format(date);
+                                auteurDate.setText(Html.fromHtml("Publié par <strong>"+auteur+"</strong> le "+strDate));
+
 
                                 afficherImage(document);
                     }
@@ -98,12 +107,15 @@ public class Article extends AppCompatActivity {
 
     public void afficherImage(DocumentSnapshot document) {
 
-        final StorageReference monImage = storageReference.child("Images/" + document.getString("Image") + ".jpg");
+        final StorageReference monImage = storageReference.child("Images/" + document.getString("Image"));
 
         File localFile = null;
 
         try {
-            localFile = File.createTempFile(document.getString("Image"), "jpg");
+            //On récupère le nom de l'image et son extension
+            String nomImage = document.getString("Image").split("\\.")[0];
+            String extension = document.getString("Image").split("\\.")[1];
+            localFile = File.createTempFile(nomImage,extension);
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -118,6 +130,8 @@ public class Article extends AppCompatActivity {
                             public void onSuccess(Uri uri) {
 
                                 //Ajout de l'image de l'article
+                                LinearLayout.LayoutParams paramsImage = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,layout.getWidth()); // Dimenssion de l'image
+                                image.setLayoutParams(paramsImage);
                                 Picasso.get().load(uri).into(image);
 
                             }

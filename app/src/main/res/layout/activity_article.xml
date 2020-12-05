@@ -14,53 +14,39 @@
         android:layout_above="@+id/divider"
         android:layout_marginTop="-20dp">
 
-
-        <RelativeLayout
-            android:id="@+id/layoutArticle"
+        <LinearLayout
+            android:id="@+id/dynamiqueLayoutArticle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="20dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                />
 
             <ImageView
                 android:id="@+id/imageArticle"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginStart="36dp"
-                android:layout_marginLeft="36dp"
-                android:layout_marginEnd="35dp"
-                android:layout_marginRight="35dp" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
             <TextView
                 android:id="@+id/textContenu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Contenu"
-                android:textSize="15dp"
-                android:layout_below="@id/imageArticle"/>
-
+                android:textSize="15sp"/>
             <TextView
-                android:id="@+id/textAuteur"
+                android:id="@+id/textAuteurDate"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/textContenu"
-                android:text="Auteur"
-                android:gravity="center"/>
+                android:layout_height="wrap_content"
+                android:text="Publié par ... le ..."
+                android:gravity="center"
+                android:layout_marginBottom="10dp"/>
 
-            <TextView
-                android:id="@+id/textDate"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/textAuteur"
-                android:text="Date"
-                android:gravity="center"/>
-
-
-
-        </RelativeLayout>
+        </LinearLayout>
 
 
     </ScrollView>
@@ -88,6 +74,8 @@
         android:textColor="@color/white"
         android:layout_marginTop="40dp"
         android:layout_marginLeft="10dp"/>
+
+
 
 
 
