@@ -20,7 +20,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Attribut *******************/
 
     private static final String DATABASE_NAME = "Etu.bd"; //Nom de la base de données
-    private static final int DATABASE_VERSION = 11; //Version de la base de données
+    private static final int DATABASE_VERSION = 12; //Version de la base de données
 
     /******************* Constructeur *******************/
     public DatabaseManager( Context context){
@@ -64,6 +64,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE MATIERES");
         db.execSQL("DROP TABLE NOTES");
         db.execSQL("DROP TABLE CALENDRIER");
+        db.execSQL("DROP TABLE Pseudo");
+        db.execSQL("DROP TABLE Message");
+        db.execSQL("DROP TABLE Token");
         onCreate(db);
 
     }

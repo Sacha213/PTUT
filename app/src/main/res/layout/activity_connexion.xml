@@ -70,7 +70,7 @@
             android:hint="Identifiant"
             android:textSize="20sp"
             android:inputType="text"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_corner_connection"
             android:layout_gravity="center"/>
 
 
@@ -82,7 +82,7 @@
             android:hint="Mot de passe"
             android:inputType="textPassword"
             android:textSize="20sp"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_corner_connection"
             android:layout_gravity="center"/>
 
 

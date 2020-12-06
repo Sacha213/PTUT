@@ -71,7 +71,7 @@
             android:hint="Adresse mail Lyon 1"
             android:textSize="20sp"
             android:inputType="textEmailAddress"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_corner_connection"
             android:layout_gravity="center"/>
 
 
@@ -83,7 +83,7 @@
             android:hint="Flux RSS Tomuss"
             android:inputType="textUri"
             android:textSize="20sp"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_corner_connection"
             android:layout_gravity="center"/>
 
         <EditText
@@ -93,7 +93,7 @@
             android:hint="Lien du calendrier"
             android:inputType="textUri"
             android:textSize="20sp"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_corner_connection"
             android:layout_gravity="center"/>
 
 

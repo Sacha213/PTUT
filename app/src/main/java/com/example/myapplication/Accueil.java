@@ -169,7 +169,7 @@ public class Accueil extends AppCompatActivity {
 
                                 /******************* Changement de page *******************/
 
-                                Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
+                                Intent otherActivity = new Intent(getApplicationContext(), FindToken.class); //Ouverture d'une nouvelle activité
                                 startActivity(otherActivity);
 
                                 finish();//Fermeture de l'ancienne activité
@@ -216,7 +216,7 @@ public class Accueil extends AppCompatActivity {
 
                                                 /******************* Changement de page *******************/
 
-                                                Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
+                                                Intent otherActivity = new Intent(getApplicationContext(), FindToken.class); //Ouverture d'une nouvelle activité
                                                 startActivity(otherActivity);
 
                                                 finish();//Fermeture de l'ancienne activité
