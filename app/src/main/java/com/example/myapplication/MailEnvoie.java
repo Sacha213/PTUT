@@ -61,7 +61,7 @@ public class MailEnvoie extends AppCompatActivity {
         setContentView(R.layout.activity_mail_envoie);
 
 
-    /******************* Initialisation des variables *******************/
+        /******************* Initialisation des variables *******************/
         this.menu = new Menu(this);
 
         this.envoyer = findViewById(R.id.imageEnvoyer);
@@ -106,21 +106,21 @@ public class MailEnvoie extends AppCompatActivity {
 
         /******************* Gestion de l'envoi d'un mail *******************/
 
-            /******************* Mise en place d'écouteur *******************/
-            envoyer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        /******************* Mise en place d'écouteur *******************/
+        envoyer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                    /******************* Envoie d'un mail *******************/
-                    EnvoieMessage message = new EnvoieMessage(); // On instanci l'objet message de la classe EnvoieMessage qui est dans une AsyncTask
-                    message.execute(object.getText().toString(), contenu.getText().toString(), destinataire.getText().toString());
-
-
-                }
-            });
+                /******************* Envoie d'un mail *******************/
+                EnvoieMessage message = new EnvoieMessage(); // On instanci l'objet message de la classe EnvoieMessage qui est dans une AsyncTask
+                message.execute(object.getText().toString(), contenu.getText().toString(), destinataire.getText().toString());
 
 
-}
+            }
+        });
+
+
+    }
 
     public class EnvoieMessage extends AsyncTask<String, Void, Void>{
 
@@ -203,12 +203,12 @@ public class MailEnvoie extends AppCompatActivity {
             }
             else{
 
-                        /******************* Affichage de la boîte de dialogue d'erreur *******************/
-                        AlertDialog.Builder erreur = new AlertDialog.Builder(MailEnvoie.this);
-                        erreur.setTitle("Oups..."); //Titre
-                        erreur.setMessage("Une erreur est survenue, avez-vous mis une adresse mail valide ?"); //Message
-                        erreur.setIcon(R.drawable.road_closure); //Ajout de l'émoji caca
-                        erreur.show(); //Affichage de la boîte de dialogue
+                /******************* Affichage de la boîte de dialogue d'erreur *******************/
+                AlertDialog.Builder erreur = new AlertDialog.Builder(MailEnvoie.this);
+                erreur.setTitle("Oups..."); //Titre
+                erreur.setMessage("Une erreur est survenue, avez-vous mis une adresse mail valide ?"); //Message
+                erreur.setIcon(R.drawable.road_closure); //Ajout de l'émoji caca
+                erreur.show(); //Affichage de la boîte de dialogue
 
 
 

@@ -120,36 +120,36 @@ public class MailReception extends AppCompatActivity {
 
         /******************* Reception des mails *******************/
 
-            db.collection("users")
-                    .whereEqualTo("Uid",mAuth.getCurrentUser().getUid())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        db.collection("users")
+                .whereEqualTo("Uid",mAuth.getCurrentUser().getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
 
-                                    // On récupère le mot de passe de l'utilisateur
-                                    PASSWORD = document.getString("Password");
+                                // On récupère le mot de passe de l'utilisateur
+                                PASSWORD = document.getString("Password");
 
-                                }
-
-                                /******************* Reception des mails *******************/
-                                TelechargementMail mails = new TelechargementMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
-                                mails.execute();
                             }
-                        }
-                    });
 
-            if(messageEnvoye){
-                /******************* Affichage de la boîte de dialogue d'envoie d'un message *******************/
-                AlertDialog.Builder erreur = new AlertDialog.Builder(this);
-                erreur.setTitle("Super..."); //Titre
-                erreur.setMessage("Votre message à bien été envoyé."); //Message
-                erreur.setIcon(R.drawable.mail_sent); //Ajout de l'émoji caca
-                erreur.show(); //Affichage de la boîte de dialogue
-            }
+                            /******************* Reception des mails *******************/
+                            TelechargementMail mails = new TelechargementMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
+                            mails.execute();
+                        }
+                    }
+                });
+
+        if(messageEnvoye){
+            /******************* Affichage de la boîte de dialogue d'envoie d'un message *******************/
+            AlertDialog.Builder erreur = new AlertDialog.Builder(this);
+            erreur.setTitle("Super..."); //Titre
+            erreur.setMessage("Votre message à bien été envoyé."); //Message
+            erreur.setIcon(R.drawable.mail_sent); //Ajout de l'émoji caca
+            erreur.show(); //Affichage de la boîte de dialogue
+        }
 
 
 
@@ -175,48 +175,48 @@ public class MailReception extends AppCompatActivity {
 
     public class TelechargementMail extends AsyncTask<Void, Void, Void> {
 
-    @Override
-    protected Void doInBackground(Void... voids) {
+        @Override
+        protected Void doInBackground(Void... voids) {
 
-        // Création de la session
-        Properties properties = new Properties();
-        properties.setProperty("mail.store.protocol", "imaps");
-        properties.setProperty("mail.imaps.host", HOST);
-        properties.setProperty("mail.imaps.user", LOGIN);
-        properties.setProperty("mail.imaps.port","993");
-        Session session = Session.getInstance(properties);
+            // Création de la session
+            Properties properties = new Properties();
+            properties.setProperty("mail.store.protocol", "imaps");
+            properties.setProperty("mail.imaps.host", HOST);
+            properties.setProperty("mail.imaps.user", LOGIN);
+            properties.setProperty("mail.imaps.port","993");
+            Session session = Session.getInstance(properties);
 
-        // Les dossiers
-        Store store = null;
-        Folder defaultFolder = null;
-        Folder inbox = null;
-        try {
-            store = session.getStore(new URLName("imaps://" + HOST));
-            store.connect(LOGIN, PASSWORD);
-            defaultFolder = store.getDefaultFolder();
-
-            inbox = defaultFolder.getFolder("INBOX");
-
-            printMessages(inbox);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // On ferme les dossier ouvert
-            close(inbox);
-            close(defaultFolder);
+            // Les dossiers
+            Store store = null;
+            Folder defaultFolder = null;
+            Folder inbox = null;
             try {
-                if (store != null && store.isConnected()) {
-                    store.close();
-                }
-            } catch (MessagingException e) {
+                store = session.getStore(new URLName("imaps://" + HOST));
+                store.connect(LOGIN, PASSWORD);
+                defaultFolder = store.getDefaultFolder();
+
+                inbox = defaultFolder.getFolder("INBOX");
+
+                printMessages(inbox);
+
+            } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                // On ferme les dossier ouvert
+                close(inbox);
+                close(defaultFolder);
+                try {
+                    if (store != null && store.isConnected()) {
+                        store.close();
+                    }
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
             }
+
+
+            return null;
         }
-
-
-        return null;
-    }
 
         @Override
         protected void onPostExecute(Void aVoid) {
@@ -302,7 +302,7 @@ public class MailReception extends AppCompatActivity {
                 //On créer un layout horizontale pour pouvoir y ajouter les mail et les pastiles
                 LinearLayout layoutHorizontale = new LinearLayout(getApplicationContext());
                 layoutHorizontale.setOrientation(LinearLayout.HORIZONTAL);
-                
+
                 //On affiche une pastille bleu devant le mail
                 ImageView pastille = new ImageView(getApplicationContext());
                 pastille.setImageResource(R.drawable.pastille_bleu);
@@ -316,113 +316,113 @@ public class MailReception extends AppCompatActivity {
 
 
                 if(lu){ //Si le mail est lu on n'affiche pas la pastile
-                           pastille.setVisibility(View.INVISIBLE);
-                        }
+                    pastille.setVisibility(View.INVISIBLE);
+                }
 
 
                 layoutHorizontale.addView(pastille); //On ajoute la pastille au layout horizontale
 
 
-                    //On créer un layout vertical pour pouvoir y ajouter les mail et les pastiles
-                    LinearLayout layoutVerticale = new LinearLayout(getApplicationContext());
-                    layoutVerticale.setOrientation(LinearLayout.VERTICAL);
+                //On créer un layout vertical pour pouvoir y ajouter les mail et les pastiles
+                LinearLayout layoutVerticale = new LinearLayout(getApplicationContext());
+                layoutVerticale.setOrientation(LinearLayout.VERTICAL);
 
 
-                        //Ajout de l'expéditeur
-                        TextView expediteur = new TextView(getApplicationContext());
-                        expediteur.setText(textExpediteur);
-                        expediteur.setTextSize(20);//Taille du text
-                        expediteur.setTypeface(null, Typeface.BOLD);//Gras
-                        expediteur.setTextColor(Color.BLACK);//text en noir
-                        expediteur.setLines(1);//Une ligne max
-                        expediteur.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
-                        layoutVerticale.addView(expediteur);
+                //Ajout de l'expéditeur
+                TextView expediteur = new TextView(getApplicationContext());
+                expediteur.setText(textExpediteur);
+                expediteur.setTextSize(20);//Taille du text
+                expediteur.setTypeface(null, Typeface.BOLD);//Gras
+                expediteur.setTextColor(Color.BLACK);//text en noir
+                expediteur.setLines(1);//Une ligne max
+                expediteur.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
+                layoutVerticale.addView(expediteur);
 
 
-                        //On ajoute la date
-                        TextView date = new TextView(getApplicationContext());
-                        date.setText(dateEnvoi);
-                        date.setTextSize(10);//Taille de la date
-                        layoutVerticale.addView(date);
+                //On ajoute la date
+                TextView date = new TextView(getApplicationContext());
+                date.setText(dateEnvoi);
+                date.setTextSize(10);//Taille de la date
+                layoutVerticale.addView(date);
 
 
-                        //Ajout du sujet
-                        TextView sujet = new TextView(getApplicationContext());
-                        sujet.setText(object);
-                        sujet.setTextSize(15);//Taille du text
-                        sujet.setLines(1);//Une ligne max
-                        sujet.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
-                        layoutVerticale.addView(sujet);
+                //Ajout du sujet
+                TextView sujet = new TextView(getApplicationContext());
+                sujet.setText(object);
+                sujet.setTextSize(15);//Taille du text
+                sujet.setLines(1);//Une ligne max
+                sujet.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
+                layoutVerticale.addView(sujet);
 
 
-                        //Ajout de la description
-                        TextView description = new TextView(getApplicationContext());
-                        description.setText(textDescription);
-                        description.setTextSize(10);//Taille du text
-                        description.setMaxLines(3);//3 lignes max
-                        description.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
-                        layoutVerticale.addView(description);
+                //Ajout de la description
+                TextView description = new TextView(getApplicationContext());
+                description.setText(textDescription);
+                description.setTextSize(10);//Taille du text
+                description.setMaxLines(3);//3 lignes max
+                description.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
+                layoutVerticale.addView(description);
 
 
-                        //Ajout du diviseur
-                        View diviseur = new View(getApplicationContext());
-                        diviseur.setBackgroundColor(Color.GRAY);
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layout.getWidth(), 1);
-                        params.setMargins(0, 20, 0, 20);
-                        diviseur.setLayoutParams(params);
-                        layoutVerticale.addView(diviseur);
+                //Ajout du diviseur
+                View diviseur = new View(getApplicationContext());
+                diviseur.setBackgroundColor(Color.GRAY);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layout.getWidth(), 1);
+                params.setMargins(0, 20, 0, 20);
+                diviseur.setLayoutParams(params);
+                layoutVerticale.addView(diviseur);
 
 
-                        layoutHorizontale.addView(layoutVerticale);//On ajoute les informations du mail au layout verticale
-                        layout.addView(layoutHorizontale); //On ajoute le tout à notre layout principale (celui de l'activité)
+                layoutHorizontale.addView(layoutVerticale);//On ajoute les informations du mail au layout verticale
+                layout.addView(layoutHorizontale); //On ajoute le tout à notre layout principale (celui de l'activité)
 
-                        /******************* Mise en place d'écouteur *******************/
-                        sujet.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                /******************* Changement de page *******************/
-                                Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
-                                otherActivity.putExtra("Numéro", numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
-                                startActivity(otherActivity);
+                /******************* Mise en place d'écouteur *******************/
+                sujet.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        /******************* Changement de page *******************/
+                        Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
+                        otherActivity.putExtra("Numéro", numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
+                        startActivity(otherActivity);
 
-                                echape = true;//On stop l'async task
+                        echape = true;//On stop l'async task
 
-                                finish();//Fermeture de l'ancienne activité
-                                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
-                            }
-                        });
-
-                        expediteur.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                /******************* Changement de page *******************/
-                                Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
-                                otherActivity.putExtra("Numéro", numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
-                                startActivity(otherActivity);
-
-                                echape = true;//On stop l'async task
-
-                                finish();//Fermeture de l'ancienne activité
-                                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
-                            }
-                        });
-
-                        description.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                /******************* Changement de page *******************/
-                                Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
-                                otherActivity.putExtra("Numéro", numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
-                                startActivity(otherActivity);
-
-                                echape = true;//On stop l'async task
-
-                                finish();//Fermeture de l'ancienne activité
-                                overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
-                            }
-                        });
-
+                        finish();//Fermeture de l'ancienne activité
+                        overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
                     }
+                });
+
+                expediteur.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        /******************* Changement de page *******************/
+                        Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
+                        otherActivity.putExtra("Numéro", numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
+                        startActivity(otherActivity);
+
+                        echape = true;//On stop l'async task
+
+                        finish();//Fermeture de l'ancienne activité
+                        overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
+                    }
+                });
+
+                description.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        /******************* Changement de page *******************/
+                        Intent otherActivity = new Intent(getApplicationContext(), MailLecture.class); //Ouverture d'une nouvelle activité
+                        otherActivity.putExtra("Numéro", numMail); //Envoie de donner dans la nouvelle activité (numéro du mail)
+                        startActivity(otherActivity);
+
+                        echape = true;//On stop l'async task
+
+                        finish();//Fermeture de l'ancienne activité
+                        overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
+                    }
+                });
+
+            }
 
 
 

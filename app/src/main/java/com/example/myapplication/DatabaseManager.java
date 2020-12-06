@@ -5,7 +5,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+
+import java.text.ParseException;
 import java.util.Date;
+
+import java.util.ArrayList;
+
+import java.util.List;
+
 
 /******************* Classe représentant notre base de données *******************/
 public class DatabaseManager extends SQLiteOpenHelper {
@@ -20,9 +27,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
     }
 
+
     /******************* Méthode appelé automatiquement lors de la première utilisation *******************/
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         String strSql1 = "create table USERS (idEtudiant varchar2(8) primary key, mail text, lienTomuss text, lienCalendrier text)"; //Génération de la requette SQL pour créer un table Users qui va contenir les identifiants de l'utilisateur
         db.execSQL(strSql1); //On exécute la requette
 
@@ -34,6 +43,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         String strSql4 = "create table CALENDRIER(IDcal varchar2(16) primary key,HDEB number(4) not null,HFIN number(4) not null,date text not null, nom text, salle text, prof text)";
         db.execSQL(strSql4); //On exécute la requette
+
+
+        String strSql5 = "create table Pseudo (id integer primary key autoincrement, prenom varchar2(255), nom varchar2(255))";
+        db.execSQL(strSql5);
+
+        String strSql6 = "create table Message (id integer primary key autoincrement, pseudoSender varchar2(255), message varchar(255), type integer, date varchar(255))";
+        db.execSQL(strSql6);
+
+        String strSql7 = "create table Token (token varchar2(255) primary key)";
+        db.execSQL(strSql7);
+
     }
 
     /******************* Méthode appelé automatiquement si la version de la base de données a changée *******************/
@@ -276,4 +296,98 @@ public class DatabaseManager extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL(strsql); //Exécution de la requette
     }
 
+    public void insertPseudo(String prenom, String nom) {
+
+        String strSql = "INSERT INTO `Pseudo` (`prenom`, `nom`) values ('"+prenom+"','"+nom+"')";
+
+        this.getWritableDatabase().execSQL(strSql);
+    }
+
+    public List<String> getPseudo() {
+
+        String strsql = "select prenom, nom from Pseudo"; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+
+        List<String> pseudo = new ArrayList<>();
+        pseudo.add(cursor.getString(0)); //On enregistre le résultat de la colone 1 dans la variable string pseudo
+        pseudo.add(cursor.getString(1));
+
+        cursor.close(); //On ferme le curseur
+
+        return pseudo;
+
+    }
+
+
+    public void insertMessage(String message, String pseudoSender, int type, Date date)
+    {
+        String strSql = "INSERT INTO `Message` (`pseudoSender`, `message`, `type`, `date`) VALUES ('"+pseudoSender+"','"+message+"','"+type+"','"+date+"')";
+        this.getWritableDatabase().execSQL(strSql);
+    }
+
+    public List<Message> listMessage(String pseudoSender) throws ParseException {
+        List<Message> list = new ArrayList<>();
+
+        String strsql = "select message, type, date from Message where pseudoSender = '"+pseudoSender+"'";
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
+        cursor.moveToFirst();
+
+        for(int i = 0; i < cursor.getCount(); i++)
+        {
+            list.add(new Message(cursor.getString(0), cursor.getInt(1), new Date(cursor.getString(2))));
+            cursor.moveToNext();
+        }
+        cursor.close(); //On ferme le curseur
+        return list;
+    }
+
+    public List<Affichage> getSender() {
+        List<Affichage> list = new ArrayList<>();
+
+        String strsql = "select distinct pseudoSender from Message";
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
+
+        if(cursor.getCount() != 0)
+        {
+            cursor.moveToFirst();
+
+            for(int i = 0; i < cursor.getCount(); i++)
+            {
+                String strsql2 = "select message from Message where pseudoSender = '"+cursor.getString(0)+"'";
+                Cursor cursor2 = this.getReadableDatabase().rawQuery(strsql2, null);
+                cursor2.moveToLast();
+                list.add(new Affichage(cursor.getString(0), cursor2.getString(  0)));
+                cursor.moveToNext();
+            }
+            cursor.close(); //On ferme le curseur
+
+        }
+        return list;
+    }
+
+    public void insertToken(String token)
+    {
+        String strsql = "DELETE FROM Token"; //Génération de la requette SQL
+        this.getWritableDatabase().execSQL(strsql);
+        String strSql = "insert into Token values ('"+token+"')";
+        this.getWritableDatabase().execSQL(strSql);
+    }
+
+    public String getToken()
+    {
+        String strsql = "select token from Token";
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
+        cursor.moveToFirst();
+        String token = cursor.getString(0);
+        return token;
+    }
+
+    public String getFirstMessage(String sender) {
+        String strsql = "select message from Message where pseudoSender = '"+sender+"'";
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
+        cursor.moveToFirst();
+        String tmp = cursor.getString(0);
+        return tmp;
+    }
 }

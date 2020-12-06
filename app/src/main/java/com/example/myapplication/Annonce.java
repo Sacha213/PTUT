@@ -41,6 +41,8 @@ public class Annonce extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_annonce);
 
+
+
         /******************* Initialisation des variables *******************/
         this.menu = new Menu(this);
 
@@ -64,7 +66,6 @@ public class Annonce extends AppCompatActivity {
 
                 finish();//Fermeture de l'ancienne activité
                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
             }
         });
 

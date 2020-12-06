@@ -9,7 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import com.google.firebase.auth.FirebaseAuth;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,6 +19,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+
+
 
 public class Connexion extends AppCompatActivity { //Classe pricipale : page de connexion des utilisateur pour vérifier que leurs identifiants Lyon1 sont correctes
 
@@ -25,6 +31,8 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
     private Button connexion;
     private EditText identifiant;
     private EditText motDePasse;
+    FirebaseFirestore db;
+
 
     private FirebaseAuth mAuth;
 
@@ -33,6 +41,10 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
+
+
+
+
 
         /******************* Initialisation des variables *******************/
         this.connexion = findViewById(R.id.connexion);
@@ -43,18 +55,17 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
         mAuth = FirebaseAuth.getInstance();
 
 
+
         if (mAuth.getCurrentUser() != null) { //On vérifie si l'utilisateur est déja connecté
 
             /******************* Changement de page *******************/
-            Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
+            Intent otherActivity = new Intent(getApplicationContext(), FindToken.class); //Ouverture d'une nouvelle activité
             startActivity(otherActivity);
 
             finish();//Fermeture de l'ancienne activité
             overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
         }
-
-
 
 
         /******************* Mise en place d'écouteur *******************/
@@ -162,12 +173,14 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
         }
     }
 
+
     /******************* Gestion du retour en arrière *******************/
     @Override
     public void onBackPressed() {
 
        super.onBackPressed();
     }
+
 }
 
 

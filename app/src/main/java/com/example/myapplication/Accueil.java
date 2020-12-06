@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -24,11 +25,62 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.util.Log;
+import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentChange.Type;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.Query.Direction;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ServerTimestamp;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.Source;
+import com.google.firebase.firestore.Transaction;
+import com.google.firebase.firestore.WriteBatch;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+
 public class Accueil extends AppCompatActivity {
 
     /******************* Attribut *******************/
     private Button continuer;
+    private EditText casePseudo;
     private AlertDialog.Builder bienvenueDialogue; //Boite de dialogue pour un message de bienvenue
+
     private EditText mail;
     private EditText adresseTomuss;
     private EditText adresseCalendrier;
@@ -46,6 +98,7 @@ public class Accueil extends AppCompatActivity {
 
     private AlertDialog.Builder erreur;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +107,7 @@ public class Accueil extends AppCompatActivity {
         /******************* Initialisation des variables *******************/
         this.continuer = findViewById(R.id.boutonAccueil);
         bienvenueDialogue = new AlertDialog.Builder(this); //Création de la boîte de dialogue
+
         this.mail = findViewById(R.id.adresseMail);
         this.adresseCalendrier = findViewById(R.id.adresseCalendrier);
         this.adresseTomuss = findViewById(R.id.adresseTommus);
@@ -73,6 +127,7 @@ public class Accueil extends AppCompatActivity {
 
 
 
+
         /******************* Affichage de la boîte de dialogue de bienvenue *******************/ // à enlever après avoir créer un parcours d'initialisation de l'application pour l'utilisateur
         bienvenueDialogue.setTitle("Tu y est presque..."); //Titre
         bienvenueDialogue.setMessage("Nous avons encore besoin de quelques informations pour pouvoir activer toutes les fonctionnalités de l’application.\n" +
@@ -89,6 +144,8 @@ public class Accueil extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+
+
 
                 //On récupère les information entrées par l'utilisateur
                 String adresseMail = String.valueOf(mail.getText()); //Adresse mail
@@ -131,6 +188,8 @@ public class Accueil extends AppCompatActivity {
                                 //On met en majuscule la première lettre
                                 prenom = prenom.substring(0,1).toUpperCase() + prenom.substring(1);
                                 nom = nom.substring(0,1).toUpperCase() + nom.substring(1);
+
+                                databaseManager.insertPseudo(prenom, nom);
 
 
                                 //Etape 2 : On crée le compte utilisateur
