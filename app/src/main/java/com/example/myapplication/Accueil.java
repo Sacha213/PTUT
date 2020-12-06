@@ -166,6 +166,15 @@ public class Accueil extends AppCompatActivity {
 
                                 //On enregistre les données de l'utilisateur dans la base de données local
                                 databaseManager.insertUser(id, adresseMail, lienTomuss, lienCalendrier);
+                                String partie1 = adresseMail.split("@")[0]; //La partie avant @
+                                prenom = partie1.split("\\.")[0]; //Avant le .
+                                nom = partie1.split("\\.")[1]; //Après le .
+
+                                //On met en majuscule la première lettre
+                                prenom = prenom.substring(0,1).toUpperCase() + prenom.substring(1);
+                                nom = nom.substring(0,1).toUpperCase() + nom.substring(1);
+
+                                databaseManager.insertPseudo(prenom, nom);
 
                                 /******************* Changement de page *******************/
 
