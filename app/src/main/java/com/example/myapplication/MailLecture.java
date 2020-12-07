@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -124,26 +125,27 @@ public class MailLecture extends AppCompatActivity {
 
         /******************* Reception des mails *******************/
 
-            db.collection("users")
-                    .whereEqualTo("Uid",mAuth.getCurrentUser().getUid())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        // On récupère le mot de passe de l'utilisateur
+        db.collection("users")
+                .document(mAuth.getCurrentUser().getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            PASSWORD = document.getString("Password");
 
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                    // On récupère le mot de passe de l'utilisateur
-                                    PASSWORD = document.getString("Password");
-                                }
-
-                                /******************* Reception des mails *******************/
-                                LectureMail mails = new LectureMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
-                                mails.execute();
-                            }
+                            /******************* Reception des mails *******************/
+                            LectureMail mails = new LectureMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
+                            mails.execute();
                         }
-                    });
+                        else{
+                            System.out.println("Erreur");
+                        }
+
+                    }
+                });
 
 
 
@@ -469,24 +471,32 @@ public class MailLecture extends AppCompatActivity {
 
     public String degodage(String text) throws UnsupportedEncodingException {
 
+        int position;
         //On cherche si le texte est codé en UTF-8
-        int position = text.indexOf("=?UTF-8");
-        if( position != -1 ) //A modifier avec iso
+        if((position=text.indexOf("=?UTF-8")) != -1 )
         {
             String partie1 = text.substring(0,position);
             String partie2 = text.substring(position);
             text = partie1 + MimeUtility.decodeText(partie2);
 
         }
-        else{
-            position = text.indexOf("=?iso-8859-1");
-            if( position != -1 ) //A modifier avec iso
-            {
-                String partie1 = text.substring(0,position);
-                String partie2 = text.substring(position);
-                text = partie1 + MimeUtility.decodeText(partie2);
+        else if ((position=text.indexOf("=?utf-8")) != -1) {
 
-            }
+            String partie1 = text.substring(0,position);
+            String partie2 = text.substring(position);
+            text = partie1 + MimeUtility.decodeText(partie2);
+
+        }
+        //On cherche si le texte est codé en ISO-8859-1
+        else if ((position=text.indexOf("=?iso-8859-1")) != -1){
+            String partie1 = text.substring(0,position);
+            String partie2 = text.substring(position);
+            text = partie1 + MimeUtility.decodeText(partie2);
+        }
+        else if ((position=text.indexOf("=?ISO-8859-1")) != -1){
+            String partie1 = text.substring(0,position);
+            String partie2 = text.substring(position);
+            text = partie1 + MimeUtility.decodeText(partie2);
         }
         return text;
     }

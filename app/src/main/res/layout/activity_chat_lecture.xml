@@ -4,35 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Recherche">
-
-    <ScrollView
-        android:id="@+id/scrollRecherche"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/recherche"
-        android:layout_above="@+id/divider"
-        android:layout_marginTop="10dp">
-
-        <LinearLayout
-            android:id="@+id/scrollRechercheChat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp">
-
-        </LinearLayout>
-
-    </ScrollView>
-
+    tools:context=".ChatLecture">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/background_chat"
         android:rotation="-4"
-        android:layout_above="@id/recherche"
+        android:layout_above="@id/recyclerview_message"
         android:layout_marginLeft="-10dp"
         android:layout_marginTop="-20dp"
         android:layout_marginRight="-10dp"/>
@@ -50,32 +29,45 @@
         android:layout_marginTop="40dp"
         android:layout_marginLeft="10dp"/>
 
-    <EditText
-        android:id="@+id/recherche"
+    <Button
+        android:id="@+id/btnSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:textSize="20sp"
-        android:hint="Recherche..."
-        android:inputType="textPersonName"
-        android:layout_below="@+id/textChat"
-        android:layout_centerHorizontal="true"
-        android:textStyle="bold"
-        android:background="@drawable/rounded_corner_connection"
-        android:layout_marginTop="15dp"/>
-
-    <ImageView
-        android:id="@+id/boutonRecherche"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_above="@id/recherche"
-        android:layout_alignParentEnd="true"
+        android:layout_margin="8dp"
+        android:layout_marginRight="4dp"
+        android:text="Envoyer"
+        android:textColor="@color/violet"
+        android:layout_above="@id/divider"
         android:layout_alignParentRight="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        app:srcCompat="@drawable/send"
-        android:elevation="4dp"
-        android:background="@drawable/shadow"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.96"
+        android:layout_marginEnd="4dp" />
+
+    <EditText
+        android:id="@+id/etMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_above="@id/divider"
+        android:ems="10"
+        android:hint="Votre message..."
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toStartOf="@+id/btnSend"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnSend"
+        android:layout_toLeftOf="@id/btnSend" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_message"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:layout_below="@+id/textChat"
+        android:layout_above="@+id/etMessage"/>
 
     <!-- Menu  -->
 

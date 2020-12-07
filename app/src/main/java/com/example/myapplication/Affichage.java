@@ -2,7 +2,6 @@ package com.example.myapplication;
 
 public class Affichage {
     private String pseudo;
-
     private String lastMessage;
 
 

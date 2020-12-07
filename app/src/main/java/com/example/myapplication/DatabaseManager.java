@@ -20,7 +20,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Attribut *******************/
 
     private static final String DATABASE_NAME = "Etu.bd"; //Nom de la base de données
-    private static final int DATABASE_VERSION = 12; //Version de la base de données
+    private static final int DATABASE_VERSION = 13; //Version de la base de données
 
     /******************* Constructeur *******************/
     public DatabaseManager( Context context){
@@ -44,15 +44,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String strSql4 = "create table CALENDRIER(IDcal varchar2(16) primary key,HDEB number(4) not null,HFIN number(4) not null,date text not null, nom text, salle text, prof text)";
         db.execSQL(strSql4); //On exécute la requette
 
-
-        String strSql5 = "create table Pseudo (id integer primary key autoincrement, prenom varchar2(255), nom varchar2(255))";
-        db.execSQL(strSql5);
-
         String strSql6 = "create table Message (id integer primary key autoincrement, pseudoSender varchar2(255), message varchar(255), type integer, date varchar(255))";
         db.execSQL(strSql6);
 
-        String strSql7 = "create table Token (token varchar2(255) primary key)";
-        db.execSQL(strSql7);
 
     }
 
@@ -64,9 +58,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE MATIERES");
         db.execSQL("DROP TABLE NOTES");
         db.execSQL("DROP TABLE CALENDRIER");
-        db.execSQL("DROP TABLE Pseudo");
         db.execSQL("DROP TABLE Message");
-        db.execSQL("DROP TABLE Token");
         onCreate(db);
 
     }
@@ -299,29 +291,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL(strsql); //Exécution de la requette
     }
 
-    public void insertPseudo(String prenom, String nom) {
-
-        String strSql = "INSERT INTO `Pseudo` (`prenom`, `nom`) values ('"+prenom+"','"+nom+"')";
-
-        this.getWritableDatabase().execSQL(strSql);
-    }
-
-    public List<String> getPseudo() {
-
-        String strsql = "select prenom, nom from Pseudo"; //Génération de la requette SQL
-        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
-        cursor.moveToFirst(); //On déplace le curseur à la première ligne
-
-        List<String> pseudo = new ArrayList<>();
-        pseudo.add(cursor.getString(0)); //On enregistre le résultat de la colone 1 dans la variable string pseudo
-        pseudo.add(cursor.getString(1));
-
-        cursor.close(); //On ferme le curseur
-
-        return pseudo;
-
-    }
-
 
     public void insertMessage(String message, String pseudoSender, int type, Date date)
     {
@@ -357,7 +326,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
             for(int i = 0; i < cursor.getCount(); i++)
             {
-                String strsql2 = "select message from Message where pseudoSender = '"+cursor.getString(0)+"'";
+                String strsql2 = "select message from Message where pseudoSender = '"+cursor.getString(0)+"'"; //Order by
                 Cursor cursor2 = this.getReadableDatabase().rawQuery(strsql2, null);
                 cursor2.moveToLast();
                 list.add(new Affichage(cursor.getString(0), cursor2.getString(  0)));
@@ -369,22 +338,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return list;
     }
 
-    public void insertToken(String token)
-    {
-        String strsql = "DELETE FROM Token"; //Génération de la requette SQL
-        this.getWritableDatabase().execSQL(strsql);
-        String strSql = "insert into Token values ('"+token+"')";
-        this.getWritableDatabase().execSQL(strSql);
-    }
-
-    public String getToken()
-    {
-        String strsql = "select token from Token";
-        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null);
-        cursor.moveToFirst();
-        String token = cursor.getString(0);
-        return token;
-    }
 
     public String getFirstMessage(String sender) {
         String strsql = "select message from Message where pseudoSender = '"+sender+"'";

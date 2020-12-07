@@ -56,23 +56,22 @@ public class Drive extends AppCompatActivity {
 
         // On récupère le mot de passe de l'utilisateur
         db.collection("users")
-                .whereEqualTo("Uid",mAuth.getCurrentUser().getUid())
+                .document(mAuth.getCurrentUser().getUid())
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                passwordUtilisateur = document.getString("Password");
-
-                            }
-                        } else {
-                            System.out.println("Erreur ");
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            passwordUtilisateur = document.getString("Password");
                         }
+                        else{
+                            System.out.println("Erreur");
+                        }
+
                     }
                 });
+
 
         /******************* Gestion du navigateur web *******************/
 

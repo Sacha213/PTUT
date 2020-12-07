@@ -63,9 +63,12 @@
         </service>
 
         <activity android:name=".FindToken" />
-        <activity android:name=".MainList"/>
-        <activity android:name=".Recherche"/>
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".ChatReception"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".Recherche"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".ChatLecture"
+            android:windowSoftInputMode="adjustPan"/>
 
     </application>
 

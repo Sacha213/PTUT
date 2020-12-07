@@ -1,67 +1,81 @@
 package com.example.myapplication
 
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context.MODE_PRIVATE
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.iid.FirebaseInstanceId
-import java.util.HashMap
 
 
-class FindToken : AppCompatActivity() {
+class FindToken  {
+
+    /******************* Attribut *******************/
 
     private val TAG = "FindToken"
 
     private var db: FirebaseFirestore? = null
+    private var mAuth: FirebaseAuth? = null
 
-    private var databaseManager: DatabaseManager? = null
+    private lateinit var NOM : String
+    private lateinit var PRENOM : String
 
-    private var recup: MutableList<String> = ArrayList<String>()
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_findtoken)
+    fun FindToken(context: Context) {
 
         db = FirebaseFirestore.getInstance()
-
-        databaseManager = DatabaseManager(this)
-
-
-        recup = databaseManager!!.pseudo
+        mAuth = FirebaseAuth.getInstance()
 
 
-        FirebaseService.sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
-        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
-            FirebaseService.token = it.token
-            val newToken = it.token
+        // On récupère le prénom et le nom de l'utilisateur
+        mAuth!!.currentUser?.uid?.let {
+            db!!.collection("users")
+                    .document(it)
+                    .get()
+                    .addOnCompleteListener { task ->
+                        val document = task.result
+                        if (document!!.exists()) {
 
-            val data = hashMapOf(
-                    "prenom" to recup.get(0),
-                    "nom" to recup.get(1),
-                    "token" to newToken
+                            NOM = document.getString("Nom").toString()
+                            PRENOM = document.getString("Prénom").toString()
 
-            )
+                            FirebaseService.sharedPref = context.getSharedPreferences("sharedPref", MODE_PRIVATE)
+                            FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
+                                FirebaseService.token = it.token
+                                val newToken = it.token
 
-            db!!.collection("Users").document(recup.get(0)+" "+recup.get(1)).set(data)
+                                val data = hashMapOf(
+                                        "token" to newToken
+                                )
 
-            /******************* Changement de page  */
-            val otherActivity = Intent(applicationContext, Information::class.java) //Ouverture d'une nouvelle activité
+                                //On ajoute le token à la base de donner
+                                //(SetOptions.merge() sert à ne pas suprimmer les ancienne données)
+                                //mAuth!!.currentUser?.getUid()?.let { it1 -> db!!.collection("users").document(it1).set(data, SetOptions.merge()) }
 
-            startActivity(otherActivity)
+                                db!!.collection("Token")
+                                        .document(PRENOM+" "+NOM)
+                                        .set(data)
+                            }
 
-            finish() //Fermeture de l'ancienne activité*/
 
+                        }else {
+                            println("Erreur")
+                        }
+
+                    }
 
         }
+
+
+
+
+
+
     }
+
 }
 
-private fun Query.set(data: HashMap<String, String>) {
-    TODO("Not yet implemented")
-}
+
 
 

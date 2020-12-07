@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -98,6 +99,8 @@ public class Accueil extends AppCompatActivity {
 
     private AlertDialog.Builder erreur;
 
+    private FindToken findToken ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +114,8 @@ public class Accueil extends AppCompatActivity {
         this.mail = findViewById(R.id.adresseMail);
         this.adresseCalendrier = findViewById(R.id.adresseCalendrier);
         this.adresseTomuss = findViewById(R.id.adresseTommus);
+
+        findToken = new FindToken();
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -174,11 +179,11 @@ public class Accueil extends AppCompatActivity {
                                 prenom = prenom.substring(0,1).toUpperCase() + prenom.substring(1);
                                 nom = nom.substring(0,1).toUpperCase() + nom.substring(1);
 
-                                databaseManager.insertPseudo(prenom, nom);
+                                findToken.FindToken(getApplicationContext());
 
                                 /******************* Changement de page *******************/
 
-                                Intent otherActivity = new Intent(getApplicationContext(), FindToken.class); //Ouverture d'une nouvelle activité
+                                Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
                                 startActivity(otherActivity);
 
                                 finish();//Fermeture de l'ancienne activité
@@ -198,8 +203,6 @@ public class Accueil extends AppCompatActivity {
                                 prenom = prenom.substring(0,1).toUpperCase() + prenom.substring(1);
                                 nom = nom.substring(0,1).toUpperCase() + nom.substring(1);
 
-                                databaseManager.insertPseudo(prenom, nom);
-
 
                                 //Etape 2 : On crée le compte utilisateur
                                 mAuth.createUserWithEmailAndPassword(adresseMail, mdp)
@@ -216,16 +219,17 @@ public class Accueil extends AppCompatActivity {
                                                 data.put("Nom", nom);
                                                 data.put("Prénom", prenom);
 
-                                                db.collection("users").add(data);
+                                                db.collection("users").document(mAuth.getCurrentUser().getUid()).set(data);
 
                                                 //On enregistre les données de l'utilisateur dans la base de données local
                                                 databaseManager.insertUser(id, adresseMail, lienTomuss, lienCalendrier);
 
                                                 //Etape 4 : On change d'activité
 
+                                                findToken.FindToken(getApplicationContext());
                                                 /******************* Changement de page *******************/
 
-                                                Intent otherActivity = new Intent(getApplicationContext(), FindToken.class); //Ouverture d'une nouvelle activité
+                                                Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
                                                 startActivity(otherActivity);
 
                                                 finish();//Fermeture de l'ancienne activité

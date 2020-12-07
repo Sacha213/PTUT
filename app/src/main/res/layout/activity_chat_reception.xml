@@ -4,35 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Recherche">
+    tools:context=".ChatReception">
+
 
     <ScrollView
-        android:id="@+id/scrollRecherche"
+        android:id="@+id/scrollChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/recherche"
+        android:layout_below="@+id/textChat"
         android:layout_above="@+id/divider"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="-20dp">
 
         <LinearLayout
-            android:id="@+id/scrollRechercheChat"
+            android:id="@+id/scrollReceptionChat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp">
+            android:layout_marginLeft="10dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                />
 
         </LinearLayout>
 
     </ScrollView>
-
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/background_chat"
         android:rotation="-4"
-        android:layout_above="@id/recherche"
+        android:layout_above="@id/scrollChat"
         android:layout_marginLeft="-10dp"
         android:layout_marginTop="-20dp"
         android:layout_marginRight="-10dp"/>
@@ -50,30 +54,17 @@
         android:layout_marginTop="40dp"
         android:layout_marginLeft="10dp"/>
 
-    <EditText
-        android:id="@+id/recherche"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:textSize="20sp"
-        android:hint="Recherche..."
-        android:inputType="textPersonName"
-        android:layout_below="@+id/textChat"
-        android:layout_centerHorizontal="true"
-        android:textStyle="bold"
-        android:background="@drawable/rounded_corner_connection"
-        android:layout_marginTop="15dp"/>
 
     <ImageView
-        android:id="@+id/boutonRecherche"
+        android:id="@+id/ecrireChat"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_above="@id/recherche"
+        android:layout_above="@id/scrollChat"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
-        app:srcCompat="@drawable/send"
+        app:srcCompat="@drawable/crayon"
         android:elevation="4dp"
         android:background="@drawable/shadow"/>
 

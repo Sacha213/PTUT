@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_HIGH
@@ -50,7 +49,7 @@ class FirebaseService : FirebaseMessagingService() {
 
         databaseManager = DatabaseManager(this)
 
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, ChatLecture::class.java)
         println(message.data["sender"])
         intent.putExtra("users", message.data["sender"])
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

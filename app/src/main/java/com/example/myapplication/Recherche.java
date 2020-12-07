@@ -1,114 +1,222 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Recherche extends AppCompatActivity implements ListAdapter.OnNoteListener {
+public class Recherche extends AppCompatActivity {
+
+    /******************* Attribut *******************/
 
     private static final String TAG = "Recherche";
     private FirebaseFirestore db; //Base de donnée Firestore
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
-    private ListAdapter listAdapter;
 
-    private List<Affichage> listeUsers = new ArrayList<>();
+
     private String prenom;
     private String nom;
     private String rslt;
 
-    private ImageView calendrier; //Icônes du menu
-    private ImageView notes;
-    private ImageView informations;
-    private ImageView drive;
-    private ImageView messagerie;
-    private TextView pseudo;
-    private Button button;
+    private Menu menu;
+    private ImageView button;
     private EditText recherche;
+    private LinearLayout layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recherche);
 
+        /******************* Initialisation des variables *******************/
+
+        this.menu = new Menu(this);
+        this.button = findViewById(R.id.boutonRecherche);
+        this.recherche = findViewById(R.id.recherche);
+        this.layout = findViewById(R.id.scrollRechercheChat);
 
         db = FirebaseFirestore.getInstance();
 
         System.out.println(getIntent().getStringExtra("mode"));
 
+        /******************* Gestion de l'affichage des utilisateurs *******************/
+
+        //Si le mode d'affichage est "mainlist" on affcihe tout les utilisateurs
         if(getIntent().getStringExtra("mode").equals("mainlist")) {
-            System.out.println("yooo");
-            db.collection("Users")
+            db.collection("Token")
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                prenom = document.getString("prenom");
-                                nom = document.getString("nom");
-                                System.out.println(prenom+" "+nom);
-                                listeUsers.add(new Affichage(prenom+" "+nom, null));
+                                String pseudo = document.getId();
+
+                                //On créer un layout horizontale pour pouvoir y ajouter les bulles
+                                LinearLayout layoutHorizontale = new LinearLayout(getApplicationContext());
+                                layoutHorizontale.setOrientation(LinearLayout.HORIZONTAL);
+
+                                //On affiche une rond devant les informations
+                                ImageView rond = new ImageView(getApplicationContext());
+                                rond.setImageResource(R.drawable.pastille_violette);
+                                //Parametre de l'image
+                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(200, 200); // Dimenssion de l'image
+                                lp.setMargins(0,0,20,0); //margin
+                                rond.setLayoutParams(lp);
+
+                                layoutHorizontale.addView(rond); //On ajoute le rond au layout horizontale
+
+                                //Création d'un layout pour mettre l'utilisateur et le dernier message reçu
+                                LinearLayout layoutMessage = new LinearLayout(getApplicationContext());
+                                layoutMessage.setOrientation(LinearLayout.VERTICAL);
+                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                params.setMargins(0, 0, 0, 40);
+                                layoutMessage.setLayoutParams(params);
+                                layoutMessage.setPadding(10,10,10,10);
+                                layoutMessage.setGravity(Gravity.CENTER_VERTICAL);
+
+
+
+                                //Ajout du pseudo
+                                TextView pseudoView = new TextView(getApplicationContext());
+                                pseudoView.setText(pseudo);
+                                pseudoView.setTypeface(null, Typeface.BOLD);//Gras
+                                pseudoView.setTextSize(30);//Taille du titre
+                                pseudoView.setTextColor(getResources().getColor(R.color.gris_fonce));
+                                layoutMessage.addView(pseudoView);
+
+                                layoutHorizontale.addView(layoutMessage);
+
+                                /******************* Mise en place d'écouteur *******************/
+                                layoutHorizontale.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        System.out.println("zeubiiii");
+
+                                        /******************* Changement de page *******************/
+                                        Intent intent = new Intent(getApplicationContext(), ChatLecture.class);
+                                        intent.putExtra("users", pseudo);
+                                        startActivity(intent);//Ouverture d'une nouvelle activité
+
+                                        finish();//Fermeture de l'ancienne activité
+                                        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
+
+                                    }
+                                });
+
+                                //On ajout le layout au scroll
+                                layout.addView(layoutHorizontale);
+
+                                //Ajout du diviseur
+                                View diviseur = new View(getApplicationContext());
+                                diviseur.setBackgroundColor(getResources().getColor(R.color.gris_claire));
+                                LinearLayout.LayoutParams paramsDiviseur = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                                paramsDiviseur.setMargins(0, 20, 0, 20);
+                                diviseur.setLayoutParams(paramsDiviseur);
+                                layout.addView(diviseur);
+
+
                             }
-                            recyclerView = findViewById(R.id.recyclerview_pers);
 
-                            layoutManager = new LinearLayoutManager(this);
-
-                            recyclerView.setLayoutManager(layoutManager);
-
-                            listAdapter = new ListAdapter(listeUsers,this);
-
-                            recyclerView.setAdapter(listAdapter);
                         }
                     });
         }
 
+        //Si le mode d'affichage est "this" on affcihe les utilisateur recherchés
         if(getIntent().getStringExtra("mode").equals("this")) {
             String temp = getIntent().getStringExtra("recherche");
 
-            db.collection("Users")
+            db.collection("Token")
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 rslt = document.getString("prenom")+" "+document.getString("nom");
-                                if (Pattern.matches(".*"+temp+".*".toLowerCase(), rslt.toLowerCase()))
+                                if (Pattern.matches(".*"+temp.toLowerCase()+".*", rslt.toLowerCase()))
                                 {
-                                    prenom = document.getString("prenom");
-                                    nom = document.getString("nom");
-                                    listeUsers.add(new Affichage(prenom+" "+nom, null));
+                                    String pseudo = document.getId();
+
+                                    //On créer un layout horizontale pour pouvoir y ajouter les bulles
+                                    LinearLayout layoutHorizontale = new LinearLayout(getApplicationContext());
+                                    layoutHorizontale.setOrientation(LinearLayout.HORIZONTAL);
+
+                                    //On affiche une rond devant les informations
+                                    ImageView rond = new ImageView(getApplicationContext());
+                                    rond.setImageResource(R.drawable.pastille_violette);
+                                    //Parametre de l'image
+                                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(200, 200); // Dimenssion de l'image
+                                    lp.setMargins(0,0,20,0); //margin
+                                    rond.setLayoutParams(lp);
+
+                                    layoutHorizontale.addView(rond); //On ajoute le rond au layout horizontale
+
+                                    //Création d'un layout pour mettre l'utilisateur et le dernier message reçu
+                                    LinearLayout layoutMessage = new LinearLayout(getApplicationContext());
+                                    layoutMessage.setOrientation(LinearLayout.VERTICAL);
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    params.setMargins(0, 0, 0, 40);
+                                    layoutMessage.setLayoutParams(params);
+                                    layoutMessage.setPadding(10,10,10,10);
+                                    layoutMessage.setGravity(Gravity.CENTER_VERTICAL);
+
+
+
+                                    //Ajout du pseudo
+                                    TextView pseudoView = new TextView(getApplicationContext());
+                                    pseudoView.setText(pseudo);
+                                    pseudoView.setTypeface(null, Typeface.BOLD);//Gras
+                                    pseudoView.setTextSize(30);//Taille du titre
+                                    pseudoView.setTextColor(getResources().getColor(R.color.gris_fonce));
+                                    layoutMessage.addView(pseudoView);
+
+                                    layoutHorizontale.addView(layoutMessage);
+
+                                    /******************* Mise en place d'écouteur *******************/
+                                    layoutHorizontale.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            System.out.println("zeubiiii");
+
+                                            /******************* Changement de page *******************/
+                                            Intent intent = new Intent(getApplicationContext(), ChatLecture.class);
+                                            intent.putExtra("users", pseudo);
+                                            startActivity(intent);//Ouverture d'une nouvelle activité
+
+                                            finish();//Fermeture de l'ancienne activité
+                                            overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
+
+                                        }
+                                    });
+
+                                    //On ajout le layout au scroll
+                                    layout.addView(layoutHorizontale);
+
+                                    //Ajout du diviseur
+                                    View diviseur = new View(getApplicationContext());
+                                    diviseur.setBackgroundColor(getResources().getColor(R.color.gris_claire));
+                                    LinearLayout.LayoutParams paramsDiviseur = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                                    paramsDiviseur.setMargins(0, 20, 0, 20);
+                                    diviseur.setLayoutParams(paramsDiviseur);
+                                    layout.addView(diviseur);
                                 }
                             }
-                            recyclerView = findViewById(R.id.recyclerview_pers);
-
-                            layoutManager = new LinearLayoutManager(this);
-
-                            recyclerView.setLayoutManager(layoutManager);
-
-                            listAdapter = new ListAdapter(listeUsers,this);
-
-                            recyclerView.setAdapter(listAdapter);
                         }
                     });
         }
@@ -120,13 +228,7 @@ public class Recherche extends AppCompatActivity implements ListAdapter.OnNoteLi
 
 
 
-        this.calendrier = findViewById(R.id.calendrier);
-        this.notes = findViewById(R.id.notes);
-        this.informations = findViewById(R.id.informations);
-        this.drive = findViewById(R.id.drive);
-        this.messagerie = findViewById(R.id.messagerie);
-        this.button = findViewById(R.id.button2);
-        this.recherche = findViewById(R.id.recherche);
+
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,94 +244,24 @@ public class Recherche extends AppCompatActivity implements ListAdapter.OnNoteLi
             }
         });
 
-
-
-
-
-        /******************* Gestion des évènements du menu *******************/
-
-        calendrier.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Calendrier.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-
-            }
-        });
-
-        notes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Note.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        informations.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        drive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Drive.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
-
-        messagerie.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Messagerie.class); //Ouverture d'une nouvelle activité
-                startActivity(otherActivity);
-
-                finish();//Fermeture de l'ancienne activité
-                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
-
-            }
-        });
     }
 
+    /******************* Gestion du retour en arrière *******************/
     @Override
-    public void onNoteClick(int position) {
-        Log.d(TAG, "onNoteClick: ");
-        Intent intent = new Intent(this,MainActivity.class);
-        String tmp = listeUsers.get(position).getPseudo();
-        intent.putExtra("users", tmp);
-        startActivity(intent);
-        finish(); //Fermeture de l'ancienne activité
-        overridePendingTransition(0, 0);
+    public void onBackPressed() {
+
+        /******************* Changement de page *******************/
+        Intent otherActivity = new Intent(getApplicationContext(), ChatReception.class); //Ouverture d'une nouvelle activité
+        startActivity(otherActivity);
+
+
+        finish();//Fermeture de l'ancienne activité
+        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
     }
+
+
+
 }
 
 

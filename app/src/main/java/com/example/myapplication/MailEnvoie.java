@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -77,29 +78,26 @@ public class MailEnvoie extends AppCompatActivity {
 
         ACCOUNT = databaseManager.getMail();
 
-        // On récupère le mot de passe de l'utilisateur, son nom et son prénom
+        // On récupère le mot de passe de l'utilisateur
         db.collection("users")
-                .whereEqualTo("Uid",mAuth.getCurrentUser().getUid())
-                .limit(1)
+                .document(mAuth.getCurrentUser().getUid())
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            PASSWORD = document.getString("Password");
+                            NOM = document.getString("Nom");
+                            PRENOM = document.getString("Prénom");
 
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                PASSWORD = document.getString("Password");
-                                NOM = document.getString("Nom");
-                                PRENOM = document.getString("Prénom");
-
-                                //On ajoute la signature à la fin du mail
-                                contenu.setText("Bonjour,\n\n\n\nCordialement,\n"+PRENOM+" "+NOM);
-
-                            }
-                        } else {
-                            System.out.println("Erreur ");
+                            //On ajoute la signature à la fin du mail
+                            contenu.setText("Bonjour,\n\n\n\nCordialement,\n"+PRENOM+" "+NOM);
                         }
+                        else{
+                            System.out.println("Erreur");
+                        }
+
                     }
                 });
 

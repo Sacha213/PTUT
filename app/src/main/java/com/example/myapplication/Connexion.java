@@ -32,7 +32,7 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
     private EditText identifiant;
     private EditText motDePasse;
     FirebaseFirestore db;
-
+    private FindToken findToken;
 
     private FirebaseAuth mAuth;
 
@@ -51,6 +51,8 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
         this.identifiant = findViewById(R.id.identifiant);
         this.motDePasse = findViewById(R.id.motdepasse);
 
+        findToken = new FindToken();
+
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
@@ -58,8 +60,10 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
 
         if (mAuth.getCurrentUser() != null) { //On vérifie si l'utilisateur est déja connecté
 
+            findToken.FindToken(this);
+
             /******************* Changement de page *******************/
-            Intent otherActivity = new Intent(getApplicationContext(), FindToken.class); //Ouverture d'une nouvelle activité
+            Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
             startActivity(otherActivity);
 
             finish();//Fermeture de l'ancienne activité

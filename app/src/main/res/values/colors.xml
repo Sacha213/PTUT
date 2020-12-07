@@ -24,4 +24,5 @@
     <color name="black">#000</color>
     <color name="gris_fonce">#B2000000</color>
     <color name="beige_claire">#F4CBB6</color>
+    <color name="gris">#4D000000</color>
 </resources>

@@ -33,6 +33,7 @@ import com.google.android.gms.common.util.IOUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -120,25 +121,25 @@ public class MailReception extends AppCompatActivity {
 
         /******************* Reception des mails *******************/
 
+        // On récupère le mot de passe de l'utilisateur
         db.collection("users")
-                .whereEqualTo("Uid",mAuth.getCurrentUser().getUid())
+                .document(mAuth.getCurrentUser().getUid())
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                // On récupère le mot de passe de l'utilisateur
-                                PASSWORD = document.getString("Password");
-
-                            }
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            PASSWORD = document.getString("Password");
 
                             /******************* Reception des mails *******************/
                             TelechargementMail mails = new TelechargementMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
                             mails.execute();
                         }
+                        else{
+                            System.out.println("Erreur");
+                        }
+
                     }
                 });
 
@@ -312,7 +313,7 @@ public class MailReception extends AppCompatActivity {
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(50, 50); // Dimenssion de l'image
                 lp.setMargins(5,10,5,10); //margin
                 pastille.setLayoutParams(lp);
-                //Centrer la pastiles
+
 
 
                 if(lu){ //Si le mail est lu on n'affiche pas la pastile
@@ -542,24 +543,32 @@ public class MailReception extends AppCompatActivity {
 
     public String degodage(String text) throws UnsupportedEncodingException {
 
+        int position;
         //On cherche si le texte est codé en UTF-8
-        int position = text.indexOf("=?UTF-8");
-        if( position != -1 )
+        if((position=text.indexOf("=?UTF-8")) != -1 )
         {
             String partie1 = text.substring(0,position);
             String partie2 = text.substring(position);
             text = partie1 + MimeUtility.decodeText(partie2);
 
         }
-        else{
-            position = text.indexOf("=?iso-8859-1");
-            if( position != -1 )
-            {
-                String partie1 = text.substring(0,position);
-                String partie2 = text.substring(position);
-                text = partie1 + MimeUtility.decodeText(partie2);
+        else if ((position=text.indexOf("=?utf-8")) != -1) {
 
-            }
+            String partie1 = text.substring(0,position);
+            String partie2 = text.substring(position);
+            text = partie1 + MimeUtility.decodeText(partie2);
+
+        }
+        //On cherche si le texte est codé en ISO-8859-1
+        else if ((position=text.indexOf("=?iso-8859-1")) != -1){
+            String partie1 = text.substring(0,position);
+            String partie2 = text.substring(position);
+            text = partie1 + MimeUtility.decodeText(partie2);
+        }
+        else if ((position=text.indexOf("=?ISO-8859-1")) != -1){
+            String partie1 = text.substring(0,position);
+            String partie2 = text.substring(position);
+            text = partie1 + MimeUtility.decodeText(partie2);
         }
         return text;
     }
