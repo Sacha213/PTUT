@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_chat_lecture.*
+import kotlinx.android.synthetic.main.activity_chat_conversation.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,6 +38,7 @@ class ChatLecture : AppCompatActivity() {
 
     private lateinit var write: ImageView
     private lateinit var menu : Menu
+    private lateinit var textChat : TextView
 
     private lateinit var NOM : String
     private lateinit var PRENOM : String
@@ -44,10 +46,11 @@ class ChatLecture : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat_lecture)
+        setContentView(R.layout.activity_chat_conversation)
 
         /******************* Initialisation des variables *******************/
         this.menu = Menu(this)
+        this.textChat = findViewById(R.id.textChat)
 
         db = FirebaseFirestore.getInstance()
         databaseManager = DatabaseManager(this)
@@ -55,7 +58,8 @@ class ChatLecture : AppCompatActivity() {
 
         //On récupère le pseudo du destinataire
         DESTINATAIRE =  intent.getStringExtra("users")
-
+        //On affiche le pseudo du destinataire
+        textChat.setText(DESTINATAIRE)
 
 
         listeMessage = databaseManager!!.listMessage(intent.getStringExtra("users"))

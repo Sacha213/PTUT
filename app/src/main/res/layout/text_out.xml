@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:padding="10dp"
-        android:background="#5089fa"
+        android:background="@drawable/background_chat_out"
         android:layout_alignParentRight="true">
 
         <TextView
@@ -24,7 +24,7 @@
             android:layout_below="@+id/username_text"
             android:layout_alignParentLeft="true"
             android:textSize="16sp"
-            android:textColor="@android:color/white"
+            android:textColor="@color/gris_fonce"
             android:text="Hi" />
 
         <TextView
@@ -34,7 +34,7 @@
             android:layout_alignRight="@+id/message_text"
             android:layout_below="@+id/message_text"
             android:textSize="11sp"
-            android:textColor="@android:color/white"
+            android:textColor="#b3b3b3"
             tools:text="11:34" />
 
     </RelativeLayout>

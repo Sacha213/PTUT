@@ -5,7 +5,7 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="fond_connexion">#fafafa</color>
     <color name="bleu_claire">#299ECA</color>
-    <color name="fond_accueil">#fafafa</color>
+    <color name="fond_accueil">#fFFF</color>
     <color name="white">#fff</color>
     <color name="colorAccentDark">#4aa87a</color>
     <color name="background_light">#fff</color>

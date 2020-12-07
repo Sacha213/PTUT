@@ -41,7 +41,7 @@
           android:endX="79.28125"
           android:type="linear">
         <item android:offset="0" android:color="#FFFFBD81"/>
-        <item android:offset="0.539" android:color="#FFFFBD81"/>
+        <item android:offset="0.539" android:color="#FFF4CBB6"/>
         <item android:offset="1" android:color="#FFFFBD81"/>
       </gradient>
     </aapt:attr>
@@ -60,11 +60,11 @@
           android:endY="154.20876"
           android:endX="141.09375"
           android:type="linear">
-        <item android:offset="0" android:color="#FFFFBD81"/>
-        <item android:offset="0.169" android:color="#FFFFBD81"/>
+        <item android:offset="0" android:color="#FFF4CBB6"/>
+        <item android:offset="0.169" android:color="#FFF4CBB6"/>
         <item android:offset="0.406" android:color="#FFFFBD81"/>
         <item android:offset="0.479" android:color="#FFFFBD81"/>
-        <item android:offset="1" android:color="#FFFFBD81"/>
+        <item android:offset="1" android:color="#FFF4CBB6"/>
       </gradient>
     </aapt:attr>
   </path>
@@ -82,9 +82,9 @@
           android:endY="136.568"
           android:endX="145.09813"
           android:type="linear">
-        <item android:offset="0" android:color="#FFFFBD81"/>
-        <item android:offset="0.627" android:color="#FFFFBD81"/>
-        <item android:offset="0.996" android:color="#FFFFBD81"/>
+        <item android:offset="0" android:color="#FFF4CBB6"/>
+        <item android:offset="0.627" android:color="#FFF4CBB6"/>
+        <item android:offset="0.996" android:color="#FFF4CBB6"/>
       </gradient>
     </aapt:attr>
   </path>
@@ -102,8 +102,8 @@
           android:endY="155.832"
           android:endX="86.67188"
           android:type="linear">
-        <item android:offset="0" android:color="#FFFFBD81"/>
-        <item android:offset="1" android:color="#FFFFBD81"/>
+        <item android:offset="0" android:color="#FFF4CBB6"/>
+        <item android:offset="1" android:color="#FFF4CBB6"/>
       </gradient>
     </aapt:attr>
   </path>
@@ -121,8 +121,8 @@
           android:endY="21.5"
           android:endX="40.3125"
           android:type="linear">
-        <item android:offset="0" android:color="#FFFFBD81"/>
-        <item android:offset="1" android:color="#FFFFBD81"/>
+        <item android:offset="0" android:color="#FFF4CBB6"/>
+        <item android:offset="1" android:color="#FFF4CBB6"/>
       </gradient>
     </aapt:attr>
   </path>
@@ -140,8 +140,8 @@
           android:endY="32.18819"
           android:endX="67.1875"
           android:type="linear">
-        <item android:offset="0.018" android:color="#FFFFECDA"/>
-        <item android:offset="1" android:color="#FFFFECDA"/>
+        <item android:offset="0.018" android:color="#FFFFFFFF"/>
+        <item android:offset="1" android:color="#FFFFFFFF"/>
       </gradient>
     </aapt:attr>
   </path>
@@ -149,7 +149,7 @@
       android:pathData="M72.563,96.75h-34.938c-2.97,0 -5.375,-2.405 -5.375,-5.375v0c0,-2.97 2.405,-5.375 5.375,-5.375h34.938c2.97,0 5.375,2.405 5.375,5.375v0c0,2.97 -2.405,5.375 -5.375,5.375zM96.75,96.75h-5.375c-2.97,0 -5.375,-2.405 -5.375,-5.375v0c0,-2.97 2.405,-5.375 5.375,-5.375h5.375c2.97,0 5.375,2.405 5.375,5.375v0c0,2.97 -2.405,5.375 -5.375,5.375zM43,134.375h-5.375c-2.97,0 -5.375,-2.405 -5.375,-5.375v0c0,-2.97 2.405,-5.375 5.375,-5.375h5.375c2.97,0 5.375,2.405 5.375,5.375v0c0,2.97 -2.405,5.375 -5.375,5.375zM96.75,134.375h-34.938c-2.97,0 -5.375,-2.405 -5.375,-5.375v0c0,-2.97 2.405,-5.375 5.375,-5.375h34.938c2.97,0 5.375,2.405 5.375,5.375v0c0,2.97 -2.405,5.375 -5.375,5.375zM53.75,115.563h-16.125c-2.97,0 -5.375,-2.405 -5.375,-5.375v0c0,-2.97 2.405,-5.375 5.375,-5.375h16.125c2.97,0 5.375,2.405 5.375,5.375v0c0,2.97 -2.405,5.375 -5.375,5.375zM96.75,115.563h-24.188c-2.97,0 -5.375,-2.405 -5.375,-5.375v0c0,-2.97 2.405,-5.375 5.375,-5.375h24.188c2.97,0 5.375,2.405 5.375,5.375v0c0,2.97 -2.405,5.375 -5.375,5.375z"
       android:strokeLineJoin="miter"
       android:strokeWidth="1"
-      android:fillColor="#ffecda"
+      android:fillColor="#ffffff"
       android:fillType="nonZero"
       android:strokeColor="#00000000"
       android:strokeLineCap="butt"/>

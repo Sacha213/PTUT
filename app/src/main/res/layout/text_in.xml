@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:padding="10dp"
-        android:background="@android:color/white">
+        android:background="@drawable/background_chat_in">
 
         <TextView
             android:id="@+id/message_text"
@@ -23,8 +23,9 @@
             android:layout_below="@+id/username_text"
             android:layout_alignParentLeft="true"
             android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:text="Hi" />
+            android:textColor="@color/gris_fonce"
+            android:text="Hi"
+            />
 
         <TextView
             android:id="@+id/date_text"

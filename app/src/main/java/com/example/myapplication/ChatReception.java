@@ -1,10 +1,8 @@
 package com.example.myapplication;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,7 +21,6 @@ public class ChatReception extends AppCompatActivity {
     private static final String TAG = "MainList";
     private DatabaseManager databaseManager;
     private List<Affichage> listeSender = new ArrayList<>();
-    private List<String> listeMessage = new ArrayList<>();
 
 
     private Menu menu; //Menu
@@ -141,7 +138,7 @@ public class ChatReception extends AppCompatActivity {
             public void onClick(View v) {
 
                 /******************* Changement de page *******************/
-                Intent intent = new Intent(getApplicationContext(), Recherche.class);
+                Intent intent = new Intent(getApplicationContext(), ChatRecherche.class);
                 intent.putExtra("mode", "mainlist");
                 startActivity(intent);
 

@@ -65,7 +65,7 @@
         <activity android:name=".FindToken" />
         <activity android:name=".ChatReception"
             android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".Recherche"
+        <activity android:name=".ChatRecherche"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".ChatLecture"
             android:windowSoftInputMode="adjustPan"/>

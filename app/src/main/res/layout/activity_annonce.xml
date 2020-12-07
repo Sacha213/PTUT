@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Annonce">
+    tools:context=".Annonce"
+    android:background="@color/fond_accueil">
 
     <ScrollView
         android:id="@+id/scrollAnnonce"
@@ -14,11 +15,6 @@
         android:layout_below="@+id/textAnnonce"
         android:layout_marginTop="-20dp">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            />
-
         <LinearLayout
             android:id="@+id/dynamiqueLayoutAnnonce"
             android:layout_width="match_parent"
@@ -26,6 +22,11 @@
             android:layout_above="@+id/boutonAnnonces"
             android:layout_below="@+id/textInformation"
             android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                />
 
         </LinearLayout>
     </ScrollView>
@@ -96,7 +97,7 @@
         <ImageView
             android:id="@+id/notes"
             android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/cartable" />
 

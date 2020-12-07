@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Recherche">
+    tools:context=".ChatRecherche">
 
     <ScrollView
         android:id="@+id/scrollRecherche"
@@ -61,7 +61,7 @@
         android:layout_below="@+id/textChat"
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
-        android:background="@drawable/rounded_corner_connection"
+        android:background="@drawable/rounded_corner_chat"
         android:layout_marginTop="15dp"/>
 
     <ImageView
@@ -105,7 +105,7 @@
         <ImageView
             android:id="@+id/notes"
             android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/cartable" />
 
