@@ -54,8 +54,6 @@ public class NouvelleAnnonce extends AppCompatActivity {
         setContentView(R.layout.activity_nouvelle_annonce);
 
         /******************* Initialisation des variables *******************/
-        this.menu = new Menu(this);
-
         this.titre = findViewById(R.id.titreNewAnnonce);
         this.perte = findViewById(R.id.checkBoxPerte);
         this.info = findViewById(R.id.checkBoxInfo);
@@ -68,6 +66,7 @@ public class NouvelleAnnonce extends AppCompatActivity {
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
         databaseManager = new DatabaseManager(this);
 
+        this.menu = new Menu(this, databaseManager);
 
 
         //On coche par default la checkbox autres
@@ -140,6 +139,8 @@ public class NouvelleAnnonce extends AppCompatActivity {
         Intent otherActivity = new Intent(getApplicationContext(), Annonce.class); //Ouverture d'une nouvelle activité
         startActivity(otherActivity);
 
+        //On ferme la database
+        databaseManager.close();
 
         finish();//Fermeture de l'ancienne activité
         overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité

@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
@@ -10,8 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -40,11 +39,11 @@ public class Note extends AppCompatActivity {
         setContentView(R.layout.activity_note);
 
         /******************* Initialisation des variables *******************/
-        this.menu = new Menu(this);
 
         this.layoutVertical = findViewById(R.id.dynamiqueLayoutNotes);
 
         databaseManager = new DatabaseManager(this);
+        this.menu = new Menu(this, databaseManager);
 
         url = databaseManager.getLienTomuss();
 
@@ -53,7 +52,7 @@ public class Note extends AppCompatActivity {
 
         /******************* Téléchargement du fichier rss *******************/
 
-        if (networkInfo.isAvailable()) { //On vérifie qu'il y a une connexion à internet
+        if (networkInfo != null) { //On vérifie qu'il y a une connexion à internet
 
             TelechargementNotes note = new TelechargementNotes();
             note.execute();
@@ -62,6 +61,23 @@ public class Note extends AppCompatActivity {
         else {
             affichageNotes();//On affiche les notes de la bd sans les actualisé
         }
+
+    }
+
+    /******************* Gestion du retour en arrière *******************/
+    @Override
+    public void onBackPressed() {
+
+        /******************* Changement de page *******************/
+        Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
+        startActivity(otherActivity);
+
+        //On ferme la database
+        databaseManager.close();
+
+
+        finish();//Fermeture de l'ancienne activité
+        overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
 
     }
 
@@ -92,80 +108,88 @@ public class Note extends AppCompatActivity {
 
             
         }
-    }
 
-    public String codeSource(){
+        public String codeSource(){
 
-        String codeRss = "";
-        HttpURLConnection conn = null;
+            String codeRss = "";
+            HttpURLConnection conn = null;
 
-        try {
-            conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.connect();
+            try {
+                conn = (HttpURLConnection) new URL(url).openConnection();
+                conn.connect();
 
-            BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
+                BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
 
-            byte[] bytes = new byte[1024];
-            int tmp ;
-            while( (tmp = bis.read(bytes) ) != -1 ) {
-                String chaine = new String(bytes,0,tmp);
-                codeRss += chaine;
+                byte[] bytes = new byte[1024];
+                int tmp ;
+                while( (tmp = bis.read(bytes) ) != -1 ) {
+                    String chaine = new String(bytes,0,tmp);
+                    codeRss += chaine;
+                }
+
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            finally {
+                if (conn != null) {
+                    conn.disconnect();//On ferme la connection
+                }
             }
 
-            conn.disconnect();
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            return codeRss;
         }
 
-        conn.disconnect();//On ferme la connection
-        return codeRss;
-    }
+        public void decodage(String codeRss){
 
-    public void decodage(String codeRss){
+            String[] codeRssItem = codeRss.split("<item>"); //On sépare le texte par balise <item>
 
-        String[] codeRssItem = codeRss.split("<item>"); //On sépare le texte par balise <item>
+            for (int i=1; i < codeRssItem.length; i++){
+                String [] codeRssTitle = codeRssItem[i].split("<title>"); //On sépare le texte par balise <title>
 
-        for (int i=1; i < codeRssItem.length; i++){
-            String [] codeRssTitle = codeRssItem[i].split("<title>"); //On sépare le texte par balise <title>
+                String description = codeRssTitle[1].split(":")[1]; //On récupère la description de la note
+                String note = codeRssTitle[1].split(":")[2].split("</title>")[0]; //On récupère la note
 
-            String description = codeRssTitle[1].split(":")[1]; //On récupère la description de la note
-            String note = codeRssTitle[1].split(":")[2].split("</title>")[0]; //On récupère la note
+                String[] codeRssDescription = codeRssItem[i].split("<description>"); //On sépare le texte par balise <description>
 
-            String[] codeRssDescription = codeRssItem[i].split("<description>"); //On sépare le texte par balise <description>
+                String matiere = codeRssDescription[1].split(",")[0]; //On récupère la matière de la note
 
-            String matiere = codeRssDescription[1].split(",")[0]; //On récupère la matière de la note
+                //On enlève la partie M12.. qui n'est pas interresente et on garde juste l'intitulé de la matière
+                int nbCaractere = matiere.split(" ")[0].length();//On compte le nombre de caractère à enlever grace au split
+                matiere = matiere.substring(nbCaractere+1);//On fait +1 pour enlever l'espace
 
-            //On enlève la partie M12.. qui n'est pas interresente et on garde juste l'intitulé de la matière
-            int nbCaractere = matiere.split(" ")[0].length();//On compte le nombre de caractère à enlever grace au split
-            matiere = matiere.substring(nbCaractere+1);//On fait +1 pour enlever l'espace
+                //On va récuperer la date de publication de la note
+                String dateNote = codeRssItem[i].split("<pubDate>")[1]; //On récupère la partie après le <pubDate>
+                dateNote = dateNote.split("</pubDate>")[0];//On récupère la partie avant </pubDate>
+                Date date = new Date(dateNote); //On transforme la date dans le format Date
+                SimpleDateFormat formateur = new SimpleDateFormat("dd/MM/yyyy");//On créer un foprmateur pour la date
+                String strDateNote = formateur.format(date);//On formate la date de publication
+                stockageNote(matiere,description,note,strDateNote);
+            }
+        }
 
-            //On va récuperer la date de publication de la note
-            String dateNote = codeRssItem[i].split("<pubDate>")[1]; //On récupère la partie après le <pubDate>
-            dateNote = dateNote.split("</pubDate>")[0];//On récupère la partie avant </pubDate>
-            Date date = new Date(dateNote); //On transforme la date dans le format Date
-            SimpleDateFormat formateur = new SimpleDateFormat("dd/MM/yyyy");//On créer un foprmateur pour la date
-            String strDateNote = formateur.format(date);//On formate la date de publication
-            stockageNote(matiere,description,note,strDateNote);
+        public void stockageNote(String matiere, String description, String note, String dateNote){
+
+            //On récupère les matières de la BD
+            String[] tabMatiere = databaseManager.getMatieres().split("/");
+
+            //On parcours les matière pour vérifié son existence
+            boolean trouver = false;
+            for(String mat : tabMatiere){
+                if (mat.equals(matiere))trouver=true;
+            }
+
+            if(!trouver)databaseManager.insertMatiere(matiere);//Si la matière n'existe pas dans la BD on l'ajoute
+
+            //On ajoute la note dans la BD
+            databaseManager.insertNote(note, description, matiere, dateNote);
         }
     }
 
-    public void stockageNote(String matiere, String description, String note, String dateNote){
 
-        //On récupère les matières de la BD
-        String[] tabMatiere = databaseManager.getMatieres().split("/");
 
-        //On parcours les matière pour vérifié son existence
-        boolean trouver = false;
-        for(String mat : tabMatiere){
-            if (mat.equals(matiere))trouver=true;
-        }
 
-        if(!trouver)databaseManager.insertMatiere(matiere);//Si la matière n'existe pas dans la BD on l'ajoute
-
-        //On ajoute la note dans la BD
-        databaseManager.insertNote(note, description, matiere, dateNote);
-    }
 
     public void affichageNotes(){
         //Etape 1 : On récupère les matières puis on les stockes dans un tableau

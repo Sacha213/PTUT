@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import org.jsoup.Jsoup;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import javax.mail.Flags;
 import javax.mail.internet.MimeUtility;
 
@@ -52,6 +55,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.AllPermission;
+import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -101,7 +105,6 @@ public class MailReception extends AppCompatActivity {
         setContentView(R.layout.activity_mail_reception);
 
         /******************* Initialisation des variables *******************/
-        this.menu = new Menu(this);
 
         this.ecrire = findViewById(R.id.imageEcrire);
         this.progressBar = findViewById(R.id.progressBar);
@@ -110,6 +113,8 @@ public class MailReception extends AppCompatActivity {
         databaseManager = new DatabaseManager(this);
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
         mAuth = FirebaseAuth.getInstance();
+
+        this.menu = new Menu(this, databaseManager);
 
         Intent intent = getIntent();//On récupaire les données transmise venant de l'ancienne activité
         messageEnvoye = intent.getBooleanExtra("MessageEnvoyer",false);
@@ -130,7 +135,7 @@ public class MailReception extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            PASSWORD = document.getString("Password");
+                            PASSWORD = decrypt(document.getString("Password"),databaseManager.getCle());
 
                             /******************* Reception des mails *******************/
                             TelechargementMail mails = new TelechargementMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
@@ -503,7 +508,14 @@ public class MailReception extends AppCompatActivity {
 
     /******************* Récupération du charset *******************/
     public String getCharset(String contentType){
-        String charset = contentType.split("charset=")[1];//On récupère la partie après le charset
+        String charset="";
+        try {
+            charset = contentType.split("charset=")[1];//On récupère la partie après le charset
+        }
+        catch (Exception e){
+            charset = "utf-8";
+        }
+
 
         if (charset.substring(0,1) == "\"") { //On suprime les "" qui se trouvent au extrémité du texte
             charset = charset.substring(1, charset.length() - 1);
@@ -573,6 +585,25 @@ public class MailReception extends AppCompatActivity {
         return text;
     }
 
+    public String decrypt(String cryptePassword, String key){
+
+        byte[] bytesPassword =  Base64.decode(cryptePassword.getBytes(),Base64.DEFAULT);
+
+        try
+        {
+            Key clef = new SecretKeySpec(key.getBytes("UTF_8"),"Blowfish");
+            Cipher cipher=Cipher.getInstance("Blowfish");
+            cipher.init(Cipher.DECRYPT_MODE,clef);
+
+            return new String(cipher.doFinal(bytesPassword), "UTF_8");
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+            return null;
+        }
+    }
+
 
     /******************* Gestion du retour en arrière *******************/
     @Override
@@ -583,6 +614,9 @@ public class MailReception extends AppCompatActivity {
         startActivity(otherActivity);
 
         echape=true;//On stop l'async task
+
+        //On ferme la database
+        databaseManager.close();
 
 
         finish();//Fermeture de l'ancienne activité

@@ -80,6 +80,8 @@ class FirebaseService : FirebaseMessagingService() {
 
         databaseManager!!.insertMessage(message, pseudoSender, 1, date)
 
+
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

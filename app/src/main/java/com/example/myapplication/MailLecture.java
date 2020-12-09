@@ -16,6 +16,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Xml;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,11 +46,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.Base64;
+import java.security.Key;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Flags;
@@ -102,8 +105,6 @@ public class MailLecture extends AppCompatActivity {
         setContentView(R.layout.activity_mail_lecture);
 
         /******************* Initialisation des variables *******************/
-        this.menu = new Menu(this);
-
         Intent intent = getIntent();//On récupaire les données transmise venant de l'ancienne activité
         numeroMail = intent.getIntExtra("Numéro",1);
 
@@ -120,6 +121,8 @@ public class MailLecture extends AppCompatActivity {
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
         mAuth = FirebaseAuth.getInstance();
 
+        this.menu = new Menu(this,databaseManager);
+
         //On récupère le login de l'utilisateur
         LOGIN=databaseManager.getIdentifiant();
 
@@ -134,7 +137,7 @@ public class MailLecture extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            PASSWORD = document.getString("Password");
+                            PASSWORD = decrypt(document.getString("Password"),databaseManager.getCle());
 
                             /******************* Reception des mails *******************/
                             LectureMail mails = new LectureMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
@@ -329,93 +332,7 @@ public class MailLecture extends AppCompatActivity {
 
             else if (bp.isMimeType("application/pdf") || bp.isMimeType("image/jpeg") || bp.isMimeType("image/png") ) {
 
-                /*
-
-                // save an attachment from a MimeBodyPart to a file
-
-                //String fileName = bp.getFileName().split("\\.")[0];
-                //String extension = bp.getFileName().split("\\.")[1];
-
-                String fileName = "controle";
-                String extension = "pdf";
-
-                File localFile = File.createTempFile(fileName,extension);
-                FileOutputStream output = new FileOutputStream(localFile);
-                InputStream input = bp.getInputStream();
-
-                byte[] buffer = new byte[4096];
-
-                int byteRead;
-
-                while ((byteRead = input.read(buffer)) != -1) {
-                    output.write(buffer, 0, byteRead);
-                }
-                output.close();
-                System.out.println(localFile.toURI());
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-
-                        Bitmap myBitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-
-                        ImageView image = new ImageView(getApplicationContext());
-                        image.setImageBitmap(myBitmap);
-                        //image.setImageDrawable(d);
-                        //Picasso.get().load(String.valueOf(localFile.toURI())).into(image);
-                        layout.addView(image);
-
-
-
-
-                    }
-                });
-
-
-
-
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //On créer un layout pour mettre l'image et le nom du document
-                        LinearLayout layoutPieceJoite = new LinearLayout(getApplicationContext());
-                        layoutPieceJoite.setOrientation(LinearLayout.VERTICAL);
-
-                        //On affiche l'icone piece jointe
-                        ImageView image = new ImageView(getApplicationContext());
-                        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(200,200); // Dimenssion de l'image
-                        image.setLayoutParams(params);
-                        image.setImageResource(R.drawable.attach);
-                        layoutPieceJoite.addView(image);
-
-                        //On affiche le titre de la piece jointe
-
-                        TextView text = new TextView(getApplicationContext());
-                        try {
-
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                                String fileName = bp.getFileName().split(String.valueOf("?"))[3];
-                                byte[] decoded = Base64.getDecoder().decode(fileName);
-                                System.out.println(new String(decoded));
-                            }
-
-
-                        } catch (MessagingException e) {
-                            e.printStackTrace();
-                        }
-                        layoutPieceJoite.addView(text);
-
-
-
-                        layout.addView(layoutPieceJoite);
-                    }
-                });
-
-
-                 */
-
+               //Code
             }
 
             else System.out.println("else "+bp.getContentType());
@@ -431,8 +348,13 @@ public class MailLecture extends AppCompatActivity {
 
     /******************* Récupération du charset *******************/
     public String getCharset(String contentType){
-        String charset = contentType.split("charset=")[1];//On récupère la partie après le charset
-        
+        String charset="";
+        try {
+            charset = contentType.split("charset=")[1];//On récupère la partie après le charset
+        }
+        catch (Exception e){
+            charset = "utf-8";
+        }
         if (charset.substring(0,1) == "\"") { //On suprime les "" qui se trouvent au extrémité du texte
             charset = charset.substring(1, charset.length() - 1);
         }
@@ -514,16 +436,36 @@ public class MailLecture extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            // On ferme les dossier ouvert
-            close(inbox);
-            close(defaultFolder);
             try {
+                // On ferme les dossier ouvert
+                close(inbox);
+                close(defaultFolder);
+
                 if (store != null && store.isConnected()) {
                     store.close();
                 }
             } catch (MessagingException e) {
                 e.printStackTrace();
             }
+            return null;
+        }
+    }
+
+    public String decrypt(String cryptePassword, String key){
+
+        byte[] bytesPassword =  android.util.Base64.decode(cryptePassword.getBytes(), Base64.DEFAULT);
+
+        try
+        {
+            Key clef = new SecretKeySpec(key.getBytes("UTF_8"),"Blowfish");
+            Cipher cipher=Cipher.getInstance("Blowfish");
+            cipher.init(Cipher.DECRYPT_MODE,clef);
+
+            return new String(cipher.doFinal(bytesPassword), "UTF_8");
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
             return null;
         }
     }
@@ -539,6 +481,9 @@ public class MailLecture extends AppCompatActivity {
         //On ferme tous ce qu'on a ouvert
         FermetureMail fermetureMail = new FermetureMail();
         fermetureMail.execute();
+
+        //On ferme la database
+        databaseManager.close();
 
         finish();//Fermeture de l'ancienne activité
         overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité

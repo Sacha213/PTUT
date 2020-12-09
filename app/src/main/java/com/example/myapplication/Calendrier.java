@@ -47,7 +47,7 @@ public class Calendrier extends AppCompatActivity {
 
 
 
-    private String url = "https://adelb.univ-lyon1.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=40699&projectId=2&calType=ical&firstDate=2020-11-30&lastDate=2021-02-01";
+    private String url;
 
 
     @Override
@@ -56,8 +56,6 @@ public class Calendrier extends AppCompatActivity {
         setContentView(R.layout.activity_calendrier);
 
         /******************* Initialisation des variables *******************/
-        this.menu = new Menu(this);
-
         this.deconnexion = findViewById(R.id.boutonDeconnexion);
 
         this.layoutFront = findViewById(R.id.layoutCalendrierFront);
@@ -69,6 +67,10 @@ public class Calendrier extends AppCompatActivity {
         databaseManager = new DatabaseManager(this);
         dateAffiche = Calendar.getInstance();
 
+        this.menu = new Menu(this,databaseManager);
+
+        url = databaseManager.getLienCalendrier();
+
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE); //Gestionnaire connexion réseau
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo(); //Information du réseau
 
@@ -76,11 +78,12 @@ public class Calendrier extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
 
-        if (networkInfo.isAvailable()) { //On vérifie qu'il y a une connexion à internet
+        if (networkInfo != null) { //On vérifie qu'il y a une connexion à internet
 
-            TelechargementCalendrier cal = new TelechargementCalendrier();
-            cal.execute();
-        } else {
+             TelechargementCalendrier cal = new TelechargementCalendrier();
+             cal.execute();
+        }
+        else {
             affichageCalendrier();//On affiche le calendrier de la bd sans les actualisé
         }
 
@@ -134,6 +137,9 @@ public class Calendrier extends AppCompatActivity {
         Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
         startActivity(otherActivity);
 
+        //On ferme la database
+        databaseManager.close();
+
 
         finish();//Fermeture de l'ancienne activité
         overridePendingTransition(0, 0);//Suprimmer l'animation lors du changement d'activité
@@ -167,36 +173,37 @@ public class Calendrier extends AppCompatActivity {
             affichageCalendrier();
 
         }
-    }
 
-    public String codeSource() {
+        public String codeSource() {
 
-        String codeCal = "";
-        HttpURLConnection conn = null;
+            String codeCal = "";
+            HttpURLConnection conn = null;
 
-        try {
-            conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.connect();
+            try {
+                conn = (HttpURLConnection) new URL(url).openConnection();
+                conn.connect();
 
-            BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
+                BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
 
-            byte[] bytes = new byte[1024];
-            int tmp;
-            while ((tmp = bis.read(bytes)) != -1) {
-                String chaine = new String(bytes, 0, tmp);
-                codeCal += chaine;
+                byte[] bytes = new byte[1024];
+                int tmp;
+                while ((tmp = bis.read(bytes)) != -1) {
+                    String chaine = new String(bytes, 0, tmp);
+                    codeCal += chaine;
+                }
+
+                //On ferme la connexion
+                conn.disconnect();
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            conn.disconnect();
 
-        } catch (IOException e) {
-            e.printStackTrace();
+            return codeCal;
         }
 
-        return codeCal;
-    }
-
-    public void decodage(String codeCal){
+        public void decodage(String codeCal){
             //Parcer le code pour récupérer les informations importantes/utiles
 
             String[] event = codeCal.split("BEGIN:VEVENT");
@@ -224,6 +231,9 @@ public class Calendrier extends AppCompatActivity {
                 //Insertion dans la base de donnée
                 databaseManager.insertCours(idCours,debutCours,finCours,date,nomCours,salle,prof);
             }
+
+
+        }
 
 
     }
@@ -277,9 +287,12 @@ public class Calendrier extends AppCompatActivity {
 
             position+=60*2;
 
+
+
         }
 
         //On affiche les cours
+
         for(String id : tabId){
             int duree = databaseManager.getHFIN(id)-databaseManager.getHDEB(id);
             duree = conversionHeureMinute(duree)*2;
@@ -293,6 +306,8 @@ public class Calendrier extends AppCompatActivity {
             layoutFront.addView(blockCours);
 
         }
+
+
 
     }
 

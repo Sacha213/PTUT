@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,8 +21,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.security.Key;
 import java.util.Properties;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -63,8 +67,6 @@ public class MailEnvoie extends AppCompatActivity {
 
 
         /******************* Initialisation des variables *******************/
-        this.menu = new Menu(this);
-
         this.envoyer = findViewById(R.id.imageEnvoyer);
         this.destinataire = findViewById(R.id.editTextDestinataire);
         this.contenu = findViewById(R.id.textMessage);
@@ -73,6 +75,8 @@ public class MailEnvoie extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();  // Initialize Firebase Auth
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
         databaseManager = new DatabaseManager(this);
+
+        this.menu = new Menu(this,databaseManager);
 
         LOGIN = databaseManager.getIdentifiant();
 
@@ -87,7 +91,7 @@ public class MailEnvoie extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            PASSWORD = document.getString("Password");
+                            PASSWORD = decrypt(document.getString("Password"),databaseManager.getCle());
                             NOM = document.getString("Nom");
                             PRENOM = document.getString("Prénom");
 
@@ -215,6 +219,25 @@ public class MailEnvoie extends AppCompatActivity {
         }
     }
 
+    public String decrypt(String cryptePassword, String key){
+
+        byte[] bytesPassword =  Base64.decode(cryptePassword.getBytes(),Base64.DEFAULT);
+
+        try
+        {
+            Key clef = new SecretKeySpec(key.getBytes("UTF_8"),"Blowfish");
+            Cipher cipher=Cipher.getInstance("Blowfish");
+            cipher.init(Cipher.DECRYPT_MODE,clef);
+
+            return new String(cipher.doFinal(bytesPassword), "UTF_8");
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     /******************* Gestion du retour en arrière *******************/
     @Override
     public void onBackPressed() {
@@ -222,6 +245,9 @@ public class MailEnvoie extends AppCompatActivity {
         /******************* Changement de page *******************/
         Intent otherActivity = new Intent(getApplicationContext(), MailReception.class); //Ouverture d'une nouvelle activité
         startActivity(otherActivity);
+
+        //On ferme la database
+        databaseManager.close();
 
         finish();//Fermeture de l'ancienne activité
         overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité

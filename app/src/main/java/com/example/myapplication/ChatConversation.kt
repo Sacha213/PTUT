@@ -49,12 +49,13 @@ class ChatLecture : AppCompatActivity() {
         setContentView(R.layout.activity_chat_conversation)
 
         /******************* Initialisation des variables *******************/
-        this.menu = Menu(this)
         this.textChat = findViewById(R.id.textChat)
 
         db = FirebaseFirestore.getInstance()
         databaseManager = DatabaseManager(this)
         mAuth = FirebaseAuth.getInstance()
+
+        this.menu = Menu(this, databaseManager)
 
         //On récupère le pseudo du destinataire
         DESTINATAIRE =  intent.getStringExtra("users")
@@ -110,7 +111,7 @@ class ChatLecture : AppCompatActivity() {
                                 date = Date()
                                 databaseManager!!.insertMessage(message, DESTINATAIRE, 2, date)
                                 PushNotification(
-                                        NotificationData(message, PRENOM +" "+ NOM),
+                                        NotificationData(message, PRENOM + " " + NOM),
                                         myToken
                                 ).also {
                                     sendNotification(it)
@@ -163,6 +164,10 @@ class ChatLecture : AppCompatActivity() {
         /******************* Changement de page  *******************/
         val otherActivity = Intent(applicationContext, ChatReception::class.java) //Ouverture d'une nouvelle activité
         startActivity(otherActivity)
+
+        //On ferme la database
+        databaseManager!!.close()
+
         finish() //Fermeture de l'ancienne activité
         overridePendingTransition(0, 0) //Suprimmer l'animation lors du changement d'activité
     }

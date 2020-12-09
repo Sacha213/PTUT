@@ -61,8 +61,6 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-
-        <activity android:name=".FindToken" />
         <activity android:name=".ChatReception"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".ChatRecherche"

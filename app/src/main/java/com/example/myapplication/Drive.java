@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -18,6 +19,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.security.Key;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 
 public class Drive extends AppCompatActivity {
@@ -44,13 +50,13 @@ public class Drive extends AppCompatActivity {
         /******************* Initialisation des variables *******************/
         this.webView = findViewById(R.id.webView);
 
-        this.menu = new Menu(this);
-
         urlClaroline = "https://cas.univ-lyon1.fr/cas/login?service=https%3A%2F%2Fclarolineconnect.univ-lyon1.fr%2Flogin_check";
 
         databaseManager = new DatabaseManager(this);
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
         mAuth = FirebaseAuth.getInstance();
+
+        this.menu = new Menu(this,databaseManager);
 
         idUtilisateur = databaseManager.getIdentifiant();
 
@@ -63,7 +69,7 @@ public class Drive extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            passwordUtilisateur = document.getString("Password");
+                            passwordUtilisateur = decrypt(document.getString("Password"),databaseManager.getCle());
                         }
                         else{
                             System.out.println("Erreur");
@@ -102,6 +108,24 @@ public class Drive extends AppCompatActivity {
 
 
     }
+    public String decrypt(String cryptePassword, String key){
+
+        byte[] bytesPassword =  Base64.decode(cryptePassword.getBytes(),Base64.DEFAULT);
+
+        try
+        {
+            Key clef = new SecretKeySpec(key.getBytes("UTF_8"),"Blowfish");
+            Cipher cipher=Cipher.getInstance("Blowfish");
+            cipher.init(Cipher.DECRYPT_MODE,clef);
+
+            return new String(cipher.doFinal(bytesPassword), "UTF_8");
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+            return null;
+        }
+    }
 
 
 
@@ -113,6 +137,9 @@ public class Drive extends AppCompatActivity {
             webView.goBack();
         }
         else {
+            //On ferme la database
+            databaseManager.close();
+
             super.onBackPressed();
         }
 

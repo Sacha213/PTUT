@@ -35,11 +35,12 @@ public class ChatReception extends AppCompatActivity {
         setContentView(R.layout.activity_chat_reception);
 
         /******************* Initialisation des variables *******************/
-        menu = new Menu(this);
         this.write = findViewById((R.id.ecrireChat));
         this.layout = findViewById(R.id.scrollReceptionChat);
 
         databaseManager = new DatabaseManager(this); //initialisation de la base de donnée local pour récupérer les messages
+        menu = new Menu(this, databaseManager);
+
 
         listeSender = databaseManager.getSender();
         System.out.println(listeSender);
@@ -162,6 +163,8 @@ public class ChatReception extends AppCompatActivity {
         Intent otherActivity = new Intent(getApplicationContext(), Messagerie.class); //Ouverture d'une nouvelle activité
         startActivity(otherActivity);
 
+        //On ferme la database
+        databaseManager.close();
 
         finish();//Fermeture de l'ancienne activité
         overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité

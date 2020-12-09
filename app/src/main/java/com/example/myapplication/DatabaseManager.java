@@ -20,7 +20,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /******************* Attribut *******************/
 
     private static final String DATABASE_NAME = "Etu.bd"; //Nom de la base de données
-    private static final int DATABASE_VERSION = 13; //Version de la base de données
+    private static final int DATABASE_VERSION = 17; //Version de la base de données
 
     /******************* Constructeur *******************/
     public DatabaseManager( Context context){
@@ -32,7 +32,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String strSql1 = "create table USERS (idEtudiant varchar2(8) primary key, mail text, lienTomuss text, lienCalendrier text)"; //Génération de la requette SQL pour créer un table Users qui va contenir les identifiants de l'utilisateur
+        String strSql1 = "create table USERS (idEtudiant varchar2(8) primary key, mail text, lienTomuss text, lienCalendrier text, cle text)"; //Génération de la requette SQL pour créer un table Users qui va contenir les identifiants de l'utilisateur
         db.execSQL(strSql1); //On exécute la requette
 
         String strSql2 = "create table MATIERES (matiere text primary key)"; //Génération de la requette SQL pour créer un table Matiere de l'utilisateur
@@ -44,7 +44,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String strSql4 = "create table CALENDRIER(IDcal varchar2(16) primary key,HDEB number(4) not null,HFIN number(4) not null,date text not null, nom text, salle text, prof text)";
         db.execSQL(strSql4); //On exécute la requette
 
-        String strSql6 = "create table Message (id integer primary key autoincrement, pseudoSender varchar2(255), message varchar(255), type integer, date varchar(255))";
+        String strSql6 = "create table Message (id integer primary key autoincrement, pseudoSender varchar2(255), message varchar2(255), type integer, date varchar2(255))";
         db.execSQL(strSql6);
 
 
@@ -64,8 +64,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     /******************* Méthode pour insérer un utilisateur dans la table Users *******************/
-    public void insertUser(String id, String mail, String lienTomuss, String lienCalendrier){
-        String strSql = "insert into Users values ('"+id+"','"+mail+"','"+lienTomuss+"','"+lienCalendrier+"')"; //Génération de la requette SQL
+    public void insertUser(String id, String mail, String lienTomuss, String lienCalendrier, String cle){
+        String strSql = "insert into Users values ('"+id+"','"+mail+"','"+lienTomuss+"','"+lienCalendrier+"','"+cle+"')"; //Génération de la requette SQL
 
         this.getWritableDatabase().execSQL(strSql); //Exécution de la requette
     }
@@ -120,6 +120,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
         cursor.close(); //On ferme le curseur
 
         return lien;
+    }
+
+    public String getCle(){
+        String strsql = "select cle from Users"; //Génération de la requette SQL
+        Cursor cursor = this.getReadableDatabase().rawQuery(strsql, null); //Création d'un curseur qui va nous permettre de parcourir les résultat de la requette (ligne par ligne)
+        cursor.moveToFirst(); //On déplace le curseur à la première ligne
+
+        String cle = cursor.getString(0); //On enregistre le résultat de la colone 1 dans la variable string id
+        cursor.close(); //On ferme le curseur
+
+        return cle;
+
     }
 
 
@@ -346,4 +358,5 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String tmp = cursor.getString(0);
         return tmp;
     }
+
 }

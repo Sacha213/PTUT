@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+
+import java.util.Base64.Decoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,12 +83,18 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+
 
 public class Accueil extends AppCompatActivity {
 
     /******************* Attribut *******************/
     private Button continuer;
-    private EditText casePseudo;
     private AlertDialog.Builder bienvenueDialogue; //Boite de dialogue pour un message de bienvenue
 
     private EditText mail;
@@ -96,6 +111,7 @@ public class Accueil extends AppCompatActivity {
     private String mdp;
     private String nom;
     private String prenom;
+    private String mdpCrypte;
 
     private AlertDialog.Builder erreur;
 
@@ -128,6 +144,7 @@ public class Accueil extends AppCompatActivity {
         id = intent.getStringExtra("Identifiant");
         mdp = intent.getStringExtra("MotDePasse");
 
+
         erreur = new AlertDialog.Builder(this); //création de la boîte de dialogue
 
 
@@ -155,30 +172,57 @@ public class Accueil extends AppCompatActivity {
                 //On récupère les information entrées par l'utilisateur
                 String adresseMail = String.valueOf(mail.getText()); //Adresse mail
                 String lienTomuss = String.valueOf(adresseTomuss.getText());
-                String lienCalendrier = String.valueOf(adresseCalendrier.getText());
+                String lienCalendrier = String.valueOf(adresseCalendrier.getText()).replace("http","https");
 
                 //On vérifie que l'utilisateur à bien remplie tout les champs
-                if (adresseMail.length()>10 && lienCalendrier.length()>10 && lienTomuss.length()>10){
+                if (!adresseMail.isEmpty() && !lienCalendrier.isEmpty() && !lienTomuss.isEmpty()){
 
 
-                /******************* Connection de l'utilisateur *******************/
+                    try {
+                        //On récupère le nom et le prénom de l'utilisateur
+                        String partie1 = adresseMail.split("@")[0]; //La partie avant @
+                        prenom = partie1.split("\\.")[0]; //Avant le .
+                        nom = partie1.split("\\.")[1]; //Après le .
+                        //On met en majuscule la première lettre
+                        prenom = prenom.substring(0,1).toUpperCase() + prenom.substring(1);
+                        nom = nom.substring(0,1).toUpperCase() + nom.substring(1);
+                    } catch (Exception e){
+                        System.out.println(e);
+                    }
 
-                //Etape 1 : On connecte l'utilisateur
-                mAuth.signInWithEmailAndPassword(String.valueOf(mail.getText()), mdp)
+                    //On génère la clè
+                    String cle = prenom+((int) (Math.random() * 1000));
+
+                    //On crypte le mot de passe avant de l'enregistrer dans la bd
+                    try {
+                        mdpCrypte = encrypt(mdp,cle);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    /******************* Connection de l'utilisateur *******************/
+
+                    //Etape 1 : On connecte l'utilisateur
+                    mAuth.signInWithEmailAndPassword(String.valueOf(mail.getText()), mdp)
                         .addOnCompleteListener(Accueil.this, task -> {
                             if (task.isSuccessful()) {
                                 //Etape 2 : Si l'utilisateur est connecté on change d'activité
 
                                 //On enregistre les données de l'utilisateur dans la base de données local
-                                databaseManager.insertUser(id, adresseMail, lienTomuss, lienCalendrier);
-                                String partie1 = adresseMail.split("@")[0]; //La partie avant @
-                                prenom = partie1.split("\\.")[0]; //Avant le .
-                                nom = partie1.split("\\.")[1]; //Après le .
+                                databaseManager.insertUser(id, adresseMail, lienTomuss, lienCalendrier, cle);
 
-                                //On met en majuscule la première lettre
-                                prenom = prenom.substring(0,1).toUpperCase() + prenom.substring(1);
-                                nom = nom.substring(0,1).toUpperCase() + nom.substring(1);
+                                //On enregistre le mot de passe de l'utilisateur dans une base de données sécurisé
+                                //Création data pour la BD Firebase
+                                Map<String, Object> data = new HashMap<>();
+                                data.put("Uid",mAuth.getCurrentUser().getUid());
+                                data.put("Password", mdpCrypte);
+                                data.put("Nom", nom);
+                                data.put("Prénom", prenom);
 
+                                db.collection("users").document(mAuth.getCurrentUser().getUid()).set(data);
+
+                                //On actualise le token
                                 findToken.FindToken(getApplicationContext());
 
                                 /******************* Changement de page *******************/
@@ -186,51 +230,47 @@ public class Accueil extends AppCompatActivity {
                                 Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
                                 startActivity(otherActivity);
 
+                                //On ferme la database
+                                databaseManager.close();
+
                                 finish();//Fermeture de l'ancienne activité
                                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
-
-
                             } else {
                                 //Si il n'y a pas de compte, on en créer un
-
-                                //On récupère les différentes informations du mail
-                                String partie1 = adresseMail.split("@")[0]; //La partie avant @
-                                prenom = partie1.split("\\.")[0]; //Avant le .
-                                nom = partie1.split("\\.")[1]; //Après le .
-
-                                //On met en majuscule la première lettre
-                                prenom = prenom.substring(0,1).toUpperCase() + prenom.substring(1);
-                                nom = nom.substring(0,1).toUpperCase() + nom.substring(1);
-
-
                                 //Etape 2 : On crée le compte utilisateur
                                 mAuth.createUserWithEmailAndPassword(adresseMail, mdp)
                                         .addOnCompleteListener(Accueil.this, new OnCompleteListener<AuthResult>() {
                                             @Override
                                             public void onComplete(@NonNull Task<AuthResult> task) {
                                             if (task.isSuccessful()) {
-                                                // Etape 3 : Si la création a fonctionnée alors on enregistre le mot de passe de l'utilisateur dans une base de données sécurisé (PS: l'utilisateur est connecté)
 
+                                                //On enregistre les données de l'utilisateur dans la base de données local
+                                                databaseManager.insertUser(id, adresseMail, lienTomuss, lienCalendrier, cle);
+
+                                                //On enregistre le mot de passe de l'utilisateur dans une base de données sécurisé
                                                 //Création data pour la BD Firebase
                                                 Map<String, Object> data = new HashMap<>();
                                                 data.put("Uid",mAuth.getCurrentUser().getUid());
-                                                data.put("Password",mdp);
+                                                data.put("Password",mdpCrypte);
                                                 data.put("Nom", nom);
                                                 data.put("Prénom", prenom);
 
                                                 db.collection("users").document(mAuth.getCurrentUser().getUid()).set(data);
 
-                                                //On enregistre les données de l'utilisateur dans la base de données local
-                                                databaseManager.insertUser(id, adresseMail, lienTomuss, lienCalendrier);
-
-                                                //Etape 4 : On change d'activité
-
+                                                //On actualise le token
                                                 findToken.FindToken(getApplicationContext());
-                                                /******************* Changement de page *******************/
+
+                                                // Si la création a fonctionnée alors l'utilisateur est connecté
+
+                                                //Etape 3 : On change d'activité
+                                                /****************** Changement de page *******************/
 
                                                 Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
                                                 startActivity(otherActivity);
+
+                                                //On ferme la database
+                                                databaseManager.close();
 
                                                 finish();//Fermeture de l'ancienne activité
                                                 overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
@@ -245,6 +285,7 @@ public class Accueil extends AppCompatActivity {
                                                 erreur.setMessage("Un problème est survenu lors de la création de votre compte, veuillez réessayer plus tard"); //Message
                                                 erreur.setIcon(R.drawable.road_closure); //Ajout de l'émoji caca
                                                 erreur.show(); //Affichage de la boîte de dialogue
+                                                System.out.println("ERRrrrrr");
 
                                             }
 
@@ -277,7 +318,33 @@ public class Accueil extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+        //On ferme la database
+        databaseManager.close();
+
         super.onBackPressed();
 
     }
+
+
+
+    public String encrypt(String password,String key) throws UnsupportedEncodingException {
+
+        byte[] bytesPassword = password.getBytes("UTF_8");
+
+        try
+        {
+            //Génération de la clé et du criptage
+            Key clef = new SecretKeySpec(key.getBytes(),"Blowfish");
+            Cipher cipher=Cipher.getInstance("Blowfish");
+            cipher.init(Cipher.ENCRYPT_MODE,clef);
+
+            return new String(Base64.encode(cipher.doFinal(bytesPassword),Base64.DEFAULT),"UTF_8");
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
+
 }
