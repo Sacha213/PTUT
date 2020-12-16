@@ -297,12 +297,26 @@ public class Calendrier extends AppCompatActivity {
             int duree = databaseManager.getHFIN(id)-databaseManager.getHDEB(id);
             duree = conversionHeureMinute(duree)*2;
             position = conversionHeureMinute(databaseManager.getHDEB(id)-800) *2;
-            TextView blockCours = new TextView(getApplicationContext());
-            blockCours.setText(databaseManager.getNomCours(id));
+            LinearLayout blockCours = new LinearLayout(getApplicationContext());
+            blockCours.setOrientation(LinearLayout.VERTICAL);
+            blockCours.setGravity(Gravity.CENTER_VERTICAL);
+
+            TextView blocktitre = new TextView(getApplicationContext());
+            TextView blockprof = new TextView(getApplicationContext());
+            TextView blocksalle = new TextView(getApplicationContext());
+
+            blocktitre.setText(databaseManager.getNomCours(id));
+            blockprof.setText(databaseManager.getProf(id));
+            blocksalle.setText(databaseManager.getSalle(id));
+
             blockCours.setBackgroundColor(getResources().getColor(R.color.vert_claire));
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutFront.getWidth(), duree);
             params.setMargins(0, position, 0, 0);
+
             blockCours.setLayoutParams(params);
+            blockCours.addView(blocktitre);
+            blockCours.addView(blockprof);
+            blockCours.addView(blocksalle);
             layoutFront.addView(blockCours);
 
         }

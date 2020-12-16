@@ -80,7 +80,7 @@ public class Annonce extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-
+                                String id = document.getId();
                                 String auteur = document.getString("Auteur");
 
                                 String titre = document.getString("Titre");
@@ -98,7 +98,7 @@ public class Annonce extends AppCompatActivity {
 
                                 int type = document.getDouble("Type").intValue();
 
-                                AfficheAnnonce(auteur, type, titre, contenu, dateAnnonce);
+                                AfficheAnnonce(id,auteur, type, titre, contenu, dateAnnonce);
 
 
                             }
@@ -110,22 +110,26 @@ public class Annonce extends AppCompatActivity {
 
     }
 
-    public void AfficheAnnonce(String auteur, int type, String titre, String contenu, String dateAnnonce){
+    public void AfficheAnnonce(String id,String auteur, int type, String titre, String contenu, String dateAnnonce){
 
 
-        //Ajout du titre de l'annonce
-        TextView titreAnnonce = new TextView(getApplicationContext());
-        titreAnnonce.setText(titre);
-        titreAnnonce.setGravity(Gravity.CENTER);//Centrage du titre
-        titreAnnonce.setTextSize(25);//Taille du titre
-        layout.addView(titreAnnonce);
-
+        //ajout de cadre annonce
+        View blockAnnonce = new View(getApplicationContext());
+        LinearLayout Lannonce = new LinearLayout(getApplicationContext());
+        Lannonce.setOrientation(LinearLayout.HORIZONTAL);
+        Lannonce.setGravity(Gravity.CENTER_VERTICAL);
+        Lannonce.setWeightSum(3);
+        LinearLayout.LayoutParams paramslayoutCal = new LinearLayout.LayoutParams(layout.getWidth()-60, 150);
+        paramslayoutCal.setMargins(30, 0, 30, 0);
+        Lannonce.setLayoutParams(paramslayoutCal);
+        Lannonce.setBackgroundColor(getResources().getColor(R.color.gris_claire));
+        Lannonce.setDividerPadding(20);
 
         //Ajout de l'image de l'article
         ImageView image = new ImageView(getApplicationContext());
-        ViewGroup.LayoutParams params = new ActionBar.LayoutParams(750,750); // Dimensions de l'image
+        ViewGroup.LayoutParams params = new ActionBar.LayoutParams(100,100); // Dimensions de l'image
         image.setLayoutParams(params);
-        image.setX(175);//Centrage de l'image a modifier
+        //image.setX(175);//Centrage de l'image a modifier
         if(type == 1){
             image.setImageResource(R.drawable.detective);
         }
@@ -138,23 +142,40 @@ public class Annonce extends AppCompatActivity {
         else {
             image.setImageResource(R.drawable.stranger_things);
         }
-        layout.addView(image);
+        Lannonce.addView(image);
+
+        //Ajout du titre de l'annonce
+        TextView titreAnnonce = new TextView(getApplicationContext());
+        titreAnnonce.setText(titre);
+        titreAnnonce.setGravity(Gravity.CENTER);//Centrage du titre
+        titreAnnonce.setTextSize(25);//Taille du titre
+        Lannonce.addView(titreAnnonce);
+
+       // ajout du chevron
+        ImageView chevron = new ImageView(getApplicationContext());
+        chevron.setLayoutParams(params);
+        chevron.setImageResource(R.drawable.fleche_droite);
+        Lannonce.addView(chevron);
+
+        layout.addView(Lannonce);
 
 
 
         //Ajout d'un espace pour séparer les articles
         TextView espace = new TextView(getApplicationContext());
-        espace.setText("      ");
+        espace.setText("");
+        espace.setTextSize(5);
         layout.addView(espace);
 
 
 
         /******************* Mise en place d'écouteur *******************/
-        image.setOnClickListener(new View.OnClickListener() {
+        Lannonce.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 /******************* Changement de page *******************/
-                Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
+                Intent otherActivity = new Intent(getApplicationContext(), ContenuAnnonce.class); //Ouverture d'une nouvelle activité
+                otherActivity.putExtra("Identifiant",id); //Envoie de donner dans la nouvelle activité (information de l'annonce)
                 startActivity(otherActivity);
 
                 finish();//Fermeture de l'ancienne activité
