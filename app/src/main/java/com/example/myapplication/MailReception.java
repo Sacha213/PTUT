@@ -97,6 +97,7 @@ public class MailReception extends AppCompatActivity {
     private boolean echape ;
 
     private boolean messageEnvoye;
+    private boolean pieceJointe;
 
 
     @Override
@@ -239,6 +240,8 @@ public class MailReception extends AppCompatActivity {
 
             for (int i = count ; i >= count-20; i-- ) {
 
+                pieceJointe = false;//Réinitialisation
+
                 Message message = folder.getMessage(i);
 
 
@@ -275,8 +278,9 @@ public class MailReception extends AppCompatActivity {
                 SimpleDateFormat formateur = new SimpleDateFormat("dd/MM/yyyy");
                 String strDate= formateur.format(dateEnvoi);
 
-                affichageDuMail(textExpediteur,sujet,description,i,strDate, lu);
+                affichageDuMail(textExpediteur,sujet,description,i,strDate, lu, pieceJointe);
                 progressBar.setProgress(progressBar.getProgress()+1);//On augmente le chargement de la bar de 1
+
 
                 // Fin de l'asynctask plus tôt (si on quite l'activité)
                 if (echape) break;
@@ -298,7 +302,7 @@ public class MailReception extends AppCompatActivity {
         }
     }
 
-    private void affichageDuMail(String textExpediteur, String object, String textDescription, int numMail,String dateEnvoi, boolean lu) {
+    private void affichageDuMail(String textExpediteur, String object, String textDescription, int numMail,String dateEnvoi, boolean lu, boolean pieceJointe) {
 
         runOnUiThread(new Runnable() {
 
@@ -345,11 +349,28 @@ public class MailReception extends AppCompatActivity {
                 layoutVerticale.addView(expediteur);
 
 
+                //On créer un lineare layout pour affichez la date et l'image de la piece jointe s'il y en a
+                LinearLayout layoutDatePeiceJointe = new LinearLayout(getApplicationContext());
+                layoutDatePeiceJointe.setOrientation(LinearLayout.HORIZONTAL);
+                layoutDatePeiceJointe.setGravity(Gravity.CENTER_VERTICAL);
+
                 //On ajoute la date
                 TextView date = new TextView(getApplicationContext());
                 date.setText(dateEnvoi);
                 date.setTextSize(10);//Taille de la date
-                layoutVerticale.addView(date);
+                layoutDatePeiceJointe.addView(date);
+
+                //On ajoute le logo de la piece jointe s'il y en a
+                if (pieceJointe){
+                    ImageView imagePieceJointe = new ImageView(getApplicationContext());
+                    imagePieceJointe.setImageResource(R.drawable.attach);
+                    LinearLayout.LayoutParams paramsImage = new LinearLayout.LayoutParams(40,40); // Dimenssion de l'image
+                    paramsImage.setMargins(10,0,0,0);
+                    imagePieceJointe.setLayoutParams(paramsImage);
+                    layoutDatePeiceJointe.addView(imagePieceJointe);
+                }
+
+                layoutVerticale.addView(layoutDatePeiceJointe);
 
 
                 //Ajout du sujet
@@ -496,6 +517,12 @@ public class MailReception extends AppCompatActivity {
                     BodyPart bp2 = mimeMultipart.getBodyPart(i);
                     cont += processBodyPartDescription(bp2);
                 }
+            }
+
+
+            else if ( ! bp.isMimeType("text/plain")) { //bp.isMimeType("application/pdf") || bp.isMimeType("image/jpeg") || bp.isMimeType("image/png")
+                //S'il y au moins une piece jointe on affiche le logo piece jointe
+                pieceJointe = true;
             }
 
 

@@ -96,8 +96,12 @@ public class MailLecture extends AppCompatActivity {
     private Folder defaultFolder = null;
     private Folder inbox = null;
 
+    //La classe pour fermer les object ouvert dans le mail
+    FermetureMail fermetureMail;
+
     private Message message;
-    boolean lu = true;
+    private boolean lu = true;
+    private boolean pieceJointe = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +125,9 @@ public class MailLecture extends AppCompatActivity {
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
         mAuth = FirebaseAuth.getInstance();
 
-        this.menu = new Menu(this,databaseManager);
+        fermetureMail = new FermetureMail();
+
+        this.menu = new Menu(this,databaseManager, fermetureMail);
 
         //On récupère le login de l'utilisateur
         LOGIN=databaseManager.getIdentifiant();
@@ -331,8 +337,8 @@ public class MailLecture extends AppCompatActivity {
             }
 
             else if (bp.isMimeType("application/pdf") || bp.isMimeType("image/jpeg") || bp.isMimeType("image/png") ) {
-
-               //Code
+                //S'il y au moins une piece jointe on affiche le logo piece jointe
+                    pieceJointe = true;
             }
 
             else System.out.println("else "+bp.getContentType());
@@ -479,7 +485,6 @@ public class MailLecture extends AppCompatActivity {
         startActivity(otherActivity);
 
         //On ferme tous ce qu'on a ouvert
-        FermetureMail fermetureMail = new FermetureMail();
         fermetureMail.execute();
 
         //On ferme la database

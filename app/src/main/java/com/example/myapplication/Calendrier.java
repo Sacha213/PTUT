@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -154,7 +155,6 @@ public class Calendrier extends AppCompatActivity {
         protected void onPreExecute() {
             //On réinitialise la table calendrier de la base de données
             databaseManager.deleteAllCours();
-
         }
 
         @Override
@@ -213,7 +213,7 @@ public class Calendrier extends AppCompatActivity {
                 int finCours = Integer.parseInt(event[i].split("DTEND:")[1].substring(9,13));
                 String nomCours = event[i].split("SUMMARY:")[1].split("LOCATION:")[0];
                 String salle = event[i].split("LOCATION:")[1].split("DESCRIPTION:")[0];
-                String prof = event[i].split("DESCRIPTION:")[1];
+                String prof = event[i].split("DESCRIPTION:")[1].split("\\(Exported")[0];
                 String idCours = event[i].split("DTSTART:")[1].split("DTEND:")[0];
                 String date = event[i].split("DTSTART:")[1].substring(0,8);
 
