@@ -75,7 +75,7 @@
         android:id="@+id/scrollCalendrier"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/boutonDeconnexion"
+        android:layout_above="@+id/divider"
         android:layout_below="@+id/menuJour"
 
         android:layout_marginLeft="5dp"
@@ -106,20 +106,6 @@
 
 
     </ScrollView>
-
-
-    <Button
-        android:id="@+id/boutonDeconnexion"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:background="@drawable/bouton_deconnection"
-        android:text="Me Déconnecter"
-        android:textSize="17sp"
-        android:textColor="@color/white"
-        android:layout_above="@+id/divider"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="20dp"
-        />
 
 
     <!-- Menu  -->

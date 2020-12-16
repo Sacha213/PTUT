@@ -32,7 +32,6 @@ public class Calendrier extends AppCompatActivity {
     /******************* Attribut *******************/
     private Menu menu;
 
-    private Button deconnexion;
     private TextView datecourante;
     private RelativeLayout layoutFront;
     private RelativeLayout layoutBack;
@@ -44,7 +43,6 @@ public class Calendrier extends AppCompatActivity {
     //Base de données
     private DatabaseManager databaseManager;
 
-    private FirebaseAuth mAuth;
 
 
 
@@ -57,7 +55,6 @@ public class Calendrier extends AppCompatActivity {
         setContentView(R.layout.activity_calendrier);
 
         /******************* Initialisation des variables *******************/
-        this.deconnexion = findViewById(R.id.boutonDeconnexion);
 
         this.layoutFront = findViewById(R.id.layoutCalendrierFront);
         this.layoutBack = findViewById(R.id.layoutCalendrierBack);
@@ -74,9 +71,6 @@ public class Calendrier extends AppCompatActivity {
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE); //Gestionnaire connexion réseau
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo(); //Information du réseau
-
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
 
 
         if (networkInfo != null) { //On vérifie qu'il y a une connexion à internet
@@ -110,20 +104,6 @@ public class Calendrier extends AppCompatActivity {
                 layoutFront.removeAllViews();
                 affichageCalendrier();
 
-            }
-        });
-
-
-        /******************* Mise en place d'écouteur *******************/
-        deconnexion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /******************* Changement de page *******************/
-                databaseManager.deleteAllUsers(); // Supression des données de la table USERS
-
-                mAuth.signOut();//On se déconnecte
-
-                finish();//Fermeture de l'ancienne activité
             }
         });
 

@@ -154,7 +154,7 @@ public class MailReception extends AppCompatActivity {
             AlertDialog.Builder erreur = new AlertDialog.Builder(this);
             erreur.setTitle("Super..."); //Titre
             erreur.setMessage("Votre message à bien été envoyé."); //Message
-            erreur.setIcon(R.drawable.mail_sent); //Ajout de l'émoji caca
+            erreur.setIcon(R.drawable.mail_sent); //Ajout de l'image
             erreur.show(); //Affichage de la boîte de dialogue
         }
 

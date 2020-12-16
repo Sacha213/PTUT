@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Parametres">
+
+    <ScrollView
+        android:id="@+id/scrollParametres"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/boutonParametres"
+        android:layout_below="@+id/textParametre"
+        android:layout_marginTop="-20dp">
+
+        <LinearLayout
+            android:id="@+id/dynamiqueLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                />
+
+            <!-- Liens et adresse mail  -->
+            <TextView
+                android:id="@+id/textAdresseMail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Adresse mail Lyon 1 :"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+
+            <EditText
+                android:id="@+id/adresseMail"
+                android:layout_width="300dp"
+                android:layout_height="70dp"
+                android:textSize="20sp"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/rounded_corner"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:id="@+id/textLienTomuss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Flux RSS Tomuss :"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+
+            <EditText
+                android:id="@+id/lienTomuss"
+                android:layout_width="300dp"
+                android:layout_height="70dp"
+                android:textSize="20sp"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/rounded_corner"
+                android:layout_marginBottom="10dp"
+                />
+
+            <TextView
+                android:id="@+id/textLienCalendrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lien du calendrier :"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+
+            <EditText
+                android:id="@+id/lienCalendrier"
+                android:layout_width="300dp"
+                android:layout_height="70dp"
+                android:textSize="20sp"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/rounded_corner"
+                android:layout_marginBottom="10dp"
+                />
+
+            <!-- Notification  -->
+
+            <!-- Deconnexion  -->
+            <Button
+                android:id="@+id/boutonDeconnexion"
+                android:layout_width="300dp"
+                android:layout_height="60dp"
+                android:background="@drawable/bouton_deconnection"
+                android:text="Me Déconnecter"
+                android:textSize="17sp"
+                android:textColor="@color/white"
+                android:layout_marginBottom="10dp"
+                />
+
+            <!-- Suppression de compte  -->
+            <Button
+                android:id="@+id/boutonSupprimerCompte"
+                android:layout_width="300dp"
+                android:layout_height="60dp"
+                android:background="@drawable/bouton_deconnection"
+                android:text="Supprimer mon compte"
+                android:textSize="17sp"
+                android:textColor="@color/white"
+                android:layout_marginBottom="10dp"
+                />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background_information"
+        android:rotation="-4"
+        android:layout_above="@id/scrollParametres"
+        android:layout_marginLeft="-10dp"
+        android:layout_marginTop="-20dp"
+        android:layout_marginRight="-10dp"/>
+
+
+
+    <TextView
+        android:id="@+id/textParametre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Paramètres"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp" />
+
+    <Button
+        android:id="@+id/boutonParametres"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:background="@drawable/bouton_annonce"
+        android:text="Valider"
+        android:textSize="17sp"
+        android:textColor="@color/white"
+        android:layout_above="@+id/divider"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="20dp"
+        />
+
+
+
+    <!-- Menu  -->
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/menu"
+        android:background="@color/gris_claire" />
+
+    <LinearLayout
+        android:id="@+id/menu"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        android:layout_alignParentBottom="true"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/calendrier"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/calendrier" />
+
+        <ImageView
+            android:id="@+id/notes"
+            android:layout_width="45dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/cartable" />
+
+        <ImageView
+            android:id="@+id/informations"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/news" />
+
+        <ImageView
+            android:id="@+id/drive"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/nuage" />
+
+        <ImageView
+            android:id="@+id/messagerie"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/messagerie_v2" />
+
+    </LinearLayout>
+
+</RelativeLayout>

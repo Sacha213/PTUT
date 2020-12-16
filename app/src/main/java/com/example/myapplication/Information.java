@@ -43,6 +43,7 @@ public class Information extends AppCompatActivity {
     private LinearLayout layout;// afficheur scroll
     private ProgressBar progressBar;
     private int tailleProgresseBar;
+    private ImageView imageParametre;
 
     private Menu menu;
 
@@ -64,6 +65,7 @@ public class Information extends AppCompatActivity {
         /******************* Initialisation des variables *******************/
         this.layout = findViewById(R.id.dynamiqueLayout); // liaison avec le scroll layout
         this.menu = new Menu(this);
+        this.imageParametre = findViewById(R.id.imageParametre);
 
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -82,8 +84,9 @@ public class Information extends AppCompatActivity {
 
         /******************* On affiche la boite de dialogue si l'utilisazteur à publiée une annonce *******************/
         if (annoncePubliee){
-            confirmationPubliee.setTitle("Annonce publiée"); //Titre
-            confirmationPubliee.setIcon(R.drawable.valider); //Ajout de l'icone valider
+            confirmationPubliee.setTitle("Super..."); //Titre
+            confirmationPubliee.setMessage("Votre annonce à bien été publiée");
+            confirmationPubliee.setIcon(R.drawable.approval); //Ajout de l'icone valider
             confirmationPubliee.show(); //Affichage de la boîte de dialogue
 
         }
@@ -107,6 +110,18 @@ public class Information extends AppCompatActivity {
             }
         });
 
+        imageParametre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /******************* Changement de page *******************/
+                Intent otherActivity = new Intent(getApplicationContext(), Parametres.class); //Ouverture d'une nouvelle activité
+                startActivity(otherActivity);
+
+                finish();//Fermeture de l'ancienne activité
+                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
+            }
+        });
 
 
 
