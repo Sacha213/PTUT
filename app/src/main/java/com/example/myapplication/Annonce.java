@@ -25,7 +25,7 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class git Annonce extends AppCompatActivity {
+public class Annonce extends AppCompatActivity {
 
     /******************* Attribut *******************/
     private Button creerAnnonce;
