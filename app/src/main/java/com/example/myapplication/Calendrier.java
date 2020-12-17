@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -31,7 +32,6 @@ public class Calendrier extends AppCompatActivity {
     /******************* Attribut *******************/
     private Menu menu;
 
-    private Button deconnexion;
     private TextView datecourante;
     private RelativeLayout layoutFront;
     private RelativeLayout layoutBack;
@@ -43,7 +43,6 @@ public class Calendrier extends AppCompatActivity {
     //Base de données
     private DatabaseManager databaseManager;
 
-    private FirebaseAuth mAuth;
 
 
 
@@ -56,7 +55,6 @@ public class Calendrier extends AppCompatActivity {
         setContentView(R.layout.activity_calendrier);
 
         /******************* Initialisation des variables *******************/
-        this.deconnexion = findViewById(R.id.boutonDeconnexion);
 
         this.layoutFront = findViewById(R.id.layoutCalendrierFront);
         this.layoutBack = findViewById(R.id.layoutCalendrierBack);
@@ -73,9 +71,6 @@ public class Calendrier extends AppCompatActivity {
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE); //Gestionnaire connexion réseau
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo(); //Information du réseau
-
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
 
 
         if (networkInfo != null) { //On vérifie qu'il y a une connexion à internet
@@ -113,20 +108,6 @@ public class Calendrier extends AppCompatActivity {
         });
 
 
-        /******************* Mise en place d'écouteur *******************/
-        deconnexion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /******************* Changement de page *******************/
-                databaseManager.deleteAllUsers(); // Supression des données de la table USERS
-
-                mAuth.signOut();//On se déconnecte
-
-                finish();//Fermeture de l'ancienne activité
-            }
-        });
-
-
     }
 
     /******************* Gestion du retour en arrière *******************/
@@ -154,7 +135,6 @@ public class Calendrier extends AppCompatActivity {
         protected void onPreExecute() {
             //On réinitialise la table calendrier de la base de données
             databaseManager.deleteAllCours();
-
         }
 
         @Override
@@ -213,7 +193,7 @@ public class Calendrier extends AppCompatActivity {
                 int finCours = Integer.parseInt(event[i].split("DTEND:")[1].substring(9,13));
                 String nomCours = event[i].split("SUMMARY:")[1].split("LOCATION:")[0];
                 String salle = event[i].split("LOCATION:")[1].split("DESCRIPTION:")[0];
-                String prof = event[i].split("DESCRIPTION:")[1];
+                String prof = event[i].split("DESCRIPTION:")[1].split("\\(Exported")[0];
                 String idCours = event[i].split("DTSTART:")[1].split("DTEND:")[0];
                 String date = event[i].split("DTSTART:")[1].substring(0,8);
 

@@ -70,6 +70,14 @@ public class DatabaseManager extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL(strSql); //Exécution de la requette
     }
 
+    public void setInformationsUser(String adresseMail, String lienTom, String lienCal){
+
+        String strSql = "update Users set mail='"+adresseMail+"', lienTomuss='"+lienTom+"', lienCalendrier='"+lienCal+"'"; //Génération de la requette SQL
+
+        this.getWritableDatabase().execSQL(strSql); //Exécution de la requette
+
+    }
+
     /******************* Méthode qui permet de connaître l'identifiant de l'utilisateur préalablement enregistrés dans la base de données *******************/
     public String getIdentifiant(){
 

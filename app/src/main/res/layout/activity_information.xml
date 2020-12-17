@@ -57,6 +57,19 @@
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp" />
 
+    <ImageView
+        android:id="@+id/imageParametre"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_above="@id/progressBarActu"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        app:srcCompat="@drawable/crayon"
+        android:elevation="4dp"
+        android:background="@drawable/shadow"/>
+
     <ProgressBar
         android:id="@+id/progressBarActu"
         style="?android:attr/progressBarStyleHorizontal"

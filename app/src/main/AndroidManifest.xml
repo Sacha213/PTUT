@@ -13,47 +13,60 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".NouvelleAnnonce"
+        <activity android:name=".Parametres"
             android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".MailLecture"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".MailEnvoie"
+        <activity
+            android:name=".NouvelleAnnonce"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".Article"
+        <activity
+            android:name=".MailLecture"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".MailEnvoie"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Article"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Annonce"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".MailReception"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Accueil"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Messagerie"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Drive"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Note"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ContenuAnnonce"
             android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".Annonce"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".MailReception"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".Accueil"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".Messagerie"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".Drive"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".Note"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".ContenuAnnonce"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".Calendrier"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".Information"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".Connexion"
+        <activity
+            android:name=".Calendrier"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Information"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Connexion"
             android:windowSoftInputMode="adjustPan">
-        <intent-filter>
-            <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="android.intent.action.MAIN" />
 
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-
 
         <service
             android:name=".FirebaseService"
@@ -63,13 +76,16 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-        <activity android:name=".ChatReception"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".ChatRecherche"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".ChatLecture"
-            android:windowSoftInputMode="adjustPan"/>
 
+        <activity
+            android:name=".ChatReception"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ChatRecherche"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ChatLecture"
+            android:windowSoftInputMode="adjustPan" />
     </application>
 
 </manifest>
