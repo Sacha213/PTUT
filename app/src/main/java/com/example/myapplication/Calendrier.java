@@ -2,8 +2,10 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -79,6 +81,13 @@ public class Calendrier extends AppCompatActivity {
              cal.execute();
         }
         else {
+            //On préviens l'utilisateur qu'on n'a pas pu actualisé la bd
+            AlertDialog.Builder erreurInternet = new AlertDialog.Builder(this);
+            erreurInternet.setTitle("Oups..."); //Titre
+            erreurInternet.setMessage("Il semblerait que vous net pas connecté à internet."); //Message
+            erreurInternet.setIcon(R.drawable.wifi); //Ajout de l'image
+            erreurInternet.show(); //Affichage de la boîte de dialogue
+
             affichageCalendrier();//On affiche le calendrier de la bd sans les actualisé
         }
 
@@ -249,7 +258,8 @@ public class Calendrier extends AppCompatActivity {
             }else{
                 heure.setText(String.valueOf(i).substring(0,2)+":00 ");
             }
-            heure.setTextSize(20);
+            heure.setTextSize(15);
+            heure.setTypeface(null, Typeface.BOLD);//Gras
 
             if(i%2!=0){  //Si c pas une heure paire on ne l'affiche pas zeubi
                 heure.setVisibility(View.INVISIBLE);
@@ -258,7 +268,7 @@ public class Calendrier extends AppCompatActivity {
 
             //Ajout du trait
             View trait = new View(getApplicationContext());
-            trait.setBackgroundColor(Color.GRAY);
+            trait.setBackgroundColor(getResources().getColor(R.color.gris_claire));
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutBack.getWidth(), 3);
             trait.setLayoutParams(params);
             lCalHori.addView(trait);
@@ -276,24 +286,31 @@ public class Calendrier extends AppCompatActivity {
         for(String id : tabId){
             int duree = databaseManager.getHFIN(id)-databaseManager.getHDEB(id);
             duree = conversionHeureMinute(duree)*2;
+            duree -=7; //On diminue la taille du cours pour pouvoir affichez nos barre pour les cours de deux heures (2 barres = 6 height et +1 pour avoir un décalage et pas de superposition), conclusion on diminue les évènement de 3min30
             position = conversionHeureMinute(databaseManager.getHDEB(id)-800) *2;
+
             LinearLayout blockCours = new LinearLayout(getApplicationContext());
             blockCours.setOrientation(LinearLayout.VERTICAL);
-            blockCours.setGravity(Gravity.CENTER_VERTICAL);
+            //blockCours.setGravity(Gravity.CENTER_VERTICAL);
 
             TextView blocktitre = new TextView(getApplicationContext());
             TextView blockprof = new TextView(getApplicationContext());
             TextView blocksalle = new TextView(getApplicationContext());
 
-            blocktitre.setText(databaseManager.getNomCours(id));
-            blockprof.setText(databaseManager.getProf(id));
-            blocksalle.setText(databaseManager.getSalle(id));
+            blocktitre.setText("  "+databaseManager.getNomCours(id));
+            blocktitre.setTypeface(null, Typeface.BOLD);//Gras
+            blocktitre.setTextColor(getResources().getColor(R.color.violet));
+            blocksalle.setText("  "+databaseManager.getSalle(id));
+            blocksalle.setTextColor(getResources().getColor(R.color.violet));
+            blockprof.setText(databaseManager.getProf(id).replace("\\n"," "));
+            blockprof.setTextColor(getResources().getColor(R.color.violet));
 
-            blockCours.setBackgroundColor(getResources().getColor(R.color.vert_claire));
+
+            blockCours.setBackgroundResource(R.drawable.evenement);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutFront.getWidth(), duree);
-            params.setMargins(0, position, 0, 0);
-
+            params.setMargins(0, position +7, 0, 0); //+7 à la position car on diminue la duree de 7, il faut donc rééquilibrer pour que le cours s'affiche au bon moment
             blockCours.setLayoutParams(params);
+
             blockCours.addView(blocktitre);
             blockCours.addView(blockprof);
             blockCours.addView(blocksalle);

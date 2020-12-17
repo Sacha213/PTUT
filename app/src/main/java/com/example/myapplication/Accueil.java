@@ -285,8 +285,6 @@ public class Accueil extends AppCompatActivity {
                                                 erreur.setMessage("Un problème est survenu lors de la création de votre compte, veuillez réessayer plus tard"); //Message
                                                 erreur.setIcon(R.drawable.road_closure); //Ajout de l'émoji caca
                                                 erreur.show(); //Affichage de la boîte de dialogue
-                                                System.out.println("ERRrrrrr");
-
                                             }
 
 

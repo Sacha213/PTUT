@@ -56,6 +56,7 @@
             android:layout_height="wrap_content"
             android:textSize="25sp"
             android:text="Jour"
+            android:textStyle="bold"
             android:gravity="center"
             android:layout_weight="1"/>
 

@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
@@ -59,6 +60,13 @@ public class Note extends AppCompatActivity {
         }
 
         else {
+            //On préviens l'utilisateur qu'on n'a pas pu actualisé la bd
+            AlertDialog.Builder erreurInternet = new AlertDialog.Builder(this);
+            erreurInternet.setTitle("Oups..."); //Titre
+            erreurInternet.setMessage("Il semblerait que vous net pas connecté à internet."); //Message
+            erreurInternet.setIcon(R.drawable.wifi); //Ajout de l'image
+            erreurInternet.show(); //Affichage de la boîte de dialogue
+
             affichageNotes();//On affiche les notes de la bd sans les actualisé
         }
 
