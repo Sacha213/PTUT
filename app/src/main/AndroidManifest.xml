@@ -48,6 +48,9 @@
             android:name=".Note"
             android:windowSoftInputMode="adjustPan" />
         <activity
+            android:name=".ContenuAnnonce"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity
             android:name=".Calendrier"
             android:windowSoftInputMode="adjustPan" />
         <activity
