@@ -67,13 +67,20 @@ public class Parametres extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                databaseManager.setInformationsUser(textMail.getText().toString(),textTomuss.getText().toString(),textCalendrier.getText().toString());
+                String textCal = textCalendrier.getText().toString();
+                if (!textCal.contains("https")){
+                    textCal = textCal.replace("http","https");
+                }
+
+                databaseManager.setInformationsUser(textMail.getText().toString(),textTomuss.getText().toString(),textCal);
 
                 //On affiche une fenetre de dialogue pour précisé à l'utilisateur que ses informations ont bien été modifiées
                 dialogConfirmation.setTitle("Super..."); //Titre
                 dialogConfirmation.setMessage("Vos données on bien été modifiées"); //Message
                 dialogConfirmation.setIcon(R.drawable.approval); //Ajout de l'icone valider
                 dialogConfirmation.show(); //Affichage de la boîte de dialogue
+
+
             }
         });
 
