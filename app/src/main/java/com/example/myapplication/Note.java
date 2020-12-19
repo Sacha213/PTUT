@@ -243,6 +243,7 @@ public class Note extends AppCompatActivity {
             //On créer un layout horizontale pour pouvoir y ajouter les notes
             LinearLayout layoutHorizontale = new LinearLayout(getApplicationContext());
             layoutHorizontale.setOrientation(LinearLayout.HORIZONTAL);
+            layoutHorizontale.setWeightSum(4);
 
             for(int i=0; i< tabNote.length;i++ ){
 
@@ -252,6 +253,7 @@ public class Note extends AppCompatActivity {
 
                     layoutHorizontale = new LinearLayout(getApplicationContext()); //On crée un nouveau layout
                     layoutHorizontale.setOrientation(LinearLayout.HORIZONTAL);
+                    layoutHorizontale.setWeightSum(4);
                 }
 
                 //Etape 6 : On affiche la note et sa description
@@ -281,10 +283,9 @@ public class Note extends AppCompatActivity {
                 }
 
                 textNote.setPadding(10,10,10,10);
-                LinearLayout.LayoutParams paramsN = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams paramsN = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT,1f);
                 paramsN.setMargins(10,10,10,10);
                 textNote.setLayoutParams(paramsN);
-                textNote.setWidth(250);//On met un nombre max pour la taille de la note
                 textNote.setLines(3);
                 textNote.setEllipsize(TextUtils.TruncateAt.END);//ajout des ...
                 layoutHorizontale.addView(textNote);//On l'ajoute au layout
