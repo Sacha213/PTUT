@@ -201,7 +201,14 @@ public class Note extends AppCompatActivity {
 
     public void affichageNotes(){
         //Etape 1 : On récupère les matières puis on les stockes dans un tableau
-        String[] tabMatiere = databaseManager.getMatieres().split("/");
+
+        String[] tabMatiere;
+        if (databaseManager.getMatieres().length() > 0){ //Si il y a plus de 0 matière alors on remplie le tableau tabMatiere de celle ci
+            tabMatiere = databaseManager.getMatieres().split("/");
+        }
+        else{//Sinon on initialise le tableau avec une taille de 0
+            tabMatiere = new String[0];
+        }
 
         //Etape 2 : On parcours les matières
         for (String mat : tabMatiere){
@@ -223,7 +230,13 @@ public class Note extends AppCompatActivity {
 
 
             //Etape 4 : On récupère toutes les notes de la matière
-            String[] tabNote = databaseManager.getNotes(mat).split("---");
+            String[] tabNote;
+            if (databaseManager.getNotes(mat).length() > 0){ //Si il y a plus de 0 note alors on remplie le tableau tabNote de celle ci
+                tabNote = databaseManager.getNotes(mat).split("---");
+            }
+            else{//Sinon on initialise le tableau avec une taille de 0
+                tabNote = new String[0];
+            }
 
             //Etape 5 : On parcours les notes
 
