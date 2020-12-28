@@ -4,6 +4,8 @@ package com.example.myapplication;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -81,6 +83,10 @@ public class Information extends AppCompatActivity {
 
         confirmationPubliee = new AlertDialog.Builder(this); //Création de la boîte de dialogue
 
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE); //Gestionnaire connexion réseau
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo(); //Information du réseau
+
+
 
         /******************* On affiche la boite de dialogue si l'utilisazteur à publiée une annonce *******************/
         if (annoncePubliee){
@@ -91,8 +97,22 @@ public class Information extends AppCompatActivity {
 
         }
 
-        /******************* Acces aux articles *******************/
-        getAllDocs();
+        if (networkInfo != null) { //On vérifie qu'il y a une connexion à internet
+             /******************* Acces aux articles *******************/
+             getAllDocs();
+        }
+        else {
+             //On préviens l'utilisateur qu'il n'a pas acces à internet
+             AlertDialog.Builder erreurInternet = new AlertDialog.Builder(this);
+             erreurInternet.setTitle("Oups..."); //Titre
+             erreurInternet.setMessage("Il semblerait que vous n'êtes pas connecté à internet."); //Message
+             erreurInternet.setIcon(R.drawable.wifi); //Ajout de l'image
+             erreurInternet.show(); //Affichage de la boîte de dialogue
+
+             progressBar.setVisibility(View.INVISIBLE);
+         }
+
+
 
 
         /******************* Mise en place d'écouteur *******************/

@@ -1,6 +1,8 @@
 package com.example.myapplication
 
+import android.app.AlertDialog
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
@@ -73,8 +75,8 @@ class ChatLecture : AppCompatActivity() {
 
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
 
-
-
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager //Gestionnaire connexion réseau
+        val networkInfo = connectivityManager.activeNetworkInfo //Information du réseau
 
 
         // On récupère le prénom et le nom de l'utilisateur
@@ -95,43 +97,56 @@ class ChatLecture : AppCompatActivity() {
 
         /******************* Mise en place d'écouteur : Envoie du message *******************/
         btnSend.setOnClickListener {
-            val message = etMessage.text.toString()
 
-            //On récupère le token du destinataire
-            db!!.collection("Token")
-                    .document(DESTINATAIRE)
-                    .get()
-                    .addOnCompleteListener { task ->
-                        val document = task.result
-                        if (document!!.exists()) {
-                            val myToken = document.getString("token").toString()
+            if (networkInfo != null){
+                val message = etMessage.text.toString()
 
-                            //On lui envoie une notification
-                            if(message.isNotEmpty() && NOM.isNotEmpty() && PRENOM.isNotEmpty() && myToken.isNotEmpty()) {
-                                date = Date()
-                                databaseManager!!.insertMessage(message, DESTINATAIRE, 2, date)
-                                PushNotification(
-                                        NotificationData(message, PRENOM + " " + NOM),
-                                        myToken
-                                ).also {
-                                    sendNotification(it)
+                //On récupère le token du destinataire
+                db!!.collection("Token")
+                        .document(DESTINATAIRE)
+                        .get()
+                        .addOnCompleteListener { task ->
+                            val document = task.result
+                            if (document!!.exists()) {
+                                val myToken = document.getString("token").toString()
+
+                                //On lui envoie une notification
+                                if(message.isNotEmpty() && NOM.isNotEmpty() && PRENOM.isNotEmpty() && myToken.isNotEmpty()) {
+                                    date = Date()
+                                    databaseManager!!.insertMessage(message, DESTINATAIRE, 2, date)
+                                    PushNotification(
+                                            NotificationData(message, PRENOM + " " + NOM),
+                                            myToken
+                                    ).also {
+                                        sendNotification(it)
+                                    }
                                 }
+
+                                //On actualise l'activité
+                                val intent = Intent(this, ChatLecture::class.java)
+                                intent.putExtra("users", DESTINATAIRE)
+                                startActivity(intent)
+
+                                finish() //Fermeture de l'ancienne activité
+                                overridePendingTransition(0, 0)
+
+
+                            } else {
+                                println("Erreur")
                             }
 
-                            //On actualise l'activité
-                            val intent = Intent(this, ChatLecture::class.java)
-                            intent.putExtra("users", DESTINATAIRE)
-                            startActivity(intent)
-
-                            finish() //Fermeture de l'ancienne activité
-                            overridePendingTransition(0, 0)
-
-
-                        } else {
-                            println("Erreur")
                         }
+            }
+            else{
+                //On préviens l'utilisateur
+                val erreurInternet = AlertDialog.Builder(this)
+                erreurInternet.setTitle("Oups...") //Titre
+                erreurInternet.setMessage("Il semblerait que vous n'êtes pas connecté à internet.\nVous ne pouvez donc pas envoyer votre message.") //Message
+                erreurInternet.setIcon(R.drawable.wifi) //Ajout de l'image
+                erreurInternet.show() //Affichage de la boîte de dialogue
 
-                    }
+            }
+
 
 
 

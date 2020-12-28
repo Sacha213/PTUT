@@ -125,29 +125,43 @@ public class MailReception extends AppCompatActivity {
         //On récupère le login de l'utilisateur
         LOGIN=databaseManager.getIdentifiant();
 
-        /******************* Reception des mails *******************/
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE); //Gestionnaire connexion réseau
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo(); //Information du réseau
 
-        // On récupère le mot de passe de l'utilisateur
-        db.collection("users")
-                .document(mAuth.getCurrentUser().getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            PASSWORD = decrypt(document.getString("Password"),databaseManager.getCle());
+        if (networkInfo != null) { //On vérifie qu'il y a une connexion à internet
 
-                            /******************* Reception des mails *******************/
-                            TelechargementMail mails = new TelechargementMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
-                            mails.execute();
+            /******************* Reception des mails *******************/
+            // On récupère le mot de passe de l'utilisateur
+            db.collection("users")
+                    .document(mAuth.getCurrentUser().getUid())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                PASSWORD = decrypt(document.getString("Password"),databaseManager.getCle());
+
+                                /******************* Reception des mails *******************/
+                                TelechargementMail mails = new TelechargementMail(); // On instanci l'objet mails de la classe ReceptionMail qui est dans une AsyncTask
+                                mails.execute();
+                            }
+                            else{
+                                System.out.println("Erreur");
+                            }
+
                         }
-                        else{
-                            System.out.println("Erreur");
-                        }
+                    });
+        }
 
-                    }
-                });
+        else {
+            //On préviens l'utilisateur
+            AlertDialog.Builder erreurInternet = new AlertDialog.Builder(this);
+            erreurInternet.setTitle("Oups..."); //Titre
+            erreurInternet.setMessage("Il semblerait que vous n'êtes pas connecté à internet."); //Message
+            erreurInternet.setIcon(R.drawable.wifi); //Ajout de l'image
+            erreurInternet.show(); //Affichage de la boîte de dialogue
+        }
 
         if(messageEnvoye){
             /******************* Affichage de la boîte de dialogue d'envoie d'un message *******************/
@@ -182,6 +196,16 @@ public class MailReception extends AppCompatActivity {
 
     public class TelechargementMail extends AsyncTask<Void, Void, Void> {
 
+        private AlertDialog.Builder dialogProblem;
+        private boolean erreur = false;
+
+        @Override
+        protected void onPreExecute() {
+
+            dialogProblem = new AlertDialog.Builder(MailReception.this);
+
+        }
+
         @Override
         protected Void doInBackground(Void... voids) {
 
@@ -208,6 +232,9 @@ public class MailReception extends AppCompatActivity {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                //Affichage msg erreur
+                erreur = true;
+
             } finally {
                 // On ferme les dossier ouvert
                 close(inbox);
@@ -228,6 +255,13 @@ public class MailReception extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             progressBar.setVisibility(View.INVISIBLE);//Supression de la progressbar
+
+            if(erreur){
+                dialogProblem.setTitle("Oups..."); //Titre
+                dialogProblem.setMessage("Un problème est survenu.\nVeuillez vérifier votre adresse mail Lyon 1."); //Message
+                dialogProblem.setIcon(R.drawable.road_closure); //Ajout de l'icone valider
+                dialogProblem.show(); //Affichage de la boîte de dialogue
+            }
         }
     }
 
@@ -618,11 +652,11 @@ public class MailReception extends AppCompatActivity {
 
         try
         {
-            Key clef = new SecretKeySpec(key.getBytes("UTF_8"),"Blowfish");
+            Key clef = new SecretKeySpec(key.getBytes("UTF-8"),"Blowfish");
             Cipher cipher=Cipher.getInstance("Blowfish");
             cipher.init(Cipher.DECRYPT_MODE,clef);
 
-            return new String(cipher.doFinal(bytesPassword), "UTF_8");
+            return new String(cipher.doFinal(bytesPassword), "UTF-8");
         }
         catch (Exception e)
         {

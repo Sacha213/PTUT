@@ -100,6 +100,7 @@ public class Accueil extends AppCompatActivity {
     private EditText mail;
     private EditText adresseTomuss;
     private EditText adresseCalendrier;
+    private ImageView infoConnexion;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db; //Base de donnée Firestore
@@ -130,6 +131,7 @@ public class Accueil extends AppCompatActivity {
         this.mail = findViewById(R.id.adresseMail);
         this.adresseCalendrier = findViewById(R.id.adresseCalendrier);
         this.adresseTomuss = findViewById(R.id.adresseTommus);
+        this.infoConnexion = findViewById(R.id.infoConnexion);
 
         findToken = new FindToken();
 
@@ -162,6 +164,14 @@ public class Accueil extends AppCompatActivity {
 
 
         /******************* Mise en place d'écouteur *******************/
+        infoConnexion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bienvenueDialogue.show(); //Affichage de la boîte de dialogue
+            }
+        });
+
+
         continuer.setOnClickListener(new View.OnClickListener() {
 
             @Override

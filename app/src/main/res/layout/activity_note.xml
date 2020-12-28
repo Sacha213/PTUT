@@ -59,6 +59,25 @@
         android:layout_marginTop="40dp"
         android:layout_marginLeft="10dp"/>
 
+    <ProgressBar
+        android:id="@+id/barChargement"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:indeterminateTint="@color/orangePale"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/textChargement"
+        android:layout_toLeftOf="@+id/textChargement" />
+
+    <TextView
+        android:id="@+id/textChargement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Chargement ..."
+        android:textStyle="bold"
+        android:textSize="30dp" />
+
 
 
 

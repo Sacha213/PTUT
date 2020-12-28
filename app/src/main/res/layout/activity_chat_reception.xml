@@ -64,7 +64,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
-        app:srcCompat="@drawable/crayon"
+        app:srcCompat="@drawable/recherche"
         android:elevation="4dp"
         android:background="@drawable/shadow"/>
 

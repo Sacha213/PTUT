@@ -13,6 +13,7 @@ import android.widget.EditText;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Parametres extends AppCompatActivity {
@@ -30,6 +31,7 @@ public class Parametres extends AppCompatActivity {
     private Button buttonSupprimerCompte;
 
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     private AlertDialog.Builder dialogConfirmation;
 
@@ -45,6 +47,7 @@ public class Parametres extends AppCompatActivity {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         dialogConfirmation = new AlertDialog.Builder(this);
 
@@ -90,9 +93,34 @@ public class Parametres extends AppCompatActivity {
                 /******************* Changement de page *******************/
                 databaseManager.deleteAllUsers(); // Supression des données de la table USERS
 
-                mAuth.signOut();//On se déconnecte
+                db.collection("users").document(mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        String NOM = document.getString("Nom");
+                        String PRENOM = document.getString("Prénom");
 
-                finish();//Fermeture de l'ancienne activité
+                        db.collection("Token").document(PRENOM+" "+NOM).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                mAuth.signOut();//On se déconnecte
+
+                                /******************* Changement de page *******************/
+                                Intent otherActivity = new Intent(getApplicationContext(), Connexion.class); //Ouverture d'une nouvelle activité
+                                startActivity(otherActivity);
+
+                                //On ferme la database
+                                databaseManager.close();
+
+                                finish();//Fermeture de l'ancienne activité
+                                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
+                            }
+                        });
+                    }
+                });
+
+
             }
         });
 
@@ -101,19 +129,39 @@ public class Parametres extends AppCompatActivity {
             public void onClick(View view) {
                 databaseManager.deleteAllUsers(); // Supression des données de la table USERS
 
-                //On supprime l'utilisateur
-                FirebaseAuth.getInstance().getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                db.collection("users").document(mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        /******************* Changement de page *******************/
-                        Intent otherActivity = new Intent(getApplicationContext(), Connexion.class); //Ouverture d'une nouvelle activité
-                        startActivity(otherActivity);
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        String NOM = document.getString("Nom");
+                        String PRENOM = document.getString("Prénom");
 
-                        //On ferme la database
-                        databaseManager.close();
+                        db.collection("Token").document(PRENOM+" "+NOM).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                db.collection("users").document(mAuth.getUid()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        //On supprime l'utilisateur
+                                        FirebaseAuth.getInstance().getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                /******************* Changement de page *******************/
+                                                Intent otherActivity = new Intent(getApplicationContext(), Connexion.class); //Ouverture d'une nouvelle activité
+                                                startActivity(otherActivity);
 
-                        finish();//Fermeture de l'ancienne activité
-                        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+
+                                                //On ferme la database
+                                                databaseManager.close();
+
+                                                finish();//Fermeture de l'ancienne activité
+                                                overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
 

@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -44,6 +46,8 @@ public class ChatReception extends AppCompatActivity {
 
         listeSender = databaseManager.getSender();
         System.out.println(listeSender);
+
+        AlertDialog.Builder dialogSuprimmer = new AlertDialog.Builder(this);
 
 
 
@@ -102,8 +106,6 @@ public class ChatReception extends AppCompatActivity {
             layoutHorizontale.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    System.out.println("zeubiiii");
-
                     /******************* Changement de page *******************/
                     Intent intent = new Intent(getApplicationContext(), ChatLecture.class);
                     intent.putExtra("users", affichage.getPseudo());
@@ -113,6 +115,38 @@ public class ChatReception extends AppCompatActivity {
                     overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
 
+                }
+            });
+
+            layoutHorizontale.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+
+                    dialogSuprimmer.setTitle("Attention..."); //Titre
+                    dialogSuprimmer.setMessage("Voulez vous supprimer cette conversation ?");
+                    dialogSuprimmer.setIcon(R.drawable.cancel); //Ajout de l'icone valider
+
+                    dialogSuprimmer.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            databaseManager.deleteSender(affichage.getPseudo());
+
+                            //On rafraichis la page
+                            /******************* Changement de page *******************/
+                            Intent otherActivity = new Intent(getApplicationContext(), ChatReception.class); //Ouverture d'une nouvelle activité
+                            startActivity(otherActivity);
+
+                            //On ferme la database
+                            databaseManager.close();
+
+                            finish();//Fermeture de l'ancienne activité
+                            overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
+                        }
+                    });
+
+                    dialogSuprimmer.show(); //Affichage de la boîte de dialogue
+
+                    return false;
                 }
             });
 

@@ -118,7 +118,7 @@ public class Annonce extends AppCompatActivity {
         LinearLayout Lannonce = new LinearLayout(getApplicationContext());
         Lannonce.setOrientation(LinearLayout.HORIZONTAL);
         Lannonce.setGravity(Gravity.CENTER_VERTICAL);
-        Lannonce.setWeightSum(3);
+        Lannonce.setWeightSum(1);
         LinearLayout.LayoutParams paramslayoutCal = new LinearLayout.LayoutParams(layout.getWidth()-60, 150);
         paramslayoutCal.setMargins(30, 0, 30, 0);
         Lannonce.setLayoutParams(paramslayoutCal);
@@ -149,12 +149,16 @@ public class Annonce extends AppCompatActivity {
         titreAnnonce.setText(titre);
         titreAnnonce.setGravity(Gravity.CENTER);//Centrage du titre
         titreAnnonce.setTextSize(25);//Taille du titre
+        LinearLayout.LayoutParams paramsTitre = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT,1f);
+        titreAnnonce.setLayoutParams(paramsTitre);
         Lannonce.addView(titreAnnonce);
 
        // ajout du chevron
         ImageView chevron = new ImageView(getApplicationContext());
         chevron.setLayoutParams(params);
         chevron.setImageResource(R.drawable.fleche_droite);
+        LinearLayout.LayoutParams paramsChevron = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT,1f);
+        titreAnnonce.setLayoutParams(paramsChevron);
         Lannonce.addView(chevron);
 
         layout.addView(Lannonce);

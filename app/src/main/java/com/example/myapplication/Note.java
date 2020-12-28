@@ -12,7 +12,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.BufferedInputStream;
@@ -28,6 +30,8 @@ public class Note extends AppCompatActivity {
     private Menu menu;
 
     private LinearLayout layoutVertical;
+    private ProgressBar progressBar;
+    private TextView textChargement;
 
     //Base de données
     private DatabaseManager databaseManager;
@@ -46,6 +50,10 @@ public class Note extends AppCompatActivity {
         databaseManager = new DatabaseManager(this);
         this.menu = new Menu(this, databaseManager);
 
+        this.progressBar = findViewById(R.id.barChargement);
+        this.textChargement = findViewById(R.id.textChargement);
+
+
         url = databaseManager.getLienTomuss();
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE); //Gestionnaire connexion réseau
@@ -60,10 +68,14 @@ public class Note extends AppCompatActivity {
         }
 
         else {
+            //On cache l'affichage du chargement
+            progressBar.setVisibility(View.INVISIBLE);
+            textChargement.setVisibility(View.INVISIBLE);
+
             //On préviens l'utilisateur qu'on n'a pas pu actualisé la bd
             AlertDialog.Builder erreurInternet = new AlertDialog.Builder(this);
             erreurInternet.setTitle("Oups..."); //Titre
-            erreurInternet.setMessage("Il semblerait que vous net pas connecté à internet."); //Message
+            erreurInternet.setMessage("Il semblerait que vous n'êtes pas connecté à internet."); //Message
             erreurInternet.setIcon(R.drawable.wifi); //Ajout de l'image
             erreurInternet.show(); //Affichage de la boîte de dialogue
 
@@ -91,20 +103,31 @@ public class Note extends AppCompatActivity {
 
     public class TelechargementNotes extends AsyncTask<Void, Void, Void>{
 
+        private AlertDialog.Builder dialogProblem;
+        private boolean erreur = false;
+
 
         @Override
         protected void onPreExecute() {
+
+            dialogProblem = new AlertDialog.Builder(Note.this);
+
             //On réinitialise les bd NOTES et MATIERES
-            databaseManager.deleteAllMatieres();
-            databaseManager.deleteAllNotes();
+            //databaseManager.deleteAllMatieres();
+            //databaseManager.deleteAllNotes();
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
 
-            String codeRss = codeSource(); //On récupère le code rss
+            try {
+                String codeRss = codeSource(); //On récupère le code rss
+                decodage(codeRss);
+            }
+            catch (Exception e){ //S'il y a une erreur on précise à l'utilisateur qu'il y a un pb avec le lien renseigné
+                erreur = true;
+            }
 
-            decodage(codeRss);
 
             return null;
         }
@@ -114,7 +137,17 @@ public class Note extends AppCompatActivity {
             //On affiche les notes
             affichageNotes();
 
-            
+            //On cache l'affichage du chargement
+            progressBar.setVisibility(View.INVISIBLE);
+            textChargement.setVisibility(View.INVISIBLE);
+
+            if(erreur){
+                dialogProblem.setTitle("Oups..."); //Titre
+                dialogProblem.setMessage("Un problème est survenu.\nVeuillez vérifier le lien du flux RSS Tomuss."); //Message
+                dialogProblem.setIcon(R.drawable.road_closure); //Ajout de l'icone valider
+                dialogProblem.show(); //Affichage de la boîte de dialogue
+            }
+
         }
 
         public String codeSource(){
@@ -139,6 +172,7 @@ public class Note extends AppCompatActivity {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                erreur = true;
             }
             finally {
                 if (conn != null) {
@@ -183,15 +217,33 @@ public class Note extends AppCompatActivity {
             String[] tabMatiere = databaseManager.getMatieres().split("/");
 
             //On parcours les matière pour vérifié son existence
-            boolean trouver = false;
+            boolean trouverMat = false;
             for(String mat : tabMatiere){
-                if (mat.equals(matiere))trouver=true;
+                if (mat.equals(matiere)) {
+                    trouverMat = true;
+                    break;
+                }
             }
 
-            if(!trouver)databaseManager.insertMatiere(matiere);//Si la matière n'existe pas dans la BD on l'ajoute
+            if(!trouverMat)databaseManager.insertMatiere(matiere);//Si la matière n'existe pas dans la BD on l'ajoute
 
-            //On ajoute la note dans la BD
-            databaseManager.insertNote(note, description, matiere, dateNote);
+            //On récupère les notes de la BD
+            String[] tabNote = databaseManager.getNotes(matiere).split("---");
+
+            //On parcours les notes pour vérifié son existence
+            boolean trouverNote = false;
+            for(String not : tabNote){
+                if (not.equals(note+" --"+description+dateNote)) {
+                    trouverNote = true;
+                    break;
+                }
+            }
+
+
+
+
+            //On ajoute la note dans la BD si elle n'existe pas dans la base
+            if(!trouverNote)databaseManager.insertNote(note, description, matiere, dateNote);
         }
     }
 

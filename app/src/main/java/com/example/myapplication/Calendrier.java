@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -42,6 +43,9 @@ public class Calendrier extends AppCompatActivity {
 
     private Calendar dateAffiche;
 
+    private ProgressBar progressBar;
+    private TextView textChargement;
+
     //Base de données
     private DatabaseManager databaseManager;
 
@@ -64,6 +68,9 @@ public class Calendrier extends AppCompatActivity {
         this.flecheDroite = findViewById(R.id.flechedroite);
         this.flecheGauche = findViewById(R.id.flechegauche);
 
+        this.progressBar = findViewById(R.id.barChargement);
+        this.textChargement = findViewById(R.id.textChargement);
+
         databaseManager = new DatabaseManager(this);
         dateAffiche = Calendar.getInstance();
 
@@ -81,10 +88,14 @@ public class Calendrier extends AppCompatActivity {
              cal.execute();
         }
         else {
+            //On cache l'affichage du chargement
+            progressBar.setVisibility(View.INVISIBLE);
+            textChargement.setVisibility(View.INVISIBLE);
+
             //On préviens l'utilisateur qu'on n'a pas pu actualisé la bd
             AlertDialog.Builder erreurInternet = new AlertDialog.Builder(this);
             erreurInternet.setTitle("Oups..."); //Titre
-            erreurInternet.setMessage("Il semblerait que vous net pas connecté à internet."); //Message
+            erreurInternet.setMessage("Il semblerait que vous n'êtes pas connecté à internet.\nVeuillez cliquer sur une flèche pour actualiser. "); //Message
             erreurInternet.setIcon(R.drawable.wifi); //Ajout de l'image
             erreurInternet.show(); //Affichage de la boîte de dialogue
 
@@ -139,9 +150,13 @@ public class Calendrier extends AppCompatActivity {
 
     public class TelechargementCalendrier extends AsyncTask<Void, Void, Void> {
 
+        private AlertDialog.Builder dialogProblem;
+        private boolean erreur = false;
 
         @Override
         protected void onPreExecute() {
+            dialogProblem = new AlertDialog.Builder(Calendrier.this);
+
             //On réinitialise la table calendrier de la base de données
             databaseManager.deleteAllCours();
         }
@@ -149,9 +164,14 @@ public class Calendrier extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            String codeCal = codeSource(); //On récupère le code du fichier calendrier
+            try {
+                String codeCal = codeSource(); //On récupère le code du fichier calendrier
+                decodage(codeCal); //On va selectionner les informations dans le text qui nous interressent
+            }
+            catch (Exception e){
+                erreur = true;
+            }
 
-            decodage(codeCal); //On va selectionner les informations dans le text qui nous interressent
 
             return null;
         }
@@ -160,6 +180,17 @@ public class Calendrier extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             //On affiche les cours
             affichageCalendrier();
+
+            //On cache l'affichage du chargement
+            progressBar.setVisibility(View.INVISIBLE);
+            textChargement.setVisibility(View.INVISIBLE);
+
+            if(erreur){
+                dialogProblem.setTitle("Oups..."); //Titre
+                dialogProblem.setMessage("Un problème est survenu.\nVeuillez vérifier le lien de l'export du calendrier."); //Message
+                dialogProblem.setIcon(R.drawable.road_closure); //Ajout de l'icone valider
+                dialogProblem.show(); //Affichage de la boîte de dialogue
+            }
 
         }
 
@@ -186,6 +217,7 @@ public class Calendrier extends AppCompatActivity {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                erreur = true;
             }
 
 
@@ -246,10 +278,13 @@ public class Calendrier extends AppCompatActivity {
 
             LinearLayout lCalHori = new LinearLayout(getApplicationContext());
             lCalHori.setOrientation(LinearLayout.HORIZONTAL);
-            lCalHori.setGravity(Gravity.CENTER_VERTICAL);
+            //lCalHori.setGravity(Gravity.CENTER_VERTICAL);
             LinearLayout.LayoutParams paramslayoutCal = new LinearLayout.LayoutParams(layoutBack.getWidth(), 150);
             paramslayoutCal.setMargins(0, position, 0, 0);
             lCalHori.setLayoutParams(paramslayoutCal);
+
+            LinearLayout layoutHeure = new LinearLayout(getApplicationContext());
+            layoutHeure.setOrientation(LinearLayout.VERTICAL);
 
             //On affiche l'heure tt les deux Heure
             TextView heure = new TextView(getApplicationContext());
@@ -260,8 +295,10 @@ public class Calendrier extends AppCompatActivity {
             }
             heure.setTextSize(15);
             heure.setTypeface(null, Typeface.BOLD);//Gras
+            heure.setGravity(Gravity.BOTTOM);
+            heure.setBackgroundResource(R.drawable.heure_calendrier);
 
-            if(i%2!=0){  //Si c pas une heure paire on ne l'affiche pas zeubi
+            if(i%2!=0){  //Si c pas une heure paire on ne l'affiche pas
                 heure.setVisibility(View.INVISIBLE);
             }
             lCalHori.addView(heure);
@@ -286,12 +323,11 @@ public class Calendrier extends AppCompatActivity {
         for(String id : tabId){
             int duree = databaseManager.getHFIN(id)-databaseManager.getHDEB(id);
             duree = conversionHeureMinute(duree)*2;
-            duree -=7; //On diminue la taille du cours pour pouvoir affichez nos barre pour les cours de deux heures (2 barres = 6 height et +1 pour avoir un décalage et pas de superposition), conclusion on diminue les évènement de 3min30
+            duree -=4; //On diminue la taille du cours pour pouvoir affichez nos barre pour les cours de deux heures (2 barres = 6 height), conclusion on diminue les évènement de 3min30
             position = conversionHeureMinute(databaseManager.getHDEB(id)-800) *2;
 
             LinearLayout blockCours = new LinearLayout(getApplicationContext());
             blockCours.setOrientation(LinearLayout.VERTICAL);
-            //blockCours.setGravity(Gravity.CENTER_VERTICAL);
 
             TextView blocktitre = new TextView(getApplicationContext());
             TextView blockprof = new TextView(getApplicationContext());
@@ -308,7 +344,7 @@ public class Calendrier extends AppCompatActivity {
 
             blockCours.setBackgroundResource(R.drawable.evenement);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(layoutFront.getWidth(), duree);
-            params.setMargins(0, position +7, 0, 0); //+7 à la position car on diminue la duree de 7, il faut donc rééquilibrer pour que le cours s'affiche au bon moment
+            params.setMargins(0, position +4, 0, 0); //+4 à la position car on diminue la duree de 4, il faut donc rééquilibrer pour que le cours s'affiche au bon moment
             blockCours.setLayoutParams(params);
 
             blockCours.addView(blocktitre);

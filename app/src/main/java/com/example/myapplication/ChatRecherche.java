@@ -1,7 +1,10 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -49,6 +52,18 @@ public class ChatRecherche extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         System.out.println(getIntent().getStringExtra("mode"));
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE); //Gestionnaire connexion réseau
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo(); //Information du réseau
+
+        if (networkInfo == null) { //On vérifie qu'il y a une connexion à internet
+            //On préviens l'utilisateur qu'on n'a pas pu actualisé la bd
+            AlertDialog.Builder erreurInternet = new AlertDialog.Builder(this);
+            erreurInternet.setTitle("Oups..."); //Titre
+            erreurInternet.setMessage("Il semblerait que vous n'êtes pas connecté à internet."); //Message
+            erreurInternet.setIcon(R.drawable.wifi); //Ajout de l'image
+            erreurInternet.show(); //Affichage de la boîte de dialogue
+        }
 
         /******************* Gestion de l'affichage des utilisateurs *******************/
 

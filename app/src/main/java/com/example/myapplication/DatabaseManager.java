@@ -358,6 +358,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return list;
     }
 
+    public void deleteSender(String sender){
+        String strsql = "DELETE FROM Message WHERE pseudoSender = '"+sender+"'"; //Génération de la requette SQL
+
+        this.getWritableDatabase().execSQL(strsql); //Exécution de la requette
+    }
+
 
     public String getFirstMessage(String sender) {
         String strsql = "select message from Message where pseudoSender = '"+sender+"'";

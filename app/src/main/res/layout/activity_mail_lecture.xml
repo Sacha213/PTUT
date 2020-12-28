@@ -122,6 +122,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_centerVertical="true"
+        android:indeterminateTint="#1ACCB4"
         android:layout_toStartOf="@+id/textChargement"
         android:layout_toLeftOf="@+id/textChargement" />
 
@@ -132,6 +133,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="Chargement ..."
+        android:textStyle="bold"
         android:textSize="30dp" />
 
 

@@ -3,7 +3,10 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -59,6 +62,20 @@ public class Drive extends AppCompatActivity {
         this.menu = new Menu(this,databaseManager);
 
         idUtilisateur = databaseManager.getIdentifiant();
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE); //Gestionnaire connexion réseau
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo(); //Information du réseau
+
+
+        if (networkInfo == null) { //On vérifie qu'il y a une connexion à internet
+            //On préviens l'utilisateur qu'il n'a pas acces à internet
+            AlertDialog.Builder erreurInternet = new AlertDialog.Builder(this);
+            erreurInternet.setTitle("Oups..."); //Titre
+            erreurInternet.setMessage("Il semblerait que vous n'êtes pas connecté à internet."); //Message
+            erreurInternet.setIcon(R.drawable.wifi); //Ajout de l'image
+            erreurInternet.show(); //Affichage de la boîte de dialogue
+
+        }
 
         // On récupère le mot de passe de l'utilisateur
         db.collection("users")

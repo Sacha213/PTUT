@@ -78,7 +78,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/divider"
         android:layout_below="@+id/menuJour"
-
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp">
 
@@ -91,22 +91,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-
-
             <RelativeLayout
                 android:id="@+id/layoutCalendrierFront"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginLeft="60dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginTop="27dp"/>
+                />
 
         </RelativeLayout>
 
 
 
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/barChargement"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:indeterminateTint="@color/rougePale"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/textChargement"
+        android:layout_toLeftOf="@+id/textChargement" />
+
+    <TextView
+        android:id="@+id/textChargement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Chargement ..."
+        android:textStyle="bold"
+        android:textSize="30dp" />
 
 
     <!-- Menu  -->
