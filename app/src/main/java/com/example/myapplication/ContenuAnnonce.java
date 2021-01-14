@@ -33,8 +33,7 @@ public class ContenuAnnonce extends AppCompatActivity {
     private String identifiant;
     private TextView titre;
     private TextView contenu;
-    private TextView date;
-    private TextView auteur;
+    private TextView auteurDate;
     private FirebaseFirestore db; //Base de donnée Firestore
 
 
@@ -53,8 +52,7 @@ public class ContenuAnnonce extends AppCompatActivity {
         identifiant = intent.getStringExtra("Identifiant");
         this.titre = findViewById(R.id.textAnnonce);
         this.contenu = findViewById(R.id.contenuAnnonce);
-        this.auteur = findViewById(R.id.auteurAnnonce);
-        this.date = findViewById(R.id.dateAnnonce);
+        this.auteurDate = findViewById(R.id.textAuteurDate);
         getInfoAnnonce();
     }
 
@@ -66,22 +64,27 @@ public class ContenuAnnonce extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot document) {
                     titre.setText(document.getString("Titre"));
                     contenu.setText(document.getString("Contenu"));
-                    auteur.setText(document.getString("Auteur"));
-                     Date dateA = document.getTimestamp("Date").toDate();
+                    String auteurString = document.getString("Auteur");
+                    Date dateA = document.getTimestamp("Date").toDate();
                     SimpleDateFormat formateur = new SimpleDateFormat("dd/MM/yyyy");
                     String strDate= formateur.format(dateA);
-                    date.setText(strDate);
+                    auteurDate.setText(Html.fromHtml("Publié par <strong>"+auteurString+"</strong> le "+strDate));
             }
         });
 
     }
+
     /******************* Gestion du retour en arrière *******************/
     @Override
     public void onBackPressed() {
 
         /******************* Changement de page *******************/
-        Intent otherActivity = new Intent(getApplicationContext(), Annonce.class); //Ouverture d'une nouvelle activité
+        Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
         startActivity(otherActivity);
+
+
+        finish();//Fermeture de l'ancienne activité
+        overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité
 
     }
 }

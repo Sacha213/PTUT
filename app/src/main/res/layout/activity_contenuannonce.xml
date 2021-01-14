@@ -39,24 +39,13 @@ android:background="@color/fond_accueil">
             android:textColor="@color/black"
             />
         <TextView
-            android:id="@+id/dateAnnonce"
+            android:id="@+id/textAuteurDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="date"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/black"
-            />
-        <TextView
-            android:id="@+id/auteurAnnonce"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_marginTop="5dp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            />
+            android:text="Publié par ... le ..."
+            android:gravity="center"
+            android:layout_marginBottom="10dp"/>
+
     </LinearLayout>
 </ScrollView>
 

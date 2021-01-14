@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -42,8 +43,11 @@ public class NouvelleAnnonce extends AppCompatActivity {
     private EditText contenu;
     private Button publier;
 
+    private static String NOM;
+    private static String PRENOM;
+
     private FirebaseFirestore db; //Base de donnée Firestore
-    private DatabaseManager databaseManager;//Base de données local
+    private FirebaseAuth mAuth;
 
     private AlertDialog.Builder erreurAnnonceDialogue;
 
@@ -64,13 +68,29 @@ public class NouvelleAnnonce extends AppCompatActivity {
 
         erreurAnnonceDialogue = new AlertDialog.Builder(this);
         db = FirebaseFirestore.getInstance(); // Acces à la base de donnée cloud firestore
-        databaseManager = new DatabaseManager(this);
+        mAuth = FirebaseAuth.getInstance();  // Initialize Firebase Auth
 
-        this.menu = new Menu(this, databaseManager);
-
+        this.menu = new Menu(this);
 
         //On coche par default la checkbox autres
         autres.setChecked(true);
+
+        db.collection("users")
+                .document(mAuth.getCurrentUser().getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            NOM = document.getString("Nom");
+                            PRENOM = document.getString("Prénom");
+                        }
+                        else{
+                            System.out.println("Erreur");
+                        }
+                    }
+                });
 
 
 
@@ -95,7 +115,7 @@ public class NouvelleAnnonce extends AppCompatActivity {
                     //Création data pour la BD Firebase
                     Map<String, Object> data = new HashMap<>();
                     data.put("Titre",titreAnnonce);
-                    data.put("Auteur",databaseManager.getIdentifiant());
+                    data.put("Auteur",PRENOM+" "+NOM);
                     data.put("Date",new Date());
                     data.put("Contenu",contenuAnnonce);
                     data.put("Type",choixCheckbox);
@@ -138,9 +158,6 @@ public class NouvelleAnnonce extends AppCompatActivity {
         /******************* Changement de page *******************/
         Intent otherActivity = new Intent(getApplicationContext(), Annonce.class); //Ouverture d'une nouvelle activité
         startActivity(otherActivity);
-
-        //On ferme la database
-        databaseManager.close();
 
         finish();//Fermeture de l'ancienne activité
         overridePendingTransition(0,0);//Suprimmer l'animation lors du changement d'activité

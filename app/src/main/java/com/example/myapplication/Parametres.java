@@ -29,6 +29,7 @@ public class Parametres extends AppCompatActivity {
     private Button buttonValider;
     private Button buttonDeconnexion;
     private Button buttonSupprimerCompte;
+    private Button buttonReinitaliserNote;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -57,6 +58,7 @@ public class Parametres extends AppCompatActivity {
         this.buttonValider = findViewById(R.id.boutonParametres);
         this.buttonDeconnexion = findViewById(R.id.boutonDeconnexion);
         this.buttonSupprimerCompte = findViewById(R.id.boutonSupprimerCompte);
+        this.buttonReinitaliserNote = findViewById(R.id.boutonSupressionNotes);
 
         //On affiche les informations
         textMail.setText(databaseManager.getMail());
@@ -64,6 +66,21 @@ public class Parametres extends AppCompatActivity {
         textCalendrier.setText(databaseManager.getLienCalendrier());
 
         /******************* Mise en place d'écouteur *******************/
+
+        buttonReinitaliserNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //On réinitialise les TABLES NOTES et MATIERES
+                databaseManager.deleteAllMatieres();
+                databaseManager.deleteAllNotes();
+
+                //On affiche une fenetre de dialogue pour précisé à l'utilisateur que ses informations ont bien été modifiées
+                dialogConfirmation.setTitle("Super..."); //Titre
+                dialogConfirmation.setMessage("Vos notes ont été réinitialisées"); //Message
+                dialogConfirmation.setIcon(R.drawable.approval); //Ajout de l'icone valider
+                dialogConfirmation.show(); //Affichage de la boîte de dialogue
+            }
+        });
 
         //Si l'utilisateur clique sur le bouton valider alors on va enregistrer les nouvelles informations
         buttonValider.setOnClickListener(new View.OnClickListener() {

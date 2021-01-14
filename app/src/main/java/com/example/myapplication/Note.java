@@ -112,9 +112,6 @@ public class Note extends AppCompatActivity {
 
             dialogProblem = new AlertDialog.Builder(Note.this);
 
-            //On réinitialise les bd NOTES et MATIERES
-            //databaseManager.deleteAllMatieres();
-            //databaseManager.deleteAllNotes();
         }
 
         @Override

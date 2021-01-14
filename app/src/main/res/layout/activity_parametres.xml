@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Parametres">
+    tools:context=".Parametres"
+    android:background="@color/fond_accueil">
 
     <ScrollView
         android:id="@+id/scrollParametres"
@@ -84,7 +85,18 @@
                 android:layout_marginBottom="10dp"
                 />
 
-            <!-- Notification  -->
+            <!-- Supression des notes  -->
+            <Button
+                android:id="@+id/boutonSupressionNotes"
+                android:layout_width="300dp"
+                android:layout_height="60dp"
+                android:background="@drawable/bouton_deconnection"
+                android:text="Réinitialiser mes notes"
+                android:textSize="17sp"
+                android:textColor="@color/white"
+                android:layout_marginBottom="10dp"
+                android:layout_gravity="center"
+                />
 
             <!-- Deconnexion  -->
             <Button
