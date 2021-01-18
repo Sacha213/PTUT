@@ -32,6 +32,15 @@
         android:layout_marginLeft="10dp"/>
 
 
+    <ImageView
+        android:id="@+id/choixdate"
+        android:layout_width="60dp"
+        android:layout_height="59dp"
+        android:layout_marginLeft="330dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center_horizontal"
+        android:src="@drawable/calendar1"
+        android:textSize="20dp" />
 
     <LinearLayout
         android:id="@+id/menuJour"
@@ -179,4 +188,5 @@
             app:srcCompat="@drawable/messagerie" />
 
     </LinearLayout>
+
 </RelativeLayout>

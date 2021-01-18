@@ -1,18 +1,24 @@
 package com.example.myapplication;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -20,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.type.DateTime;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -40,6 +47,7 @@ public class Calendrier extends AppCompatActivity {
     private RelativeLayout layoutBack;
     private ImageView flecheGauche;
     private ImageView flecheDroite;
+    private ImageView choixDate;
 
     private Calendar dateAffiche;
 
@@ -67,6 +75,11 @@ public class Calendrier extends AppCompatActivity {
         this.datecourante = findViewById(R.id.textjour);
         this.flecheDroite = findViewById(R.id.flechedroite);
         this.flecheGauche = findViewById(R.id.flechegauche);
+        this.choixDate = findViewById(R.id.choixdate);
+
+        final int[] mYear = new int[1];
+        final int[] mMonth = new int[1];
+        final int[] mDate = new int[1];
 
         this.progressBar = findViewById(R.id.barChargement);
         this.textChargement = findViewById(R.id.textChargement);
@@ -124,6 +137,28 @@ public class Calendrier extends AppCompatActivity {
                 layoutFront.removeAllViews();
                 affichageCalendrier();
 
+            }
+        });
+
+        /******************* Mise en place d'écouteur *******************/
+        choixDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final Calendar choix = Calendar.getInstance();
+                mDate[0] = choix.get(Calendar.DATE);
+                mMonth[0] = choix.get(Calendar.MONTH);
+                mYear[0] = choix.get(Calendar.YEAR);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(Calendrier.this, android.R.style.Theme_DeviceDefault_Dialog, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int date) {
+                        dateAffiche.set(year, month, date);
+                        layoutBack.removeAllViews();
+                        layoutFront.removeAllViews();
+                        affichageCalendrier();
+                    }
+                }, mYear[0], mMonth[0], mDate[0]);
+                datePickerDialog.show();
             }
         });
 
