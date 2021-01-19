@@ -6,10 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 
 import android.widget.EditText;
@@ -167,8 +169,13 @@ public class Accueil extends AppCompatActivity {
         infoConnexion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bienvenueDialogue.show(); //Affichage de la boîte de dialogue
+                //On redirige vers la vidéo d'aide de connexion
+                Intent viewIntent =
+                        new Intent("android.intent.action.VIEW",
+                                Uri.parse("https://youtu.be/Sgaw6jS-Fpw"));
+                startActivity(viewIntent);
             }
+
         });
 
 

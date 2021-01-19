@@ -108,7 +108,11 @@ public class Parametres extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 /******************* Changement de page *******************/
-                databaseManager.deleteAllUsers(); // Supression des données de la table USERS
+                databaseManager.deleteAllUsers(); // Supression des données
+                databaseManager.deleteAllMatieres();
+                databaseManager.deleteAllNotes();
+                databaseManager.deleteAllCours();
+                databaseManager.deleteAllMessages();
 
                 db.collection("users").document(mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -144,7 +148,11 @@ public class Parametres extends AppCompatActivity {
         buttonSupprimerCompte.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                databaseManager.deleteAllUsers(); // Supression des données de la table USERS
+                databaseManager.deleteAllUsers(); // Supression des données
+                databaseManager.deleteAllMatieres();
+                databaseManager.deleteAllNotes();
+                databaseManager.deleteAllCours();
+                databaseManager.deleteAllMessages();
 
                 db.collection("users").document(mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override

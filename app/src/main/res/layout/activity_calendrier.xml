@@ -34,13 +34,16 @@
 
     <ImageView
         android:id="@+id/choixdate"
-        android:layout_width="60dp"
-        android:layout_height="59dp"
-        android:layout_marginLeft="330dp"
-        android:layout_marginTop="40dp"
-        android:gravity="center_horizontal"
-        android:src="@drawable/calendar1"
-        android:textSize="20dp" />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_above="@id/menuJour"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        app:srcCompat="@drawable/calendar1"
+        android:elevation="4dp"
+        android:background="@drawable/shadow"/>
 
     <LinearLayout
         android:id="@+id/menuJour"

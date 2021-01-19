@@ -164,9 +164,11 @@ public class Connexion extends AppCompatActivity { //Classe pricipale : page de 
         /******************* Méthode appeler automatiquement après l'exécution de la méthode principale (doInBackground) *******************/
         protected void onPostExecute(Void voids) {
 
+            //On récupère la position du mot success
+            int position = result.indexOf("succes");
 
             /******************* Vérification de la réponse *******************/
-            if (result.length() == 4229) { //Si la réponse contient 4229 caractère alors l'utilisateur à rentré les bons identifiants Lyon1
+            if (position != -1) { //Si la réponse contient succes alors l'utilisateur à rentré les bons identifiants Lyon1
 
                 /******************* Changement de page *******************/
                 Intent otherActivity = new Intent(getApplicationContext(), Accueil.class); //Ouverture d'une nouvelle activité

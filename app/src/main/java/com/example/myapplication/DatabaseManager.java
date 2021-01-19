@@ -373,4 +373,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return tmp;
     }
 
+    /******************* Méthode qui permet de suprimmer les données de la table Matière *******************/
+    public void deleteAllMessages(){
+        String strsql = "DELETE FROM Message "; //Génération de la requette SQL
+
+        this.getWritableDatabase().execSQL(strsql); //Exécution de la requette
+    }
+
 }
