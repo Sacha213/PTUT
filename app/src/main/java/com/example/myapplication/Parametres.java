@@ -205,7 +205,7 @@ public class Parametres extends AppCompatActivity {
     public void onBackPressed() {
 
         /******************* Changement de page *******************/
-        Intent otherActivity = new Intent(getApplicationContext(), Annonce.class); //Ouverture d'une nouvelle activité
+        Intent otherActivity = new Intent(getApplicationContext(), Information.class); //Ouverture d'une nouvelle activité
         startActivity(otherActivity);
 
         //On ferme la database

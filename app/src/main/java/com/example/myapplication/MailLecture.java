@@ -214,8 +214,14 @@ public class MailLecture extends AppCompatActivity {
 
             //récupération du sujet
             String sujet = message.getSubject();
-            //On transforme le text s'il est encoder en utf-8 ou IS0
-            sujet = degodage(sujet);
+
+
+            if(sujet != null){ //S'il y a une sujet alors...
+                sujet = degodage(sujet); //On transforme le text s'il est encoder en utf-8 ou IS0
+            }
+            else {
+                sujet = "(pas d'objet)";
+            }
 
             Address addresses = message.getFrom()[0];//Résupération de l'adresse de l'expéditeur
             String[] nomDest = addresses.toString().split("<");//Transformation en chaîne de caractère et on va enlever les informations superflux (<adresse mail>)
