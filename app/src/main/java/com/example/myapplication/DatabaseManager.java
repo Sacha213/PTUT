@@ -152,6 +152,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     /******************* Méthode qui permet d'insérer une matière *******************/
     public void insertMatiere(String matiere){
+        //on protège les apostrofes
+        matiere = matiere.replace("'","''");
+
         String strSql = "insert into MATIERES values ('"+matiere+"')"; //Génération de la requette SQL
 
         this.getWritableDatabase().execSQL(strSql); //Exécution de la requette
@@ -183,6 +186,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     /******************* Méthode qui permet d'insérer une note *******************/
     public void insertNote(String note, String description, String matiere, String datePub){
+        //on protège les apostrofes
+        description = description.replace("'","''");
+        note = note.replace("'","''");
+        matiere = matiere.replace("'","''");
+
         String strSql = "insert into NOTES values ('"+note+"','"+description+"','"+matiere+"','"+datePub+"')"; //Génération de la requette SQL
 
         this.getWritableDatabase().execSQL(strSql); //Exécution de la requette
@@ -216,6 +224,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     /******************* Méthode pour insérer un cours de l'utilisateur dans la table Users *******************/
     public void insertCours(String idcal, int HDEB,int HFIN,String date,String nom, String salle, String prof){
+        //on protège les apostrofes
+        nom = nom.replace("'","''");
+        salle = salle.replace("'","''");
+        prof = prof.replace("'","''");
+
         String strSql = "insert into CALENDRIER values ('"+idcal+"',"+HDEB+","+HFIN+",'"+date+"','"+nom+"','"+salle+"','"+prof+"')"; //Génération de la requette SQL
 
         this.getWritableDatabase().execSQL(strSql); //Exécution de la requette
@@ -314,6 +327,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     public void insertMessage(String message, String pseudoSender, int type, Date date)
     {
+        //on protège les apostrofes(sinon erreur)
+        message = message.replace("'","''");
+
         String strSql = "INSERT INTO `Message` (`pseudoSender`, `message`, `type`, `date`) VALUES ('"+pseudoSender+"','"+message+"','"+type+"','"+date+"')";
         this.getWritableDatabase().execSQL(strSql);
     }
