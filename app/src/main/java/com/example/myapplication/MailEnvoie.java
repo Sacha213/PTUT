@@ -117,7 +117,7 @@ public class MailEnvoie extends AppCompatActivity {
                 EnvoieMessage message = new EnvoieMessage(); // On instanci l'objet message de la classe EnvoieMessage qui est dans une AsyncTask
                 message.execute(object.getText().toString(), contenu.getText().toString(), destinataire.getText().toString());
 
-
+                //Convertire le text en html (voir tuto)
             }
         });
 

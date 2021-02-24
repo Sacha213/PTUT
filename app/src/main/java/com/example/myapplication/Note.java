@@ -204,6 +204,7 @@ public class Note extends AppCompatActivity {
                 Date date = new Date(dateNote); //On transforme la date dans le format Date
                 SimpleDateFormat formateur = new SimpleDateFormat("dd/MM/yyyy");//On créer un foprmateur pour la date
                 String strDateNote = formateur.format(date);//On formate la date de publication
+
                 stockageNote(matiere,description,note,strDateNote);
             }
         }
