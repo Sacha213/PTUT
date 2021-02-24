@@ -155,7 +155,7 @@ public class Accueil extends AppCompatActivity {
 
 
         /******************* Affichage de la boîte de dialogue de bienvenue *******************/ // à enlever après avoir créer un parcours d'initialisation de l'application pour l'utilisateur
-        bienvenueDialogue.setTitle("Tu y est presque..."); //Titre
+        bienvenueDialogue.setTitle("Tu y es presque..."); //Titre
         bienvenueDialogue.setMessage("Nous avons encore besoin de quelques informations pour pouvoir activer toutes les fonctionnalités de l’application.\n" +
                 "\n" +
                 "* Il te faut maintenant renseigner ton adresse mail de l’université Lyon 1.\n" +
