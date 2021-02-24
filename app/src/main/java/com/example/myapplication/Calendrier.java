@@ -2,10 +2,12 @@ package com.example.myapplication;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GestureDetectorCompat;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -15,7 +17,9 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -27,6 +31,8 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.type.DateTime;
+
+import org.xml.sax.SAXException;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -47,9 +53,13 @@ public class Calendrier extends AppCompatActivity {
     private RelativeLayout layoutBack;
     private ImageView flecheGauche;
     private ImageView flecheDroite;
+
     private ImageView choixDate;
 
     private Calendar dateAffiche;
+    private float x1, x2;
+    private static int MIN_DISTANCE = 150;
+    private GestureDetector detectionGeste;
 
     private ProgressBar progressBar;
     private TextView textChargement;
@@ -61,6 +71,7 @@ public class Calendrier extends AppCompatActivity {
 
 
     private String url;
+    private View GesteArea;
 
 
     @Override
@@ -75,8 +86,9 @@ public class Calendrier extends AppCompatActivity {
         this.datecourante = findViewById(R.id.textjour);
         this.flecheDroite = findViewById(R.id.flechedroite);
         this.flecheGauche = findViewById(R.id.flechegauche);
-        this.choixDate = findViewById(R.id.choixdate);
+        this.GesteArea = findViewById(R.id.scrollCalendrier);
 
+        this.choixDate = findViewById(R.id.choixdate);
         final int[] mYear = new int[1];
         final int[] mMonth = new int[1];
         final int[] mDate = new int[1];
@@ -140,29 +152,93 @@ public class Calendrier extends AppCompatActivity {
             }
         });
 
+
         /******************* Mise en place d'écouteur *******************/
         choixDate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) { // ce qu'il va se passer si on clique sur l'objet écouté
 
                 final Calendar choix = Calendar.getInstance();
                 mDate[0] = choix.get(Calendar.DATE);
                 mMonth[0] = choix.get(Calendar.MONTH);
                 mYear[0] = choix.get(Calendar.YEAR);
+                // déclaration d'un objet de type DatePickerDialog
                 DatePickerDialog datePickerDialog = new DatePickerDialog(Calendrier.this, android.R.style.Theme_DeviceDefault_Dialog, new DatePickerDialog.OnDateSetListener() {
+
                     @Override
-                    public void onDateSet(DatePicker view, int year, int month, int date) {
+                    public void onDateSet(DatePicker view, int year, int month, int date) { // ce qu'il va se passer quand la date sera modifiée
                         dateAffiche.set(year, month, date);
                         layoutBack.removeAllViews();
                         layoutFront.removeAllViews();
                         affichageCalendrier();
                     }
                 }, mYear[0], mMonth[0], mDate[0]);
+                // fin de la déclaration
                 datePickerDialog.show();
             }
         });
 
+        GesteArea.setOnTouchListener(new OnSwipeTouchListener(Calendrier.this) {
+            @Override
+            public void onSwipeLeft() {
+                dateAffiche.add(Calendar.DATE,+1);
+                layoutBack.removeAllViews();
+                layoutFront.removeAllViews();
+                affichageCalendrier();
+            }
+            public void onSwipeRight() {
+                dateAffiche.add(Calendar.DATE,-1);
+                layoutBack.removeAllViews();
+                layoutFront.removeAllViews();
+                affichageCalendrier();
+            }
+        });
 
+    }
+    /******************* Gestion des gestes *******************/
+
+    public class OnSwipeTouchListener implements View.OnTouchListener {
+
+        private final GestureDetector gestureDetector;
+
+        public OnSwipeTouchListener(Context context) {
+            gestureDetector = new GestureDetector(context, new GestureListener());
+        }
+
+        public void onSwipeLeft() {
+        }
+
+        public void onSwipeRight() {
+        }
+
+        public boolean onTouch(View v, MotionEvent event) {
+            return gestureDetector.onTouchEvent(event);
+        }
+
+        private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+            private static final int SWIPE_DISTANCE_THRESHOLD = 100;
+            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                float distanceX = e2.getX() - e1.getX();
+                float distanceY = e2.getY() - e1.getY();
+                if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > SWIPE_DISTANCE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (distanceX > 0)
+                        onSwipeRight();
+                    else
+                        onSwipeLeft();
+                    return true;
+                }
+                return false;
+            }
+        }
     }
 
     /******************* Gestion du retour en arrière *******************/
@@ -402,4 +478,5 @@ public class Calendrier extends AppCompatActivity {
 
         return convertion;
     }
+
 }
